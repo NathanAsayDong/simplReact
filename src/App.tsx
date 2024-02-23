@@ -1,28 +1,25 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { useState } from 'react'
 import './App.css'
+import Dashboard from './components/Dashboard/Dashboard'
 import Login from './components/Login/Login'
 
 function App() {
+  const [isLoggin, setIsLoggin] = useState(false)
 
-  return (
-    <>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />}>
-          <Route index element={<App />} />
-          <Route path="login" element={<Login />} />
-          {/* <Route path="blogs" element={<Blogs />} />
-          <Route path="contact" element={<Contact />} /> */}
-        </Route>
-      </Routes>
-    </BrowserRouter>
+  const handleLogin = () => {
+    setIsLoggin(true);
+  };
 
+  const handleLogout = () => {
+    setIsLoggin(false);
+  }
 
-
-
-      <Login />
-    </>
-  )
+  if (isLoggin) {
+    return <Dashboard handleLogout={handleLogout}/>
+  }
+  else {
+    return <Login handleLogin={handleLogin}/>
+  }
 }
 
 export default App

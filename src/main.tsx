@@ -1,15 +1,20 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import App from './App';
+import './index.css';
 
-import { createBrowserRouter } from 'react-router-dom'
 
-const BrowserRouter = createBrowserRouter([])
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    errorElement: <h1>404 Not Found</h1>
+  },
+]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
-    {/* change app to router provided */}
+    <RouterProvider router={router} />
   </React.StrictMode>,
-)
+);

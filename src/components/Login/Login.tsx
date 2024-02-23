@@ -1,9 +1,11 @@
 import { FC } from 'react';
 import './Login.scss'; // Import CSS file for styling
 
-interface LoginProps {}
+interface LoginProps {
+   handleLogin: () => void;
+}
 
-const Login: FC<LoginProps> = () => (
+const Login: FC<LoginProps> = ({ handleLogin }) => (
    <>
       <h1>LOGIN</h1>
       <div className='loginForm'>
@@ -11,7 +13,7 @@ const Login: FC<LoginProps> = () => (
          <input type="text" />
          <h2>Password:</h2>
          <input type="password" />
-         <button>Login</button>
+         <button onClick={handleLogin}>Login</button>
          <button>Create Account</button>
       </div>
    </>
