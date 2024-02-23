@@ -1,4 +1,6 @@
 import { FC } from 'react';
+import ImportCsv from '../ImportCsv/ImportCsv';
+import NavBar from '../NavBar/NavBar';
 
 interface DashboardProps {
    handleLogout: () => void;
@@ -6,8 +8,14 @@ interface DashboardProps {
 
 const Dashboard: FC<DashboardProps> = ({handleLogout}) => (
    <>
-      <p>Welcome to dashboard</p>
-      <button onClick={handleLogout} >Logout</button>
+   <NavBar />
+
+      <div className='dashboard'>
+         <p>Welcome to dashboard</p>
+         <button onClick={handleLogout} >Logout</button>
+      </div>
+
+   <ImportCsv />
    </>
 );
 
