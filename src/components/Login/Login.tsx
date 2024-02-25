@@ -9,7 +9,7 @@ interface LoginProps {
 
 const Login: FC<LoginProps> = ({ handleLogin }) => (
    <>
-      <h1>LOGIN</h1>
+      <h1>MAKING FINANCES SIMPL.</h1>
       <div className='loginForm'>
          <h2>Username:</h2>
          <input type="text" />
