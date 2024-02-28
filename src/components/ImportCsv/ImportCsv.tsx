@@ -1,9 +1,11 @@
 import { FC, useState } from 'react';
+import './ImportCsv.scss';
 
 interface ImportCsvProps {}
 
 const ImportCsv: FC<ImportCsvProps> = () => {
   const [csvContent, setCsvContent] = useState<string>('');
+  const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -14,17 +16,23 @@ const ImportCsv: FC<ImportCsvProps> = () => {
         setCsvContent(text as string);
       };
       reader.readAsText(file);
+      setCsvHeaders(getCsvHeaders(csvContent));
     }
   };
 
+  const getCsvHeaders = (csvContent: string) => {
+    const [headers] = csvContent.split('\n');
+    return (headers.split(','));
+  }
+
   return (
     <>
-      <div>
-      <label htmlFor="upload-csv" style={{ backgroundColor: 'black', color: 'white', padding: '1.5px', borderRadius: '1px', cursor: 'pointer' }}>
-        Upload File
-      </label>
-      <input type="file" id="upload-csv" accept=".csv" onChange={handleFileUpload} style={{ display: 'none' }} />
-      {csvContent && <p>{csvContent}</p>}
+      <div className='container'>
+
+      <h1 className='title'>Import CSV</h1>
+
+      <input type="file" id="upload-csv" accept=".csv" onChange={handleFileUpload} />
+      {csvContent && <p className='csv-content'>{csvHeaders}</p>}
     </div>
     </>
   );
