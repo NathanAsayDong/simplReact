@@ -11,3 +11,20 @@ h2 {
 .account {
     flex: end;
 }
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    top: 0;
+}
+
+.navbar {
+    .nav-item {
+      transition: all 0.3s ease; // Smooth transition effect
+    &:hover {
+        transform: scale(1.1); // Increase size by 10% on hover
+    }
+    }
+}

@@ -1,35 +1,20 @@
-// import { FC } from 'react';
-
-// interface NavBarProps {}
-
-// const NavBar: FC<NavBarProps> = () => (
-//    <>
-//       NavBar Component
-//    </>
-// );
-
-// export default NavBar;
 import { FC } from 'react';
+import './NavBar.scss';
 
 interface NavBarProps {}
 
 const NavBar: FC<NavBarProps> = () => (
-  <nav className="navbar">
-    <ul className="nav-menu">
-      <li className="nav-item">
-        <a href="#instant-balance">Instant Balance</a>
-      </li>
-      <li className="nav-item">
-        <a href="#future-balance">Future Balance</a>
-      </li>
-      <li className="nav-item">
-        <a href="#investments">Investments</a>
-      </li>
-      <li className="nav-item">
-        <a href="#expenses">Expenses</a>
-      </li>
-    </ul>
-  </nav>
+  <div className='navbar'>
+
+        <a href="#instant-balance"><h2 className='nav-item'>Instant Balance</h2></a>
+
+        <a href="#future-balance"><h2 className='nav-item'>Future Balance</h2></a>
+
+        <a href="#investments"><h2 className='nav-item'>Investments</h2></a>
+
+        <a href="#expenses"><h2 className='nav-item'>Expenses</h2></a>
+
+  </div>
 );
 
 export default NavBar;
