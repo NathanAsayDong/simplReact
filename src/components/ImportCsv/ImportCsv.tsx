@@ -6,6 +6,14 @@ interface ImportCsvProps {}
 const ImportCsv: FC<ImportCsvProps> = () => {
   const [csvContent, setCsvContent] = useState<string>('');
   const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
+  const [netValue, setNetValue] = useState<number>(0);
+
+  const testData = [
+    {caption: '', value: 0, timestamp: ''},
+    {caption: '', value: 0, timestamp: ''},
+    {caption: '', value: 0, timestamp: ''},
+    {caption: '', value: 0, timestamp: ''},
+  ]
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
