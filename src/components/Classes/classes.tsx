@@ -5,13 +5,15 @@ class Transaction {
     description: string;
     account: string;
     category: string;
-    constructor(id: number, date: Date, amount: number, description: string, account: string, category: string) {
+    status: string;
+    constructor(id: number,date: Date, amount: number, description: string, account: string, category: string, status: string) {
         this.id = id;
         this.date = date;
         this.amount = amount;
         this.description = description;
         this.account = account;
         this.category = category;
+        this.status = status;
     }
 }
 
