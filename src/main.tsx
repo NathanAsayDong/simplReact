@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
+import Budgets from './components/Budgets/Budgets';
 
 
 const router = createBrowserRouter([
@@ -12,8 +13,11 @@ const router = createBrowserRouter([
     errorElement: <h1>404 Not Found</h1>
   },
   //add new paths here
-
-
+  // {
+  //   path: '/budgets',
+  //   element: <Budgets />,
+  //   errorElement: <h1>404 Not Found</h1>
+  // },
 
 ]);
 

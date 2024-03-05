@@ -5,7 +5,6 @@
 
 h2 {
     margin: 5px;
-    
 }
 
 .account {
@@ -16,15 +15,29 @@ h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    width: 60%;
     top: 0;
+    margin: auto;
 }
 
-.navbar {
-    .nav-item {
-      transition: all 0.3s ease; // Smooth transition effect
-    &:hover {
-        transform: scale(1.1); // Increase size by 10% on hover
-    }
-    }
+.navbar .nav-item {
+    transition: all 0.3s ease; 
+    color: hsl(180, 10%, 94%); 
+}
+
+.navbar .nav-item:hover {
+    color: rgb(107, 110, 113); 
+    transform: scale(1.2); 
+}
+
+.navbar .account-icon {
+    font-size: 1.5rem; 
+    color: hsl(180, 10%, 94%); 
+    cursor: pointer;
+    transition: all 0.3s ease; 
+}
+
+.navbar .account-icon:hover {
+    color: rgb(107, 110, 113); 
+    transform: scale(1.2); 
 }
