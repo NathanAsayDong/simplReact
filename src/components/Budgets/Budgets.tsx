@@ -1,5 +1,6 @@
 import { FC, useState } from 'react';
-
+import './Budgets.css'
+import NavBar from '../NavBar/NavBar';
 
 interface BudgetsProps {}
 const [budgets, setBudgets] = useState<Budget[]>([]);
@@ -16,6 +17,7 @@ const createBudget = () => {
 
 const Budgets: FC<BudgetsProps> = () => (
   <div>
+    <NavBar />
     Budgets Component
   </div>
 );
