@@ -1,4 +1,4 @@
-class Transaction {
+export class Transaction {
     id: number;
     date: Date;
     amount: number;
@@ -17,7 +17,7 @@ class Transaction {
     }
 }
 
-class Budget {
+export class Budget {
     id: number;
     name: string;
     category: string;
@@ -27,5 +27,12 @@ class Budget {
         this.name = name;
         this.category = category;
         this.amount = amount;
+    }
+}
+
+export class AccountTypes {
+    value : string = 'Uccu' || 'Chase' || 'Discover' || 'CapitalOne' || 'Venmo' || 'CashApp' || 'Paypal' || 'Cash' || 'Other';
+    constructor(value: string) {
+        this.value = value;
     }
 }

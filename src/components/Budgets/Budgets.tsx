@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { Budget } from '../../services/Classes/classes';
 
 
 interface BudgetsProps {}
