@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
-import Budgets from './components/Budgets/Budgets';
 import './index.css';
 
 
@@ -12,11 +11,9 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <h1>404 Not Found</h1>
   },
-  {
-    path: '/Budgets',
-    element: <Budgets />,
-  }
-  
+  //add new paths here
+
+
 
 ]);
 
