@@ -13,7 +13,7 @@ const NavBar: FC<NavBarProps> = () => (
 
         <a href="#investments"><h2 className='nav-item'>Investments</h2></a>
 
-        <a href="#expenses"><h2 className='nav-item'>Expenses</h2></a>
+        <a href="/Budgets"><h2 className='nav-item'>Budgets</h2></a>
 
   </div>
 );
