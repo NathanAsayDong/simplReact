@@ -41,9 +41,7 @@ const ImportCsv: FC<ImportCsvProps> = () => {
   return (
     <>
       <div className='container'>
-
       <h1 className='title'>Import CSV</h1>
-
       <input type="file" id="upload-csv" accept=".csv" onChange={handleFileUpload} />
       {csvContent && <p className='csv-content'>{csvHeaders}</p>}
     </div>
