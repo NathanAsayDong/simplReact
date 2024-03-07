@@ -1,21 +1,23 @@
-class Transaction {
+export class Transaction {
     id: number;
     date: Date;
     amount: number;
     description: string;
     account: string;
     category: string;
-    constructor(id: number, date: Date, amount: number, description: string, account: string, category: string) {
+    status: string;
+    constructor(id: number,date: Date, amount: number, description: string, account: string, category: string, status: string) {
         this.id = id;
         this.date = date;
         this.amount = amount;
         this.description = description;
         this.account = account;
         this.category = category;
+        this.status = status;
     }
 }
 
-class Budget {
+export class Budget {
     id: number;
     name: string;
     category: string;
@@ -25,5 +27,12 @@ class Budget {
         this.name = name;
         this.category = category;
         this.amount = amount;
+    }
+}
+
+export class AccountTypes {
+    value : string = 'Uccu' || 'Chase' || 'Discover' || 'CapitalOne' || 'Venmo' || 'CashApp' || 'Paypal' || 'Cash' || 'Other';
+    constructor(value: string) {
+        this.value = value;
     }
 }

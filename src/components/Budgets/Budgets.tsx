@@ -1,15 +1,9 @@
-import React, { FC, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import './Budgets.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { FC, useState } from 'react';
+import { Budget } from '../../services/Classes/classes';
 import NavBar from '../NavBar/NavBar';
-
-interface Budget {
-  id: number;
-  name: string;
-  amount: number;
-  category: string;
-}
+import './Budgets.css';
 
 const Budgets: FC = () => {
   const [budgets, setBudgets] = useState<Budget[]>([]);
