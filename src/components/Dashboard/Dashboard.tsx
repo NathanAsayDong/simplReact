@@ -16,8 +16,6 @@ const Dashboard: FC<DashboardProps> = ({handleLogout}) => (
          <button onClick={handleLogout} >Logout</button>
       </div>
 
-      <button className='demo'>HEy matt</button>
-
    <ImportCsv />
    </>
 );
