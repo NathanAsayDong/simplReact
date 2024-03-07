@@ -41,7 +41,7 @@ const Budgets: FC = () => {
             <input type="text" id="category" name="category" value={newBudget.category} onChange={handleChange} />
           </div>
           <button type="submit">
-            <FontAwesomeIcon icon={faPlus} /> {/* Font Awesome icon */}
+            <FontAwesomeIcon icon={faPlus} />
           </button>
         </form>
         <div>
