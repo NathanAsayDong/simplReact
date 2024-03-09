@@ -13,9 +13,8 @@ export const attemptLogin = async (email: string, password: string) => {
         })
     });
     if (!response.ok) {
-        throw new Error('Failed to login');
+        return false;
     }
     const data = await response.json();
-    console.log(data);
     return data;
 }
