@@ -1,5 +1,4 @@
 import { FC, useState } from 'react';
-import { View } from 'react-native';
 import { attemptLogin } from '../../services/Classes/userStoreService';
 import './Login.scss';
 
@@ -27,7 +26,6 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
 
    return  (
    <>
-      <View>
          <h1>MAKING FINANCES SIMPL.</h1>
          <div className='loginForm'>
             <h2>Email:</h2>
@@ -37,7 +35,6 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
             <button onClick={login}>Login</button>
             <button>Create Account</button>
          </div>
-      </View>
    </>
    );
    
