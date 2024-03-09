@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { attemptLogin } from '../../services/Classes/userStoreService';
+import { attemptCreateAccount, attemptLogin } from '../../services/Classes/userStoreService';
 import './Login.scss';
 
 
@@ -35,6 +35,19 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       }
    }
 
+   const createAccount = async () => {
+      if (email === '' || password === '') {
+         return;
+      }
+      const success = await attemptCreateAccount(email, password);
+      if (success) {
+         console.log(success);
+         handleLogin();
+      }
+      else {
+         alert('Failed to create an account');
+      }
+   }
    return  (
    <>
       <div className='centerPage'>
@@ -45,7 +58,8 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
             <h2>Password:</h2>
                <input id='password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             <button onClick={login}>Login</button>
-            <button>Create Account</button>
+            <button onClick={createAccount}>Create Account</button>
+      
          </div>
       </div>
    </>

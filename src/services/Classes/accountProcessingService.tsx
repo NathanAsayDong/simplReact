@@ -1,7 +1,7 @@
 import { AccountTypes } from './classes';
 
 const url = 'https://simpl-api-ca96d9ccde88.herokuapp.com/'
-const localUrl = 'http://0.0.0.0:8080/'
+const localUrl = 'http://localhost:8080/'
 
 export class TransactionProcessing {
     public static processTransactions = (csvData: any) => {
