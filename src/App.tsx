@@ -14,7 +14,7 @@ function App() {
     setIsLoggin(false);
   }
 
-  const getCachedID = () => {
+  const initializePage = () => {
     const id = localStorage.getItem('id');
     if (id !== 'undefined' && id !== null && id !== '' && id !== undefined) {
       setIsLoggin(true);
@@ -25,7 +25,7 @@ function App() {
   }
 
   useEffect(() => {
-    getCachedID();
+    initializePage();
   }, [])
 
   if (isLoggin) {

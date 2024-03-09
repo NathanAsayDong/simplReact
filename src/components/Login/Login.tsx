@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { attemptLogin } from '../../services/Classes/userStoreService';
 import './Login.scss';
 
@@ -11,6 +11,13 @@ interface LoginProps {
 const Login: FC<LoginProps> = ({ handleLogin }) => {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
+
+   useEffect(() => {
+      const slogan = document.querySelector('.slogan');
+      if (slogan) {
+         slogan.classList.add('panUp');
+      }
+   }, []);
 
    
    const login = async () => {
@@ -30,15 +37,17 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
 
    return  (
    <>
-         <h1>MAKING FINANCES SIMPL.</h1>
+      <div className='centerPage'>
+         <h1 className='slogan'>MAKING FINANCES SIMPL.</h1>
          <div className='loginForm'>
             <h2>Email:</h2>
-               <input id='username' className='loginInput' type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+               <input id='username' type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             <h2>Password:</h2>
-               <input id='password' className='loginInput' type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+               <input id='password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             <button onClick={login}>Login</button>
             <button>Create Account</button>
          </div>
+      </div>
    </>
    );
    
