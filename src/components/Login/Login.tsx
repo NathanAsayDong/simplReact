@@ -1,28 +1,46 @@
-import { FC } from 'react';
-import { attemptLogin } from '../../services/Classes/userStoreService.tsx';
-import './Login.scss'; // Import CSS file for styling
+import { FC, useState } from 'react';
+import { View } from 'react-native';
+import { attemptLogin } from '../../services/Classes/userStoreService';
+import './Login.scss';
+
+
 
 interface LoginProps {
    handleLogin: () => void;
 }
+   
 
-const apiLogin = async () => {
-   const user = await attemptLogin('test@gmail.com', 'testing');
-}
+const Login: FC<LoginProps> = ({ handleLogin }) => {
+   const [email, setEmail] = useState('');
+   const [password, setPassword] = useState('');
 
-const Login: FC<LoginProps> = ({ handleLogin }) => (
+   
+   const login = async () => {
+      const success = await attemptLogin(email, password);
+      if (success) {
+         handleLogin();
+      }
+      else {
+         alert('Failed to login');
+      }
+   }
+
+   return  (
    <>
-      <h1>MAKING FINANCES SIMPL.</h1>
-      <div className='loginForm'>
-         <h2>Username:</h2>
-         <input type="text" />
-         <h2>Password:</h2>
-         <input type="password" />
-         <button onClick={handleLogin}>Login</button>
-         <button onClick={apiLogin}>Login Api</button>
-         <button>Create Account</button>
-      </div>
+      <View>
+         <h1>MAKING FINANCES SIMPL.</h1>
+         <div className='loginForm'>
+            <h2>Email:</h2>
+               <input id='username' type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <h2>Password:</h2>
+               <input id='password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <button onClick={login}>Login</button>
+            <button>Create Account</button>
+         </div>
+      </View>
    </>
-);
+   );
+   
+};
 
 export default Login;
