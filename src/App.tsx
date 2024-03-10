@@ -12,6 +12,7 @@ function App() {
 
   const handleLogout = () => {
     setIsLoggin(false);
+    localStorage.removeItem('id');
   }
 
   const initializePage = () => {
