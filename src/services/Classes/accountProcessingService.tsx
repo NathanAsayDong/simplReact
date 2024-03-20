@@ -29,24 +29,30 @@ export class TransactionProcessing {
 export class TransactionProcessingLocal {
     public static processTransactions = async (csvData: any, account: AccountTypes) => {
         try {
-            const id = localStorage.getItem('id')
+            const id = localStorage.getItem('id');
+            if (!id) throw new Error('User ID is missing in local storage.');
+            
             const url = localUrl + 'upload-transactions-csv' + '?account=' + account.value + '&userId=' + id;
+            
             const response = await fetch(url, {
                 method: 'POST',
-                body: JSON.stringify(csvData),
+                body: csvData,
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'text/csv'
                 }
             });
+            
             if (!response.ok) {
-                throw new Error('Failed to upload CSV');
+                const errorBody = await response.text(); // Or response.json() if the server sends JSON
+                throw new Error(`Failed to upload CSV: ${response.status} ${response.statusText} - ${errorBody}`);
             }
-            const res =  await response.json();
+            
+            const res = await response.json();
             console.log('this is front end response ', res);
             return res;
-        }
-        catch (error) {
-            throw new Error('Error uploading CSV');
+        } catch (error) {
+            console.error('Error during CSV upload:', error);
+            throw error; // Re-throw to allow error handling further up the call stack.
         }
     }
 }

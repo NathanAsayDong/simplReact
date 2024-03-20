@@ -24,13 +24,19 @@ const ImportCsv: FC<ImportCsvProps> = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = async (e: ProgressEvent<FileReader>) => {
-        const text = e.target?.result;
-        setCsvContent(text as object);
-        await uploadCsv(text);
+        try {
+          const text = e.target?.result;
+          setCsvContent(text);
+          await uploadCsv(text);
+        } catch (error) {
+          console.error(error);
+          // Here you might want to set an error state and display it to the user
+        }
       };
       reader.readAsText(file);
     }
   };
+  
 
   const uploadCsv = async (csv: any) => {
     const account = new AccountTypes('Uccu');
