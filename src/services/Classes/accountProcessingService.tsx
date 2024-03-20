@@ -29,7 +29,8 @@ export class TransactionProcessing {
 export class TransactionProcessingLocal {
     public static processTransactions = async (csvData: any, account: AccountTypes) => {
         try {
-            const url = localUrl + 'upload-transactions-csv' + '?account=' + account.value;
+            const id = localStorage.getItem('id')
+            const url = localUrl + 'upload-transactions-csv' + '?account=' + account.value + '&userId=' + id;
             const response = await fetch(url, {
                 method: 'POST',
                 body: JSON.stringify(csvData),

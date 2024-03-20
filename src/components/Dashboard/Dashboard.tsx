@@ -10,12 +10,14 @@ interface DashboardProps {
 const Dashboard: FC<DashboardProps> = ({handleLogout}) => (
    <>
    <NavBar />
+      <div>
 
-      <div className='dashboard'>
-         <p>Welcome to dashboard</p>
-         <button onClick={handleLogout} >Logout</button>
+         <div className='dashboard'>
+            <p>Welcome to dashboard</p>
+            <button onClick={handleLogout} >Logout</button>
+         </div>
+
       </div>
-
    <ImportCsv />
    </>
 );
