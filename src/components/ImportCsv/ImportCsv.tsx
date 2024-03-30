@@ -44,11 +44,17 @@ const ImportCsv: FC<ImportCsvProps> = () => {
     await TransactionProcessingLocal.processTransactions(csv, account);
   }
 
+  const getAllTransactions = async () => {
+    const response = await TransactionProcessingLocal.getAllTransactions();
+    console.log('response', response);
+  }
+
   return (
     <>
       <div className='container'>
       <h1 className='title'>Import CSV</h1>
       <input type="file" id="upload-csv" accept=".csv" onChange={handleFileUpload} />
+      <button onClick={getAllTransactions}>Get All Transactions</button>
       {csvContent && <p className='csv-content'>{csvHeaders}</p>}
     </div>
     </>

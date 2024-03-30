@@ -17,6 +17,7 @@ const router = createBrowserRouter([
     element: <Budgets />,
     errorElement: <h1>404 Not Found</h1>
   },
+  
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

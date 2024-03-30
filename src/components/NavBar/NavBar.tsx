@@ -8,6 +8,7 @@ interface NavBarProps {}
 const NavBar: FC<NavBarProps> = () => (
 
     <div className='navbar'>
+        <a href="/"><h2 className='nav-item'>Dashboard</h2></a>
 
         <a href="/budgets"><h2 className='nav-item'>Budgets</h2></a>
 

@@ -55,4 +55,27 @@ export class TransactionProcessingLocal {
             throw error; // Re-throw to allow error handling further up the call stack.
         }
     }
+
+    public static getAllTransactions = async () => {
+        try {
+            const id = localStorage.getItem('id');
+            if (!id) throw new Error('User ID is missing in local storage.');
+
+            const url = localUrl + 'get-transactions-all' + '?userId=' + id;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                const errorBody = await response.text(); // Or response.json() if the server sends JSON
+                throw new Error(`Failed to get transactions: ${response.status} ${response.statusText} - ${errorBody}`);
+            }
+
+            const res = await response.json();
+            console.log('this is front end response ', res);
+            return res;
+        } catch (error) {
+            console.error('Error during getting transactions:', error);
+            throw error; // Re-throw to allow error handling further up the call stack.
+        }
+    }
 }
