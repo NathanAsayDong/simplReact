@@ -54,9 +54,9 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
          <h1 className='slogan'>MAKING FINANCES SIMPL.</h1>
          <div className='loginForm'>
             <h2>Email:</h2>
-               <input id='username' type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+               <input id='username' type="email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key == 'Enter' ? login() : null)}/>
             <h2>Password:</h2>
-               <input id='password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+               <input id='password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key == 'Enter' ? login() : null)}/>
             <button onClick={login}>Login</button>
             <button onClick={createAccount}>Create Account</button>
       

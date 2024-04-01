@@ -31,3 +31,8 @@ export default {
 
 
 npm run dev
+```to generate new components, run the following command:
+vite generate component <component-name>
+```
+```to generate new pages, run the following command:
+npx generate-react-cli component uploadTransactions
