@@ -35,4 +35,4 @@ npm run dev
 vite generate component <component-name>
 ```
 ```to generate new pages, run the following command:
-npx generate-react-cli component uploadTransactions
+npx generate-react-cli component <component name here>
