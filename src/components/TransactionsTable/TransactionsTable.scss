@@ -1,0 +1,22 @@
+
+.table-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+/* If you're directly applying styles to .MuiTableContainer-root, ensure there's actually a wrapping .table-container div in your JSX. If not, you may directly style the TableContainer component */
+.MuiTableContainer-root {
+  max-width: 75%; /* Adjust the table container width */
+  margin: auto; /* Centering the table container if it's directly targeted */
+}
+
+.MuiTableCell-root {
+  padding: 12px; /* Reduce the padding to make content more compact */
+  font-size: 0.875rem; /* You can reduce the font size for the text within the cells */
+}
+
+.MuiTableCell-head {
+  padding: 10px; /* Optionally reduce the padding for header cells even further */
+  font-size: 0.9rem; /* Reduce the font size for the headers if needed */
+}
