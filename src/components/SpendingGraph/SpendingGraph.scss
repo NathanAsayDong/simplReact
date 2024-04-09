@@ -1,10 +1,11 @@
-// SpendingGraph.scss
 .graph-container {
-    max-width: 75%;
+    width: 100%; // Adjust width to ensure full-size graph representation
+    height: auto; // Adjust height dynamically based on content and available space
     margin: 20px auto;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.5); // Adjust for see-through effect
+    backdrop-filter: blur(5px); // Optional: adds a blur effect for content behind the graph
   }
   
