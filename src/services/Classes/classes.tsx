@@ -36,3 +36,12 @@ export class AccountTypes {
         this.value = value;
     }
 }
+
+export class Account {
+    name: string;
+    type: AccountTypes;
+    constructor(name: string, type: AccountTypes) {
+        this.name = name;
+        this.type = type;
+    }
+}
