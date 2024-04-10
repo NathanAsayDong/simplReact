@@ -36,3 +36,5 @@ vite generate component <component-name>
 ```
 ```to generate new pages, run the following command:
 npx generate-react-cli component <component name here>
+
+MASTER DOC: https://docs.google.com/document/d/1uAUbe3f7aD5KCwo7efaJo6VUBhHIYD74xG4_sJH2B4U/edit?usp=sharing
