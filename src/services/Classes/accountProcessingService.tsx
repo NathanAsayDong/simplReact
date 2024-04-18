@@ -1,4 +1,4 @@
-import { AccountTypes } from './classes';
+import { Account, AccountTypes } from './classes';
 
 const url = 'https://simpl-api-ca96d9ccde88.herokuapp.com/'
 const localUrl = 'http://localhost:8080/'
@@ -95,7 +95,14 @@ export class TransactionProcessingLocal {
 
             const res = await response.json();
             console.log('this is front end response ', res);
-            return res;
+
+            const accounts = res.map((account: any) => {
+                return new Account(account.accountName, account.accountType);
+            });
+
+            console.log('this is front end accounts ', accounts);
+
+            return accounts;
         } catch (error) {
             console.error('Error during getting accounts:', error);
             throw error; // Re-throw to allow error handling further up the call stack.

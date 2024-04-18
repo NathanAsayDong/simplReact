@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import Dashboard from './components/Dashboard/Dashboard'
 import Login from './components/Login/Login'
-import { TransactionsDataProvider } from './services/Classes/dataContext'
 
 function App() {
   const [isLoggin, setIsLoggin] = useState(false)
@@ -32,9 +31,7 @@ function App() {
 
   if (isLoggin) {
     return (
-      <TransactionsDataProvider>
         <Dashboard handleLogout={handleLogout}/>
-      </TransactionsDataProvider>
     )
   }
   else {

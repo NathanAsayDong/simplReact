@@ -59,7 +59,6 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
                <input id='password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key == 'Enter' ? login() : null)}/>
             <button onClick={login}>Login</button>
             <button onClick={createAccount}>Create Account</button>
-      
          </div>
       </div>
    </>

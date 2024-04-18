@@ -37,11 +37,19 @@ export class AccountTypes {
     }
 }
 
+export const accountTypes = [
+    'Uccu', 'Chase', 'Discover', 'CapitalOne', 'Venmo', 'CashApp', 'Paypal', 'Cash', 'Other'
+];
+
 export class Account {
     name: string;
     type: AccountTypes;
     constructor(name: string, type: AccountTypes) {
         this.name = name;
         this.type = type;
+    }
+
+    getAccountType(): string {
+        return this.type.value;
     }
 }
