@@ -1,5 +1,6 @@
 .container {
     width: 90%;
+    display: flex;
 }
 
 .section-header {
@@ -7,7 +8,6 @@
 }
 
 .account-row {
-    // border: 1px solid rgb(104, 133, 183, .5);
     box-shadow: inset 0px 0px 12px 1px rgba(104, 133, 183, 0.4);
     border-radius: 20px;
     display: flex;
@@ -18,7 +18,7 @@
     transition: all 0.3s ease;
 
     &:hover {
-        transform: scale(1.02);
+        transform: scale(1.005);
     }
 }
 
@@ -39,6 +39,7 @@
     display: flex;
     align-items: center;
     gap: 5%;
+
 }
 
 input {
@@ -66,15 +67,3 @@ select {
     height: 78%;
 }
 
-.special-button {
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: linear-gradient(75deg, rgb(104, 133, 183) 0%, rgb(33, 89, 185) 100%);
-    border: 1px solid rgb(104, 133, 183, .5);
-    color: white;
-
-    &:hover {
-        transform: scale(1.2);
-        text-shadow: 0 0 5px rgb(255, 255, 255);
-    }
-}

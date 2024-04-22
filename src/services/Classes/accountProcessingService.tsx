@@ -1,4 +1,4 @@
-import { Account, AccountTypes } from './classes';
+import { Account } from './classes';
 
 const url = 'https://simpl-api-ca96d9ccde88.herokuapp.com/'
 const localUrl = 'http://localhost:8080/'
@@ -27,12 +27,12 @@ export class TransactionProcessing {
 
 
 export class TransactionProcessingLocal {
-    public static processTransactions = async (csvData: any, account: AccountTypes) => {
+    public static processTransactions = async (csvData: any, account: Account) => {
         try {
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
             
-            const url = localUrl + 'upload-transactions-csv' + '?account=' + account.value + '&userId=' + id;
+            const url = localUrl + 'upload-transactions-csv' + '?account=' + account.name + '&accountType=' + account.type + '&userId=' + id;
             
             const response = await fetch(url, {
                 method: 'POST',
@@ -43,16 +43,15 @@ export class TransactionProcessingLocal {
             });
             
             if (!response.ok) {
-                const errorBody = await response.text(); // Or response.json() if the server sends JSON
+                const errorBody = await response.text();
                 throw new Error(`Failed to upload CSV: ${response.status} ${response.statusText} - ${errorBody}`);
             }
             
             const res = await response.json();
-            console.log('this is front end response ', res);
             return res;
         } catch (error) {
             console.error('Error during CSV upload:', error);
-            throw error; // Re-throw to allow error handling further up the call stack.
+            throw error;
         }
     }
 
@@ -71,7 +70,6 @@ export class TransactionProcessingLocal {
             }
 
             const res = await response.json();
-            console.log('this is front end response ', res);
             return res;
         } catch (error) {
             console.error('Error during getting transactions:', error);
@@ -89,7 +87,7 @@ export class TransactionProcessingLocal {
             const response = await fetch(url);
 
             if (!response.ok) {
-                const errorBody = await response.text(); // Or response.json() if the server sends JSON
+                const errorBody = await response.text();
                 throw new Error(`Failed to get accounts: ${response.status} ${response.statusText} - ${errorBody}`);
             }
 
@@ -106,6 +104,68 @@ export class TransactionProcessingLocal {
         } catch (error) {
             console.error('Error during getting accounts:', error);
             throw error; // Re-throw to allow error handling further up the call stack.
+        }
+    }
+
+    public static addAccount = async (account: Account) => {
+        try {
+            const id = localStorage.getItem('id');
+            if (!id) throw new Error('User ID is missing in local storage.');
+
+            const url = localUrl + 'add-account' + '?userId=' + id;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify({
+                    accountName: account.name,
+                    accountType: account.type
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(`Failed to add account: ${response.status} ${response.statusText} - ${errorBody}`);
+            }
+
+            const res = await response.json();
+            return res;
+        } catch (error) {
+            console.error('Error during adding account:', error);
+            throw error;
+        }
+    }
+
+    public static deleteAccount = async (account: Account) => {
+        try {
+            const id = localStorage.getItem('id');
+            if (!id) throw new Error('User ID is missing in local storage.');
+
+            const url = localUrl + 'delete-account' + '?userId=' + id;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify({
+                    accountName: account.name,
+                    accountType: account.type
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(`Failed to delete account: ${response.status} ${response.statusText} - ${errorBody}`);
+            }
+
+            const res = await response.json();
+            return res;
+        } catch (error) {
+            console.error('Error during deleting account:', error);
+            throw error;
         }
     }
 }

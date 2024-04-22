@@ -1,7 +1,8 @@
 import { FC, useState } from 'react';
 import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
-import { AccountTypes } from '../../services/Classes/classes';
+import { Account } from '../../services/Classes/classes';
 
+import { UserAccountsData } from '../../services/Classes/dataContext';
 import './ImportCsv.scss';
 
 interface ImportCsvProps {}
@@ -12,12 +13,17 @@ const ImportCsv: FC<ImportCsvProps> = () => {
   const [netValue, setNetValue] = useState<number>(0);
   const [testApiResponse, setTestApiResponse] = useState<String>('');
 
-  const testData = [
-    {caption: '', value: 0, timestamp: ''},
-    {caption: '', value: 0, timestamp: ''},
-    {caption: '', value: 0, timestamp: ''},
-    {caption: '', value: 0, timestamp: ''},
-  ]
+
+  const accounts = UserAccountsData() || [];
+  const [selectedAccount, setSelectedAccount] = useState<String>('');
+  const [numTransactions, setNumTransactions] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleAccountChange = (e: any) => {
+    console.log(e.target.value);
+    setSelectedAccount(e.target.value);
+  }
+
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -27,22 +33,33 @@ const ImportCsv: FC<ImportCsvProps> = () => {
         try {
           const text = e.target?.result;
           setCsvContent(text);
-          await uploadCsv(text);
+          if (text) {
+            const lines = text.toString().split('\n');
+            setNumTransactions(lines.length-1);
+          }
         } catch (error) {
           console.error(error);
-          // Here you might want to set an error state and display it to the user
         }
       };
       reader.readAsText(file);
     }
   };
-  
 
-  const uploadCsv = async (csv: any) => {
-    const account = new AccountTypes('Uccu');
-    console.log('csv', csv);
-    await TransactionProcessingLocal.processTransactions(csv, account);
+  const uploadCsv = async () => {
+    if (numTransactions === 0 || selectedAccount === 'None') {
+      alert('Please select an account and upload a CSV file');
+    }
+    else {
+      setLoading(true);
+      const account = accounts.find((account: Account) => account.name === selectedAccount);
+      await TransactionProcessingLocal.processTransactions(csvContent, account);
+      setCsvContent('');
+      setSelectedAccount('None');
+      setNumTransactions(0);
+      setLoading(false);
+    }
   }
+
 
   const getAllTransactions = async () => {
     const response = await TransactionProcessingLocal.getAllTransactions();
@@ -51,11 +68,26 @@ const ImportCsv: FC<ImportCsvProps> = () => {
 
   return (
     <>
+    <div className='body'>
       <div className='container'>
-      <h1 className='title'>Import CSV</h1>
-      <input type="file" id="upload-csv" accept=".csv" onChange={handleFileUpload} />
-      <button onClick={getAllTransactions}>Get All Transactions</button>
-      {csvContent && <p className='csv-content'>{csvHeaders}</p>}
+        <h1 className='title'>Import CSV</h1>
+        <div className='row'>
+        <input type="file" id="upload-csv" accept=".csv" onChange={handleFileUpload} />
+          <select onChange={handleAccountChange}>
+            <option value="None">Select Account</option>
+            {accounts.map((account: Account) => {
+              return <option value={account.name}>{account.name}</option>
+            })}
+          </select>
+          <button onClick={uploadCsv} className='special-button'>
+          { loading ? 'Uploading...' :
+            `Upload ${numTransactions}`
+          }
+        </button>
+        </div>
+        <button onClick={getAllTransactions}>Get All Transactions</button>
+        {csvContent && <p className='csv-content'>{csvHeaders}</p>}
+      </div>
     </div>
     </>
   );

@@ -31,7 +31,7 @@ export class Budget {
 }
 
 export class AccountTypes {
-    value : string = 'Uccu' || 'Chase' || 'Discover' || 'CapitalOne' || 'Venmo' || 'CashApp' || 'Paypal' || 'Cash' || 'Other';
+    value : string = 'Uccu' || 'Chase' || 'Discover' || 'CapitalOne' || 'Venmo' || 'CashApp' || 'Paypal' || 'Cash' || 'Other' || 'None';
     constructor(value: string) {
         this.value = value;
     }
