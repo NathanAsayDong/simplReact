@@ -1,4 +1,4 @@
-import { Account } from './classes';
+import { Account, Transaction } from './classes';
 
 const url = 'https://simpl-api-ca96d9ccde88.herokuapp.com/'
 const localUrl = 'http://localhost:8080/'
@@ -70,7 +70,14 @@ export class TransactionProcessingLocal {
             }
 
             const res = await response.json();
-            return res;
+            // convert the response to a Transaction object
+            const transactions = res.map((transaction: any) => {
+                return new Transaction(transaction.id, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.account, transaction.category, transaction.status);
+            });
+
+            //format dates to be 
+
+            return transactions;
         } catch (error) {
             console.error('Error during getting transactions:', error);
             throw error; // Re-throw to allow error handling further up the call stack.
@@ -92,13 +99,11 @@ export class TransactionProcessingLocal {
             }
 
             const res = await response.json();
-            console.log('this is front end response ', res);
 
             const accounts = res.map((account: any) => {
                 return new Account(account.accountName, account.accountType);
             });
 
-            console.log('this is front end accounts ', accounts);
 
             return accounts;
         } catch (error) {

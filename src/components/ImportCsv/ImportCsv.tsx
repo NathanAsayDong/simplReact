@@ -52,7 +52,8 @@ const ImportCsv: FC<ImportCsvProps> = () => {
     else {
       setLoading(true);
       const account = accounts.find((account: Account) => account.name === selectedAccount);
-      await TransactionProcessingLocal.processTransactions(csvContent, account);
+      const res = await TransactionProcessingLocal.processTransactions(csvContent, account);
+      console.log(res);
       setCsvContent('');
       setSelectedAccount('None');
       setNumTransactions(0);

@@ -148,3 +148,24 @@ button:focus-visible {
   }
 }
 
+.special-title {
+  font-size: 2em;
+  color: #ffffff;
+}
+
+.inner-row {
+    box-shadow: inset 0px 0px 12px 1px rgba(104, 133, 183, 0.4);
+    border-radius: 20px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding-left: 5%;
+    padding-right: 5%;
+    gap: 5%;
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: scale(1.005);
+    }
+}
+
