@@ -20,6 +20,8 @@ const NavBar: FC<NavBarProps> = () => (
 
             <Link to="/accounts"><h2 className='nav-item'>Accounts</h2></Link>
 
+            <Link to="/manage-categories"><h2 className='nav-item'>Categories</h2></Link>
+
             {/* <a href="pro_forma"><h2 className='nav-item'>Pro-Forma</h2></a> */}
 
             <FontAwesomeIcon icon={faUser} className='account-icon' />

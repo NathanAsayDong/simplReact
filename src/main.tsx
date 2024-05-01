@@ -4,6 +4,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import Accounts from './components/Accounts/Accounts';
 import Budgets from './components/Budgets/Budgets';
+import CategoryManagement from './components/CategoryManagement/CategoryManagement';
 import UploadTransactions from './components/uploadTransactions/uploadTransactions';
 import './index.css';
 import { AppDataProvider } from './services/Classes/dataContext';
@@ -28,6 +29,11 @@ const router = createBrowserRouter([
   {
     path: '/accounts',
     element: <Accounts />,
+    errorElement: <h1>404 Not Found</h1>
+  },
+  {
+    path: '/manage-categories',
+    element: <CategoryManagement />,
     errorElement: <h1>404 Not Found</h1>
   },
 

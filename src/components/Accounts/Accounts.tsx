@@ -51,13 +51,7 @@ const Accounts: FC<AccountsProps> = () =>  {
       }
     }
   };
-
-  const test = async () => {
-    console.log('test');
-    console.log(accounts);
-    console.log(accounts[0].type);
-  };
-  
+ 
   const addAccount = async () => {
     console.log('addAccount');
     if (newAccountName === '' || newAccountType.value === 'None') {

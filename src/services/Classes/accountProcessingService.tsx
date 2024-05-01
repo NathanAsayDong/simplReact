@@ -173,4 +173,88 @@ export class TransactionProcessingLocal {
             throw error;
         }
     }
+
+    public static getAllCategories = async () => {
+        try {
+            const id = localStorage.getItem('id');
+            if (!id) throw new Error('User ID is missing in local storage.');
+
+            const url = localUrl + 'get-categories-all' + '?userId=' + id;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(`Failed to get categories: ${response.status} ${response.statusText} - ${errorBody}`);
+            }
+
+            const res = await response.json();
+            return res;
+        } catch (error) {
+            console.error('Error during getting categories:', error);
+            throw error;
+        }
+    }
+
+    public static addCategory = async (category: string) => {
+        try {
+            const id = localStorage.getItem('id');
+            if (!id) throw new Error('User ID is missing in local storage.');
+
+            const url = localUrl + 'add-category' + '?userId=' + id;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify({
+                    category: category
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(`Failed to add category: ${response.status} ${response.statusText} - ${errorBody}`);
+            }
+
+            const res = await response.json();
+            return res;
+        } catch (error) {
+            console.error('Error during adding category:', error);
+            throw error;
+        }
+    }
+
+    public static deleteCategory = async (category: string) => {
+        try {
+            const id = localStorage.getItem('id');
+            if (!id) throw new Error('User ID is missing in local storage.');
+
+            const url = localUrl + 'delete-category' + '?userId=' + id;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify({
+                    category: category
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(`Failed to delete category: ${response.status} ${response.statusText} - ${errorBody}`);
+            }
+
+            const res = await response.json();
+            return res;
+        } catch (error) {
+            console.error('Error during deleting category:', error);
+            throw error;
+        }
+    }
+
+
 }

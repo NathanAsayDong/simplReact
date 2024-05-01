@@ -38,7 +38,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const initializeTransactions = async () => {
     if (transactions.length === 0) {
       const res = await TransactionProcessingLocal.getAllTransactions();
-      console.log('this is res', res)
       if (res) {
         updateTransactions(res);
         processTransactionsIntoDates(res);
@@ -72,8 +71,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   };
 
   const processTransactionsIntoDates = (transactions: Transaction[]) => {
-    console.log('Processing transactions to dates');
-    console.log('this is transactions', transactions)
     const data: any[] = [];
     transactions.forEach((transaction: Transaction) => {
       const dateIndex = data.findIndex((d) => d.date === transaction.timestamp);
@@ -83,14 +80,11 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
         data[dateIndex].amount += transaction.amount;
       }
     });
-    //order the data by date
     data.sort((a, b) => a.date - b.date);
     setTimelineData(data);
-    console.log('this is data', data);
   }
 
   const processTransactionsIntoCategories = (transactions: Transaction[]) => {  
-    console.log('Processing transactions to categories');
     const data: any[] = [];
     transactions.forEach((transaction: Transaction) => {
       const categoryIndex = data.findIndex((d) => d.category === transaction.category);
