@@ -1,5 +1,6 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { DatePicker } from '@mui/x-date-pickers';
 import { FC, useEffect, useState } from 'react';
 import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
 import { Account, AccountTypes, accountTypes } from '../../services/Classes/classes';
@@ -17,6 +18,8 @@ const Accounts: FC<AccountsProps> = () =>  {
   const [newAccountName, setNewAccountName] = useState<string>('');
   const [newAccountType, setNewAccountType] = useState<AccountTypes>(new AccountTypes('None'));
   const updateAccounts = SetUserAccountData();
+  const [newRefDate, setNewRefDate] = useState<string>(new Date().toLocaleDateString());
+  const [newRefBalance, setNewRefBalance] = useState<number>(0);
 
   
   useEffect(() => {
@@ -31,7 +34,6 @@ const Accounts: FC<AccountsProps> = () =>  {
   }, [accounts]);
 
   const handleAccountNameChange = (e: any) => {
-    console.log(e.target.value);
     setNewAccountName(e.target.value);
   }
 
@@ -59,7 +61,8 @@ const Accounts: FC<AccountsProps> = () =>  {
       return;
     }
     else {
-      const account = new Account(newAccountName, newAccountType);
+      const account = new Account(newAccountName, newAccountType, newRefDate, newRefBalance);
+      console.log(account);
       TransactionProcessingLocal.addAccount(account);
       setAccountsState([...accountsState, account]);
     }
@@ -70,6 +73,24 @@ const Accounts: FC<AccountsProps> = () =>  {
     console.log(account);
     TransactionProcessingLocal.deleteAccount(account);
     setAccountsState(accountsState.filter((acc) => acc !== account));
+  }
+
+  const handleNewRefDate = (newValue: any) => {
+    setNewRefDate(newValue.$d.toLocaleDateString());
+  }
+
+  const handleNewRefBalance = (newBalance: any) => {
+    const floatValue = parseFloat(newBalance.target.value);
+    if (!isNaN(floatValue)) {
+        const roundedValue = Math.round(floatValue * 100) / 100;
+        const formattedValue = roundedValue.toFixed(2);
+        setNewRefBalance(parseFloat(formattedValue));
+    }
+    if (newBalance.target.value === '') {
+      setNewRefBalance(0);
+    }
+    setNewRefBalance(floatValue);
+
   }
 
   return (
@@ -87,7 +108,9 @@ const Accounts: FC<AccountsProps> = () =>  {
                 {accountTypeOptions[0].map((type, index) => (
                   <option key={index} value={type}>{type}</option>
                 ))}
-            </select>
+              </select>
+              <DatePicker label="Reference Date" onChange={(date) => handleNewRefDate(date)}/>
+              <input type='number' placeholder='Reference Balance' onChange={(e) => handleNewRefBalance(e)}/>
             </div>
             <button className='special-button' onClick={addAccount}>Add Account</button>
           </div>
@@ -111,6 +134,16 @@ const Accounts: FC<AccountsProps> = () =>  {
                   <div className='item'>
                     <h3>Type:</h3>
                     <h3>{account.type.toString()}</h3>
+                  </div>
+
+                  <div className='item'>
+                    <h3>Reference Date:</h3>
+                    <h3>{account.refDate}</h3>
+                  </div>
+
+                  <div className='item'>
+                    <h3>Reference Balance:</h3>
+                    <h3>{account.refBalance}</h3>
                   </div>
 
                   <div className='item' style={{marginRight: '5%', marginLeft: 'auto'}}>

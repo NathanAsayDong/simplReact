@@ -6,6 +6,7 @@ import { LineChart } from '@mui/x-charts/LineChart';
 import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
 import { Transaction } from '../../services/Classes/classes';
 import { SetTransactionData, SetUserAccountData, TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
+import { convertNumberToCurrency } from '../../services/Classes/formatService';
 
 interface DashboardProps {
   handleLogout: () => void;
@@ -22,6 +23,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const [timelineData, setTimelineData] = useState<any[]>([]);
   const [categoryData, setCategoryData] = useState<any[]>([]);
   const [netValue, setNetValue] = useState<number>(0);
+  const [netValueOverTime, setNetValueOverTime] = useState<any[]>([]);
 
   
   //TO DO: In order to do the loading icon we should acutally use something called react suspense
@@ -35,13 +37,19 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   //   }
   // }, []);
 
+  useEffect(() => {
+    console.log('net value over time', netValueOverTime);
+  }, [netValueOverTime]);
+
   const initializeTransactions = async () => {
     if (transactions.length === 0) {
       const res = await TransactionProcessingLocal.getAllTransactions();
       if (res) {
+        await initializeAccounts();
+        await processTransactionsIntoDates(res);
+        await processTransactionsIntoCategories(res);
+        await processTransactionsIntoNetValue(res);
         updateTransactions(res);
-        processTransactionsIntoDates(res);
-        processTransactionsIntoCategories(res);
       } else {
         console.log('Failed to get transactions');
       }
@@ -52,6 +60,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     if (accounts.length === 0) {
       const res = await TransactionProcessingLocal.getAllAccounts();
       if (res) {
+        console.log(res);
         updateAccounts(res);
       } else {
         console.log('Failed to get accounts');
@@ -61,7 +70,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   const initializePage = async () => {
     await initializeTransactions();
-    await initializeAccounts();
   };
 
   const test = async () => {
@@ -97,6 +105,55 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     setCategoryData(data);
   }
 
+  const processTransactionsIntoNetValue = async (transactions: Transaction[]) => {
+      const refAccount = await TransactionProcessingLocal.getAllAccounts();
+      const refStartDate = new Date(refAccount[0].refDate).getTime();
+      const refBalance = refAccount[0].refBalance;
+      const data: any[] = [];
+      const beforeTrns = transactions.filter((transaction) => transaction.timestamp < refStartDate);
+      const afterTrns = transactions.filter((transaction) => transaction.timestamp >= refStartDate);
+      let netValue = refBalance;
+      let i = 0;
+      let j = 0;
+      while (i < beforeTrns.length && j < afterTrns.length) {
+        if (beforeTrns[i].timestamp < afterTrns[j].timestamp) {
+          netValue += beforeTrns[i].amount;
+          data.push({ date: beforeTrns[i].timestamp, netValue });
+          i++;
+        } else {
+          netValue -= afterTrns[j].amount;
+          data.push({ date: afterTrns[j].timestamp, netValue });
+          j++;
+        }
+      }
+      while (i < beforeTrns.length) {
+        netValue += beforeTrns[i].amount;
+        data.push({ date: beforeTrns[i].timestamp, netValue });
+        i++;
+      }
+      while (j < afterTrns.length) {
+        netValue -= afterTrns[j].amount;
+        data.push({ date: afterTrns[j].timestamp, netValue });
+        j++;
+      }
+
+      const filteredData: any[] = [];
+      for (let i = 0; i < data.length; i++) {
+        const dateIndex = filteredData.findIndex((d) => d.date === data[i].date);
+        if (dateIndex === -1) {
+          filteredData.push(data[i]);
+        } else {
+          filteredData[dateIndex] = data[i];
+        }
+      }
+      for (let i = 0; i < filteredData.length; i++) {
+        filteredData[i].netValue = convertNumberToCurrency(filteredData[i].netValue);
+      }
+      setNetValueOverTime(filteredData);
+      const decimalNetValue = convertNumberToCurrency(netValue);
+      setNetValue(decimalNetValue);
+  }
+
   useEffect(() => {
     initializePage();
   }, []);
@@ -112,9 +169,9 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
           </div>
           <div className='line-chart container' style={{width: '100%'}}>
           <LineChart
-          dataset={timelineData}
+          dataset={netValueOverTime}
             xAxis={[{dataKey: 'date', scaleType: 'time', label: 'Date'}]}
-            series={[{dataKey: 'amount', area: true, color: 'rgb(104, 133, 183)', showMark: true,}]}
+            series={[{dataKey: 'netValue', area: true, color: 'rgb(104, 133, 183)', showMark: true,}]}
             tooltip={{ trigger: 'item' }}
             width={1500}
             height={400}

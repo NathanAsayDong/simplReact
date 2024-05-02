@@ -44,9 +44,13 @@ export const accountTypes = [
 export class Account {
     name: string;
     type: AccountTypes;
-    constructor(name: string, type: AccountTypes) {
+    refDate: string;
+    refBalance: number;
+    constructor(name: string, type: AccountTypes, refDate: string = "NA", refBalance: number = 0) {
         this.name = name;
         this.type = type;
+        this.refDate = refDate;
+        this.refBalance = refBalance;
     }
 
     getAccountType(): string {

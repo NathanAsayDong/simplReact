@@ -39,7 +39,7 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
 
   const addCategory = async () => {
     setLoading(true);
-    const val = newCategory.toLowerCase().replace(/\b[a-z]/g, (letter) => letter.toUpperCase());
+    const val = newCategory.toLowerCase().replace(/\b[a-z]/g, (letter) => letter.toUpperCase()); // Capitalize first letter and lowercase the rest
     const res = await TransactionProcessingLocal.addCategory(val);
     if (res) {
       console.log(res);

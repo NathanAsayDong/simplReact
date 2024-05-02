@@ -75,7 +75,11 @@ export class TransactionProcessingLocal {
                 return new Transaction(transaction.id, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.account, transaction.category, transaction.status);
             });
 
-            //format dates to be 
+            transactions.sort((a: Transaction, b: Transaction) => {
+                return a.timestamp - b.timestamp;
+            });
+
+            console.log(transactions);
 
             return transactions;
         } catch (error) {
@@ -99,9 +103,9 @@ export class TransactionProcessingLocal {
             }
 
             const res = await response.json();
-
+            console.log(res);
             const accounts = res.map((account: any) => {
-                return new Account(account.accountName, account.accountType);
+                return new Account(account.accountName, account.accountType, account.refDate, account.refBalance);
             });
 
 
@@ -123,7 +127,9 @@ export class TransactionProcessingLocal {
                 method: 'POST',
                 body: JSON.stringify({
                     accountName: account.name,
-                    accountType: account.type
+                    accountType: account.type,
+                    refDate: account.refDate,
+                    refBalance: account.refBalance
                 }),
                 headers: {
                     'Content-Type': 'application/json'

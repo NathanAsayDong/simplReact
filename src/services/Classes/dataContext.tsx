@@ -1,5 +1,8 @@
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { createContext, useContext, useState, } from 'react';
 import { Account, Transaction } from './classes';
+
 
 type TransactionDataContextType = Transaction[] | null;
 type UserAccountsDataContextType = Account[] | null;
@@ -55,18 +58,20 @@ export function AppDataProvider({ children }: any){
 
 
     return (
-        <TransactionsDataContext.Provider value={ transactions }>
-            <SetTransactionDataContext.Provider value={ updateTransactions }>
-                <UserAccountsDataContext.Provider value={ userAccounts }>
-                    <SetUserAccountDataContext.Provider value={ updateAccounts }>
-                        <UserCategoriesDataContext.Provider value={ userCategories }>
-                            <SetUserCategoryDataContext.Provider value={ updateCategories }>
-                                {children}
-                            </SetUserCategoryDataContext.Provider>
-                        </UserCategoriesDataContext.Provider>
-                    </SetUserAccountDataContext.Provider>
-                </UserAccountsDataContext.Provider>
-            </SetTransactionDataContext.Provider>
-        </TransactionsDataContext.Provider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <TransactionsDataContext.Provider value={ transactions }>
+                <SetTransactionDataContext.Provider value={ updateTransactions }>
+                    <UserAccountsDataContext.Provider value={ userAccounts }>
+                        <SetUserAccountDataContext.Provider value={ updateAccounts }>
+                            <UserCategoriesDataContext.Provider value={ userCategories }>
+                                <SetUserCategoryDataContext.Provider value={ updateCategories }>
+                                    {children}
+                                </SetUserCategoryDataContext.Provider>
+                            </UserCategoriesDataContext.Provider>
+                        </SetUserAccountDataContext.Provider>
+                    </UserAccountsDataContext.Provider>
+                </SetTransactionDataContext.Provider>
+            </TransactionsDataContext.Provider>
+        </LocalizationProvider>
     );
 }
