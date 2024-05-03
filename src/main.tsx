@@ -5,6 +5,7 @@ import App from './App';
 import Accounts from './components/Accounts/Accounts';
 import Budgets from './components/Budgets/Budgets';
 import CategoryManagement from './components/CategoryManagement/CategoryManagement';
+import TransactionsManagement from './components/TransactionsManagement/TransactionsManagement';
 import UploadTransactions from './components/uploadTransactions/uploadTransactions';
 import './index.css';
 import { AppDataProvider } from './services/Classes/dataContext';
@@ -34,6 +35,11 @@ const router = createBrowserRouter([
   {
     path: '/manage-categories',
     element: <CategoryManagement />,
+    errorElement: <h1>404 Not Found</h1>
+  },
+  {
+    path: '/manage-transactions',
+    element: <TransactionsManagement />,
     errorElement: <h1>404 Not Found</h1>
   },
 

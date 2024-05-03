@@ -14,15 +14,13 @@ const NavBar: FC<NavBarProps> = () => (
         <div className='nav-items'>
             <Link to="/"><h2 className='nav-item'>Dashboard</h2></Link>
 
-            {/* <a href="/budgets"><h2 className='nav-item'>Budgets</h2></a> */}
-
             <Link to="/upload"><h2 className='nav-item'>Upload</h2></Link>
 
             <Link to="/accounts"><h2 className='nav-item'>Accounts</h2></Link>
 
             <Link to="/manage-categories"><h2 className='nav-item'>Categories</h2></Link>
 
-            {/* <a href="pro_forma"><h2 className='nav-item'>Pro-Forma</h2></a> */}
+            <Link to="/manage-transactions"><h2 className='nav-item'>Transactions</h2></Link>
 
             <FontAwesomeIcon icon={faUser} className='account-icon' />
         </div>

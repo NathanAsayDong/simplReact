@@ -1,12 +1,11 @@
-import { FC, useEffect, useRef, useState } from 'react';
-import NavBar from '../NavBar/NavBar'; // Make sure the path is correct
-import './Dashboard.scss';
-// import TransactionsTable from '../TransactionsTable/TransactionsTable';
 import { LineChart } from '@mui/x-charts/LineChart';
+import { FC, useEffect, useRef, useState } from 'react';
 import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
 import { Transaction } from '../../services/Classes/classes';
 import { SetTransactionData, SetUserAccountData, TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import { convertNumberToCurrency } from '../../services/Classes/formatService';
+import NavBar from '../NavBar/NavBar'; // Make sure the path is correct
+import './Dashboard.scss';
 
 interface DashboardProps {
   handleLogout: () => void;
@@ -25,17 +24,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const [netValue, setNetValue] = useState<number>(0);
   const [netValueOverTime, setNetValueOverTime] = useState<any[]>([]);
 
-  
-  //TO DO: In order to do the loading icon we should acutally use something called react suspense
-  // useEffect(() => { 
-  //   if (loadingIconRef.current) {
-  //     loadingIconRef.current.start();
-  //     const timer = setTimeout(() => {
-  //       loadingIconRef.current?.stop();
-  //     }, 3500);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, []);
 
   useEffect(() => {
     console.log('net value over time', netValueOverTime);
@@ -193,7 +181,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
                 </div>
                 <div className='item'>
                   <h3>Amount:</h3>
-                  <h3>{category.amount}</h3>
+                  <h3>{category.amount * -1}</h3>
                 </div>
               </div>
             ))}

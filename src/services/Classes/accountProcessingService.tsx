@@ -262,5 +262,36 @@ export class TransactionProcessingLocal {
         }
     }
 
+    public static updateCategoryForTransaction = async (transactionId: number, newCategory: string) => {
+        try {
+            const id = localStorage.getItem('id');
+            if (!id) throw new Error('User ID is missing in local storage.');
+
+            const url = localUrl + 'update-category-transaction' + '?userId=' + id;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify({
+                    transactionId: transactionId,
+                    newCategory: newCategory
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(`Failed to update category: ${response.status} ${response.statusText} - ${errorBody}`);
+            }
+
+            const res = await response.json();
+            return res;
+        } catch (error) {
+            console.error('Error during updating category:', error);
+            throw error;
+        }
+    }
+
 
 }
