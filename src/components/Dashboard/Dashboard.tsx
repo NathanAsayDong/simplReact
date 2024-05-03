@@ -1,7 +1,7 @@
 import { LineChart } from '@mui/x-charts/LineChart';
 import { FC, useEffect, useRef, useState } from 'react';
 import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
-import { Transaction } from '../../services/Classes/classes';
+import { Account, Transaction } from '../../services/Classes/classes';
 import { SetTransactionData, SetUserAccountData, TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import { convertNumberToCurrency } from '../../services/Classes/formatService';
 import NavBar from '../NavBar/NavBar'; // Make sure the path is correct
@@ -23,11 +23,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const [categoryData, setCategoryData] = useState<any[]>([]);
   const [netValue, setNetValue] = useState<number>(0);
   const [netValueOverTime, setNetValueOverTime] = useState<any[]>([]);
-
-
-  useEffect(() => {
-    console.log('net value over time', netValueOverTime);
-  }, [netValueOverTime]);
+  const [transactionsByAccount, setTransactionsByAccount] = useState<any[]>([]);
 
   const initializeTransactions = async () => {
     if (transactions.length === 0) {
@@ -37,6 +33,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
         await processTransactionsIntoDates(res);
         await processTransactionsIntoCategories(res);
         await processTransactionsIntoNetValue(res);
+        await initializeTransactionsByAccount();
         updateTransactions(res);
       } else {
         console.log('Failed to get transactions');
@@ -48,7 +45,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     if (accounts.length === 0) {
       const res = await TransactionProcessingLocal.getAllAccounts();
       if (res) {
-        console.log(res);
         updateAccounts(res);
       } else {
         console.log('Failed to get accounts');
@@ -56,14 +52,25 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     }
   };
 
+  const initializeTransactionsByAccount = async () => {
+    const data: any[] = [];
+    const accounts = await TransactionProcessingLocal.getAllAccounts();
+    accounts.forEach(async (account: Account) => {
+      let obj = { account: account.name, transactions: [] };
+      const accountTransactions = await TransactionProcessingLocal.getTransactionsForAccount(account);
+      obj.transactions = accountTransactions;
+      data.push(obj);
+    });
+    setTransactionsByAccount(data);
+  }
+
   const initializePage = async () => {
     await initializeTransactions();
   };
 
   const test = async () => {
     console.log('Testing');
-    console.log(transactions);
-    console.log(timelineData);
+    console.log('transactions by account', transactionsByAccount);
   };
 
   const processTransactionsIntoDates = (transactions: Transaction[]) => {

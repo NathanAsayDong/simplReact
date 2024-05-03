@@ -32,7 +32,7 @@ export class TransactionProcessingLocal {
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
             
-            const url = localUrl + 'upload-transactions-csv' + '?account=' + account.name + '&accountType=' + account.type + '&userId=' + id;
+            const url = localUrl + 'upload-transactions-csv' + '?account=' + account.name + '&accountType=' + '&userId=' + id;
             
             const response = await fetch(url, {
                 method: 'POST',
@@ -68,23 +68,44 @@ export class TransactionProcessingLocal {
                 const errorBody = await response.text(); // Or response.json() if the server sends JSON
                 throw new Error(`Failed to get transactions: ${response.status} ${response.statusText} - ${errorBody}`);
             }
-
             const res = await response.json();
             // convert the response to a Transaction object
             const transactions = res.map((transaction: any) => {
                 return new Transaction(transaction.id, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.account, transaction.category, transaction.status);
             });
-
             transactions.sort((a: Transaction, b: Transaction) => {
                 return a.timestamp - b.timestamp;
             });
-
-            console.log(transactions);
-
             return transactions;
         } catch (error) {
             console.error('Error during getting transactions:', error);
             throw error; // Re-throw to allow error handling further up the call stack.
+        }
+    }
+
+    public static getTransactionsForAccount = async (account: Account) => {
+        try {
+            console.log('calling get transactions for accouont');
+            const id = localStorage.getItem('id');
+            if (!id) throw new Error('User ID is missing in local storage.');
+            const url = localUrl + 'get-transactions-account' + '?userId=' + id + '&account=' + account.name;
+            const response = await fetch(url);
+            if (!response.ok) {
+                const errorBody = await response.text(); // Or response.json() if the server sends JSON
+                throw new Error(`Failed to get transactions: ${response.status} ${response.statusText} - ${errorBody}`);
+            }
+            const res = await response.json();
+            console.log('res', res);
+            const transactions = res.map((transaction: any) => {
+                return new Transaction(transaction.id, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.account, transaction.category, transaction.status);
+            });
+            transactions.sort((a: Transaction, b: Transaction) => {
+                return a.timestamp - b.timestamp;
+            });
+            return transactions;
+        } catch (error) {
+            console.error('Error during getting transactions:', error);
+            throw error;
         }
     }
 
@@ -103,11 +124,9 @@ export class TransactionProcessingLocal {
             }
 
             const res = await response.json();
-            console.log(res);
             const accounts = res.map((account: any) => {
-                return new Account(account.accountName, account.accountType, account.refDate, account.refBalance);
+                return new Account(account.accountName, account.accountType, account.accountSource, account.refDate, account.refBalance);
             });
-
 
             return accounts;
         } catch (error) {
@@ -128,6 +147,7 @@ export class TransactionProcessingLocal {
                 body: JSON.stringify({
                     accountName: account.name,
                     accountType: account.type,
+                    accountSource: account.source,
                     refDate: account.refDate,
                     refBalance: account.refBalance
                 }),
@@ -160,7 +180,6 @@ export class TransactionProcessingLocal {
                 method: 'POST',
                 body: JSON.stringify({
                     accountName: account.name,
-                    accountType: account.type
                 }),
                 headers: {
                     'Content-Type': 'application/json'
