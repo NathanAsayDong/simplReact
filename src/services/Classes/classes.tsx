@@ -4,12 +4,14 @@ export class Transaction {
     amount: number;
     description: string;
     category: string;
-    constructor(id: number = -1, timestamp: number, amount: number, description: string, account: string, category: string, status: string = 'none') {
+    account: string
+    constructor(id: number = -1, timestamp: number, amount: number, description: string, account: string, category: string) {
         this.id = id;
         this.timestamp = timestamp;
         this.amount = amount;
         this.description = description;
         this.category = category;
+        this.account = account;
     }
 }
 

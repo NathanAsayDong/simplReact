@@ -119,7 +119,14 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
                   <div className='item'>
                     <h3>Timestamp:</h3>
-                    <h3>{new Date(transaction.timestamp).toLocaleDateString()}</h3>                  </div>
+                    <h3>{new Date(transaction.timestamp).toLocaleDateString()}</h3>
+                  </div>
+
+
+                  <div className='item'>
+                    <h3>Account:</h3>
+                    <h3>{transaction.account}</h3>
+                  </div>
 
                   <div className='item' style={{marginRight: '5%', marginLeft: 'auto'}}>
                     <button className='special-button' onClick={() => updateCategory(transaction.id)}>Update Category</button>

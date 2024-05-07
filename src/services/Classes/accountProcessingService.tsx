@@ -71,7 +71,7 @@ export class TransactionProcessingLocal {
             const res = await response.json();
             // convert the response to a Transaction object
             const transactions = res.map((transaction: any) => {
-                return new Transaction(transaction.id, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.account, transaction.category, transaction.status);
+                return new Transaction(transaction.id, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.account, transaction.category);
             });
             transactions.sort((a: Transaction, b: Transaction) => {
                 return a.timestamp - b.timestamp;
@@ -85,7 +85,6 @@ export class TransactionProcessingLocal {
 
     public static getTransactionsForAccount = async (account: Account) => {
         try {
-            console.log('calling get transactions for accouont');
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
             const url = localUrl + 'get-transactions-account' + '?userId=' + id + '&account=' + account.name;
@@ -95,9 +94,8 @@ export class TransactionProcessingLocal {
                 throw new Error(`Failed to get transactions: ${response.status} ${response.statusText} - ${errorBody}`);
             }
             const res = await response.json();
-            console.log('res', res);
             const transactions = res.map((transaction: any) => {
-                return new Transaction(transaction.id, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.account, transaction.category, transaction.status);
+                return new Transaction(transaction.id, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.account, transaction.category);
             });
             transactions.sort((a: Transaction, b: Transaction) => {
                 return a.timestamp - b.timestamp;
