@@ -1,11 +1,9 @@
 import { MenuItem, Select } from '@mui/material';
 import { LineChart } from '@mui/x-charts/LineChart';
-import { DateRangePicker } from '@mui/x-date-pickers-pro';
-import dayjs from 'dayjs';
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
 import { Account, Transaction } from '../../services/Classes/classes';
-import { SetTransactionData, SetUserAccountData, TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
+import { InitializeDataForContext, SetTransactionData, SetUserAccountData, TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import { convertNumberToCurrency } from '../../services/Classes/formatService';
 import NavBar from '../NavBar/NavBar'; // Make sure the path is correct
 import './Dashboard.scss';
@@ -15,18 +13,16 @@ interface DashboardProps {
 }
 
 const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
-  const loadingIconRef = useRef<{ start: () => void; stop: () => void }>(null);
   const transactions = TransactionData() || [];
   const updateTransactions = SetTransactionData();
   const accounts = UserAccountsData() || [];
   const updateAccounts = SetUserAccountData();
-
   const [categoryData, setCategoryData] = useState<any[]>([]);
   const [netValue, setNetValue] = useState<number>(0);
-  const [netValueOverTime, setNetValueOverTime] = useState<any[]>([]);
   const [transactionsByAccount, setTransactionsByAccount] = useState<any[]>([]);
+  const initializeDataForContext = InitializeDataForContext();
 
-  //filter values
+  //FILTERS:
   const [filteredAccount, setFilteredAccount] = useState<string>('All');
   const [filteredCategory, setFilteredCategory] = useState<string>('All');
 
@@ -40,7 +36,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const stackStrategy = {
     stack: 'total',
     area: true,
-    stackOffset: 'none', // To stack 0 on top of others
+    stackOffset: 'none',
   } as const;
 
   useEffect(() => {
@@ -52,43 +48,39 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     if (transactions.length === 0) {
       const res = await TransactionProcessingLocal.getAllTransactions();
       if (res) {
+        await updateTransactions(res);
         await initializeAccounts();
         await processTransactionsIntoCategories(res);
-        await initializeTransactionsByAccount();
-        updateTransactions(res);
-      } else {
-        console.log('Failed to get transactions');
+        await initializeTransactionsByAccount(res);
+        await initializeDataForContext();
       }
     }
   };
 
   const initializeAccounts = async () => {
     if (accounts.length === 0) {
-      const res = await TransactionProcessingLocal.getAllAccounts();
-      if (res) {
-        updateAccounts(res);
-      } else {
-        console.log('Failed to get accounts');
-      }
+      TransactionProcessingLocal.getAllAccounts().then((accounts) => {
+        updateAccounts(accounts);
+      })
     }
   };
 
-  const initializeTransactionsByAccount = async () => {
+  const initializeTransactionsByAccount = async (transactions: Transaction[]) => {
     const data: any[] = [];
     let organizedData: any[] = [];
-    const accounts = await TransactionProcessingLocal.getAllAccounts();
-  
-    for (const account of accounts) {
-      let obj = { account: account.name, transactions: [] };
-      const accountTransactions = await TransactionProcessingLocal.getTransactionsForAccount(account);
-      obj.transactions = accountTransactions;
-      data.push(obj);
+    for (const transaction of transactions) {
+      if (data.find((obj) => obj.account === transaction.account)) {
+        data.find((obj) => obj.account === transaction.account).transactions.push(transaction);
+      }
+      else {
+        data.push({ account: transaction.account, transactions: [transaction] });
+      }
     }
+    const accounts = await TransactionProcessingLocal.getAllAccounts();
     for (const obj of data) {
       const account = accounts.find((account: any) => account.name === obj.account);
       organizedData.push(await processTransactionsIntoNetValue(obj.transactions, account));
     }
-  
     organizedData = organizedData.map(account => ({
       account: account.account,
       data: account.amount.map((entry: any) => ({
@@ -96,42 +88,40 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
         netValue: parseFloat(entry.netValue)
       }))
     }));
-
-    //create an entirely new variable where its an array of objects and each object is something like this
-    // { timestamp: 123456789, account1: 100, account2: 200, account3: 300 }
-
     const allDates: number[] = [];
     for (const account of organizedData) {
       for (const entry of account.data) {
         allDates.push(entry.date);
       }
     }
-
     const uniqueDates = Array.from(new Set(allDates));
-    console.log('uniqueDates', uniqueDates);
     const allAccounts = organizedData.map(account => account.account);
     const organizedData2: any[] = [];
     for (const date of uniqueDates) {
       let obj: any = { date };
       for (const account of allAccounts) {
         const accountData = organizedData.find((data) => data.account === account);
-        console.log('accountData', accountData.data)
-        //accountData.data = [{ date: 123456789, netValue: 100 }, { date: 123456789, netValue: 200 ]
         const accountValue = accountData.data.find((entry: any) => entry.date === date);
-        console.log('accountValue', accountValue);
-        obj[account] = accountValue ? accountValue.netValue : 0;
+        if (date == uniqueDates[0]) {
+          obj[account] = accountValue ? accountValue.netValue : accountData.data[0].netValue;
+          console.log('accountValue', accountValue);
+        }
+        if (date == uniqueDates[uniqueDates.length - 1]) {
+          obj[account] = accountValue ? accountValue.netValue : accountData.data[accountData.data.length - 1].netValue;
+        }
+        else {
+          obj[account] = accountValue ? accountValue.netValue : null;
+        }
       }
       organizedData2.push(obj);
     }
-
-    console.log('organizedData2', organizedData2);
     setTransactionsByAccount(organizedData2);
   }
 
 
   const test = async () => {
     console.log('Testing');
-    console.log('categories', categoryData);
+    console.log('transactions by account', transactionsByAccount);
   };
 
   const processTransactionsIntoCategories = (transactions: Transaction[]) => {  
@@ -194,11 +184,8 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
           console.log(`Invalid netValue at index ${i}: ${originalValue}`);
         }
       }
-      setNetValueOverTime(filteredData);
       const decimalNetValue = convertNumberToCurrency(netValue);
       setNetValue(decimalNetValue);
-
-
       return { account: account.name, amount: filteredData };
     }
 
@@ -245,9 +232,9 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
                   <MenuItem key={index} value={category.category}>{category.category}</MenuItem>
                 ))}
               </Select>
-              <DateRangePicker
+              {/* <DateRangePicker
                 defaultValue={[dayjs('2022-04-17'), dayjs('2022-04-21')]}
-              />
+              /> */}
             </div>
           </div>
           <div className='line-chart container' style={{width: '100%'}}>
@@ -295,7 +282,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
         <button onClick={handleLogout}>Logout</button>
         <button onClick={test}>TEST</button>
-        {/* <LoadingIcon ref={loadingIconRef} /> */}
       </div>
     </>
   );

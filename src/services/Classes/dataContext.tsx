@@ -1,6 +1,7 @@
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { createContext, useContext, useState, } from 'react';
+import { createContext, useContext, useState } from 'react';
+import { TransactionProcessingLocal } from './accountProcessingService';
 import { Account, Transaction } from './classes';
 
 
@@ -14,6 +15,7 @@ const UserAccountsDataContext = createContext<any>(null);
 const SetUserAccountDataContext = createContext<any>(null);
 const UserCategoriesDataContext = createContext<any>(null);
 const SetUserCategoryDataContext = createContext<any>(null);
+const InitializeDataContext = createContext<any>(null);
 
 export function TransactionData() {
     return useContext(TransactionsDataContext);
@@ -39,6 +41,10 @@ export function SetUserCategoryData() {
     return useContext(SetUserCategoryDataContext);
 }
 
+export function InitializeDataForContext() {
+    return useContext(InitializeDataContext);
+}
+
 export function AppDataProvider({ children }: any){
     const [transactions, setTransactions] = useState<TransactionDataContextType>(null);
     const [userAccounts, setUserAccounts] = useState<UserAccountsDataContextType>(null);
@@ -56,6 +62,43 @@ export function AppDataProvider({ children }: any){
         setUserCategories(data);
     }
 
+    const initializeTransactions = async () => {
+        if (!transactions) {
+            TransactionProcessingLocal.getAllTransactions().then((transactions) => {
+                if (transactions) {
+                    setTransactions(transactions);
+                }
+            });
+        }
+    }
+
+    const initializeAccounts = async () => {
+        if (!userAccounts) {
+            TransactionProcessingLocal.getAllAccounts().then((accounts) => {
+                if (accounts) {
+                    setUserAccounts(accounts);
+                }
+            });
+        }
+    }
+
+    const initializeCategories = async () => {
+        if (!userCategories) {
+            TransactionProcessingLocal.getAllCategories().then((categories) => {
+                if (categories) {
+                    setUserCategories(categories);
+                }
+            });
+        }
+    }
+
+    const initializeData = async () => {
+        console.log('Initializing data in the context...');
+        await initializeTransactions();
+        await initializeAccounts();
+        await initializeCategories();
+    }
+
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -65,7 +108,9 @@ export function AppDataProvider({ children }: any){
                         <SetUserAccountDataContext.Provider value={ updateAccounts }>
                             <UserCategoriesDataContext.Provider value={ userCategories }>
                                 <SetUserCategoryDataContext.Provider value={ updateCategories }>
-                                    {children}
+                                    <InitializeDataContext.Provider value={ initializeData }>
+                                        {children}
+                                    </InitializeDataContext.Provider>
                                 </SetUserCategoryDataContext.Provider>
                             </UserCategoriesDataContext.Provider>
                         </SetUserAccountDataContext.Provider>
