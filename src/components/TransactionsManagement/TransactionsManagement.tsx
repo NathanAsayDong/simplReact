@@ -37,8 +37,6 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
       if (res) {
         updateTransactions(res);
         setLoading(false);
-      } else {
-        console.log('Failed to get transactions');
       }
     }
   };
@@ -48,14 +46,10 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     if (res) {
       updateCategories(res);
       setLoading(false);
-    } else {
-      console.log('Failed to get categories');
     }
   };
 
   const handleNewCategoryChange = (id: number, event: any) => {
-    console.log('adding id', id);
-    console.log('adding category', event.target.value);
     setUpdateCategoryValue(event.target.value);
     let transaction = transactions.find((transaction: Transaction) => transaction.id === id);
     transaction.category = event.target.value;
@@ -64,8 +58,6 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
   const updateCategory = async (id: number) => {
     const category = potentialUpdatedTransactions.find((transaction: Transaction) => transaction.id === id)?.category;
-    console.log('category', category);
-    console.log('potentialUpdatedTransactions', potentialUpdatedTransactions);
     if (!category) {
       alert('There was an issue');
       return;
@@ -73,10 +65,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     await TransactionProcessingLocal.updateCategoryForTransaction(id, category).then(
       (res: any) => {
         if (res) {
-          console.log('sucessfully updated category');
           initializeTransactions();
-        } else {
-          console.log('Failed to update category');
         }
       }
     );

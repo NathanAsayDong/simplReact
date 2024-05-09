@@ -40,30 +40,16 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   } as const;
 
   useEffect(() => {
-    initializePage();
-  }, []);
+    initializeDataForContext();
+  }, [])
 
-
-  const initializePage = async () => {
-    if (transactions.length === 0) {
-      const res = await TransactionProcessingLocal.getAllTransactions();
-      if (res) {
-        await updateTransactions(res);
-        await initializeAccounts();
-        await processTransactionsIntoCategories(res);
-        await initializeTransactionsByAccount(res);
-        await initializeDataForContext();
-      }
+  useEffect(() => {
+    if (transactions.length > 0 && accounts.length > 0) {
+      processTransactionsIntoCategories(transactions);
+      initializeTransactionsByAccount(transactions);
     }
-  };
+  }, [transactions, accounts])
 
-  const initializeAccounts = async () => {
-    if (accounts.length === 0) {
-      TransactionProcessingLocal.getAllAccounts().then((accounts) => {
-        updateAccounts(accounts);
-      })
-    }
-  };
 
   const initializeTransactionsByAccount = async (transactions: Transaction[]) => {
     const data: any[] = [];
@@ -104,7 +90,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
         const accountValue = accountData.data.find((entry: any) => entry.date === date);
         if (date == uniqueDates[0]) {
           obj[account] = accountValue ? accountValue.netValue : accountData.data[0].netValue;
-          console.log('accountValue', accountValue);
         }
         if (date == uniqueDates[uniqueDates.length - 1]) {
           obj[account] = accountValue ? accountValue.netValue : accountData.data[accountData.data.length - 1].netValue;

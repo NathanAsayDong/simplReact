@@ -39,12 +39,10 @@ const Accounts: FC<AccountsProps> = () =>  {
   }
 
   const handleAccountTypeChange = (e: any) => {
-    console.log('setting new accounot type', e.target.value);
     setNewAccountType(e.target.value);
   }
 
   const handleAccountSourceChange = (e: any) => {
-    console.log('setting new account source', e.target.value);
     setNewAccountSource(e.target.value);
   }
 
@@ -54,29 +52,23 @@ const Accounts: FC<AccountsProps> = () =>  {
       if (res) {
         updateAccounts(res);
         setLoading(false);
-      } else {
-        console.log('Failed to get accounts');
       }
     }
   };
- 
+
   const addAccount = async () => {
-    console.log('addAccount');
     if (newAccountName === '' || newAccountSource === '' || newAccountType === '' || newRefDate === '' || newRefBalance === 0) {
       alert('Please fill out all fields');
       return;
     }
     else {
       const account = new Account(newAccountName, newAccountType, newAccountSource, newRefDate, newRefBalance);
-      console.log(account);
       TransactionProcessingLocal.addAccount(account);
       setAccountsState([...accountsState, account]);
     }
   };
 
   const deleteAccount = async (account: Account) => {
-    console.log('deleteAccount');
-    console.log(account);
     TransactionProcessingLocal.deleteAccount(account);
     setAccountsState(accountsState.filter((acc) => acc !== account));
   }

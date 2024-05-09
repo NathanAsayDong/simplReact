@@ -27,8 +27,6 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
     const res = await TransactionProcessingLocal.getAllCategories();
     if (res) {
       updateCategories(res);
-    } else {
-      console.log('Failed to get categories');
     }
     setLoading(false);
   };
@@ -42,10 +40,7 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
     const val = newCategory.toLowerCase().replace(/\b[a-z]/g, (letter) => letter.toUpperCase()); // Capitalize first letter and lowercase the rest
     const res = await TransactionProcessingLocal.addCategory(val);
     if (res) {
-      console.log(res);
       initializeCategories();
-    } else {
-      console.log('Failed to add category');
     }
     setLoading(false);
     setNewCategory('');
@@ -55,21 +50,10 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
     setLoading(true);
     const res = await TransactionProcessingLocal.deleteCategory(category);
     if (res) {
-      console.log(res);
       initializeCategories();
-    } else {
-      console.log('Failed to delete category');
     }
     setLoading(false);
   }
-
-
-  const test = async () => {
-    console.log('test');
-    await TransactionProcessingLocal.getAllCategories();
-  }
-
-
 
   return (
     <>

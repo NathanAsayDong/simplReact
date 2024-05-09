@@ -26,7 +26,6 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       }
       const success = await attemptLogin(email, password);
       if (success) {
-         console.log(success);
          localStorage.setItem('id', success.authToken);
          handleLogin();
       }
@@ -41,7 +40,6 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       }
       const success = await attemptCreateAccount(email, password);
       if (success) {
-         console.log(success);
          handleLogin();
       }
       else {

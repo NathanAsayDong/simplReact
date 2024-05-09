@@ -20,7 +20,6 @@ const ImportCsv: FC<ImportCsvProps> = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleAccountChange = (e: any) => {
-    console.log(e.target.value);
     setSelectedAccount(e.target.value);
   }
 
@@ -53,7 +52,6 @@ const ImportCsv: FC<ImportCsvProps> = () => {
       setLoading(true);
       const account = accounts.find((account: Account) => account.name === selectedAccount);
       const res = await TransactionProcessingLocal.processTransactions(csvContent, account);
-      console.log(res);
       setCsvContent('');
       setSelectedAccount('None');
       setNumTransactions(0);
