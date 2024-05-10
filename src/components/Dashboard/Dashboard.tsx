@@ -1,9 +1,8 @@
 import { MenuItem, Select } from '@mui/material';
 import { LineChart } from '@mui/x-charts/LineChart';
 import { FC, useEffect, useState } from 'react';
-import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
 import { Account, Transaction } from '../../services/Classes/classes';
-import { InitializeDataForContext, SetTransactionData, SetUserAccountData, TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
+import { InitializeDataForContext, TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import { convertNumberToCurrency } from '../../services/Classes/formatService';
 import NavBar from '../NavBar/NavBar'; // Make sure the path is correct
 import './Dashboard.scss';
@@ -14,9 +13,7 @@ interface DashboardProps {
 
 const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const transactions = TransactionData() || [];
-  const updateTransactions = SetTransactionData();
   const accounts = UserAccountsData() || [];
-  const updateAccounts = SetUserAccountData();
   const [categoryData, setCategoryData] = useState<any[]>([]);
   const [netValue, setNetValue] = useState<number>(0);
   const [transactionsByAccount, setTransactionsByAccount] = useState<any[]>([]);
@@ -39,68 +36,100 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     stackOffset: 'none',
   } as const;
 
+  const series = [
+    ...accounts.map((account: Account) => ({
+      dataKey: account.name,
+      label: account.name,
+      ...stackStrategy,
+    })),
+    {
+      dataKey: 'sum',
+      label: 'Sum',
+      // ...stackStrategy,
+    },
+  ]
+
   useEffect(() => {
     initializeDataForContext();
-  }, [])
+  }, [ ])
 
   useEffect(() => {
     if (transactions.length > 0 && accounts.length > 0) {
       processTransactionsIntoCategories(transactions);
-      initializeTransactionsByAccount(transactions);
+      initializeGraphData();
     }
   }, [transactions, accounts])
 
+  const initializeGraphData = async () => {
+    console.log('initializing graph data');
+    //STEPS:
+    //1. make a set of all the unique dates in the transactions
+    //2. process all the accounts into the object of net values using the processTransactionsIntoNetValue function
+    //3. for each date starting at the oldest to newest, get the net value of each account for that day, if that value doesnt exist that day then use the most recent value
+    //4. create an object for each date with the net value of each account
+    //5. go through the object and add a new key called sum that is the sum of all the net values for that day for all the accounts
+    //6. set the transactionsByAccount state to the object
 
-  const initializeTransactionsByAccount = async (transactions: Transaction[]) => {
-    const data: any[] = [];
-    let organizedData: any[] = [];
-    for (const transaction of transactions) {
-      if (data.find((obj) => obj.account === transaction.account)) {
-        data.find((obj) => obj.account === transaction.account).transactions.push(transaction);
-      }
-      else {
-        data.push({ account: transaction.account, transactions: [transaction] });
-      }
-    }
-    const accounts = await TransactionProcessingLocal.getAllAccounts();
-    for (const obj of data) {
-      const account = accounts.find((account: any) => account.name === obj.account);
-      organizedData.push(await processTransactionsIntoNetValue(obj.transactions, account));
-    }
-    organizedData = organizedData.map(account => ({
-      account: account.account,
-      data: account.amount.map((entry: any) => ({
-        ...entry,
-        netValue: parseFloat(entry.netValue)
-      }))
-    }));
+    //STEP 1
     const allDates: number[] = [];
-    for (const account of organizedData) {
-      for (const entry of account.data) {
-        allDates.push(entry.date);
-      }
+    for (const transaction of transactions) {
+      allDates.push(transaction.timestamp);
     }
     const uniqueDates = Array.from(new Set(allDates));
-    const allAccounts = organizedData.map(account => account.account);
-    const organizedData2: any[] = [];
+
+    //STEP 2
+    const data: any[] = [];
+    for (const account of accounts) {
+      data.push(await processTransactionsIntoNetValue(transactions, account));
+    }
+
+    //STEP 3 & 4
+    const organizedData: any[] = [];
     for (const date of uniqueDates) {
+      //for every date
       let obj: any = { date };
-      for (const account of allAccounts) {
-        const accountData = organizedData.find((data) => data.account === account);
-        const accountValue = accountData.data.find((entry: any) => entry.date === date);
+      for (const account of data) {
+        //for every account
+        const accountValue = account.amount.find((entry: any) => entry.date === date);
         if (date == uniqueDates[0]) {
-          obj[account] = accountValue ? accountValue.netValue : accountData.data[0].netValue;
+          obj[account.account] = accountValue ? accountValue.netValue : account.amount[0].netValue;
         }
-        if (date == uniqueDates[uniqueDates.length - 1]) {
-          obj[account] = accountValue ? accountValue.netValue : accountData.data[accountData.data.length - 1].netValue;
+        else if (date == uniqueDates[uniqueDates.length - 1]) {
+          obj[account.account] = accountValue ? accountValue.netValue : account.amount[account.amount.length - 1].netValue;
         }
         else {
-          obj[account] = accountValue ? accountValue.netValue : null;
+          if (!accountValue) {
+            let i = organizedData.length - 1;
+            while (i >= 0) {
+              if (organizedData[i][account.account]) {
+                obj[account.account] = organizedData[i][account.account];
+                break;
+              }
+              i--;
+            }
+          } else {
+            obj[account.account] = accountValue.netValue;
+          }
         }
       }
-      organizedData2.push(obj);
+      organizedData.push(obj);
     }
-    setTransactionsByAccount(organizedData2);
+
+    //STEP 5
+    for (let i = 0; i < organizedData.length; i++) {
+      let sum = 0;
+      for (const account of accounts) {
+        sum += organizedData[i][account.name];
+      }
+      organizedData[i].sum = sum;
+    }
+
+    console.log('organized data with sum', organizedData);
+    
+    //STEP 6
+    setTransactionsByAccount(organizedData);
+
+
   }
 
 
@@ -109,7 +138,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     console.log('transactions by account', transactionsByAccount);
   };
 
-  const processTransactionsIntoCategories = (transactions: Transaction[]) => {  
+  const processTransactionsIntoCategories = (transactions: Transaction[]) => {
     const data: any[] = [];
     transactions.forEach((transaction: Transaction) => {
       const categoryIndex = data.findIndex((d) => d.category === transaction.category);
@@ -123,6 +152,8 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   }
 
   const processTransactionsIntoNetValue = async (transactions: Transaction[], account: Account) => {
+      //filter out any transactions not from the account
+      transactions = transactions.filter((transaction) => transaction.account === account.name);
       const refStartDate = new Date(account.refDate).getTime();
       const refBalance = account.refBalance;
       const data: any[] = [];
@@ -227,11 +258,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
           dataset={transactionsByAccount}
           {...customize}
             xAxis={[{dataKey: 'date', scaleType: 'time', label: 'Date'}]}
-            series={accounts.map((account: Account) => ({
-              dataKey: account.name,
-              label: account.name,
-              ...stackStrategy,
-            }))}
+            series={series}
             tooltip={{ trigger: 'item' }}
             width={1500}
             height={400}

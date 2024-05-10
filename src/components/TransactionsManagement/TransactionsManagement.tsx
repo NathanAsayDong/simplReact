@@ -93,7 +93,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
                   <div className='item'>
                     <h3>Amount:</h3>
-                    <h3>{transaction.amount * -1}</h3>
+                    <h3>{transaction.amount}</h3>
                   </div>
 
                   <div className='item' style={{width: '24%'}}>

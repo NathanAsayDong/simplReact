@@ -74,8 +74,8 @@ const ImportCsv: FC<ImportCsvProps> = () => {
         <input type="file" id="upload-csv" accept=".csv" onChange={handleFileUpload} />
           <select onChange={handleAccountChange}>
             <option value="None">Select Account</option>
-            {accounts.map((account: Account) => {
-              return <option value={account.name}>{account.name}</option>
+            {accounts.map((account: Account, key: any) => {
+              return <option value={account.name} key={key}>{account.name}</option>
             })}
           </select>
           <button onClick={uploadCsv} className='special-button'>

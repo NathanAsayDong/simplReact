@@ -76,6 +76,7 @@ export class TransactionProcessingLocal {
             transactions.sort((a: Transaction, b: Transaction) => {
                 return a.timestamp - b.timestamp;
             });
+
             return transactions;
         } catch (error) {
             console.error('Error during getting transactions:', error);
