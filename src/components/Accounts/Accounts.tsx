@@ -4,7 +4,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { FC, useEffect, useState } from 'react';
 import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
 import { Account, accountSources, accountTypes } from '../../services/Classes/classes';
-import { SetUserAccountData, UserAccountsData } from '../../services/Classes/dataContext';
+import { InitializeDataForContext, SetUserAccountData, UserAccountsData } from '../../services/Classes/dataContext';
 import NavBar from '../NavBar/NavBar';
 import './Accounts.scss';
 
@@ -12,84 +12,45 @@ interface AccountsProps {}
 
 const Accounts: FC<AccountsProps> = () =>  {
   const accounts = UserAccountsData() || [];
-  const [accountsState, setAccountsState] = useState<Account[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [newAccountName, setNewAccountName] = useState<string>('');
-  const [newAccountType, setNewAccountType] = useState<string>('');
-  const [newAccountSource, setNewAccountSource] = useState<string>('none');
-  const [newRefDate, setNewRefDate] = useState<string>(new Date().toLocaleDateString());
-  const [newRefBalance, setNewRefBalance] = useState<number>(0);
   const updateAccounts = SetUserAccountData();
+
+
+  const [newRefDate, setNewRefDate] = useState<string>(new Date().toLocaleDateString());
+  const [newAccountData, setNewAccountData] = useState<any>({name: '', type: '', source: '', refDate: '', refBalance: 0});
+  const initializeDataForContext = InitializeDataForContext();
+
 
 
   
   useEffect(() => {
-    if (accounts.length > 0) {
-      setAccountsState(accounts);
-      setLoading(false);
-    }
-    else {
-      setLoading(true);
-      initializeAccounts();
-    }
-  }, [accounts]);
-
-  const handleAccountNameChange = (e: any) => {
-    setNewAccountName(e.target.value);
+    initializeDataForContext();
+  }, [ ]);
+  
+  const handleNewAccountDataChange = (e: any) => {
+    setNewAccountData({...newAccountData, [e.target.name]: e.target.value});
   }
-
-  const handleAccountTypeChange = (e: any) => {
-    setNewAccountType(e.target.value);
-  }
-
-  const handleAccountSourceChange = (e: any) => {
-    setNewAccountSource(e.target.value);
-  }
-
-  const initializeAccounts = async () => {
-    if (accounts.length === 0) {
-      const res = await TransactionProcessingLocal.getAllAccounts();
-      if (res) {
-        updateAccounts(res);
-        setLoading(false);
-      }
-    }
-  };
 
   const addAccount = async () => {
-    if (newAccountName === '' || newAccountSource === '' || newAccountType === '' || newRefDate === '' || newRefBalance === 0) {
+    if (newAccountData.name === '' || newAccountData.type === '' || newAccountData.source === '' || newAccountData.refDate === '' || newAccountData.refBalance === 0) {
       alert('Please fill out all fields');
       return;
     }
     else {
-      const account = new Account(newAccountName, newAccountType, newAccountSource, newRefDate, newRefBalance);
+      const account = new Account(newAccountData.name, newAccountData.type, newAccountData.source, newRefDate, newAccountData.refBalance);
       TransactionProcessingLocal.addAccount(account);
-      setAccountsState([...accountsState, account]);
+      updateAccounts(accounts.append(account));
     }
-  };
+  }
 
   const deleteAccount = async (account: Account) => {
     TransactionProcessingLocal.deleteAccount(account);
-    setAccountsState(accountsState.filter((acc) => acc !== account));
+    updateAccounts(accounts.filter((acc: Account) => acc !== account));
   }
 
   const handleNewRefDate = (newValue: any) => {
     setNewRefDate(newValue.$d.toLocaleDateString());
   }
 
-  const handleNewRefBalance = (newBalance: any) => {
-    const floatValue = parseFloat(newBalance.target.value);
-    if (!isNaN(floatValue)) {
-        const roundedValue = Math.round(floatValue * 100) / 100;
-        const formattedValue = roundedValue.toFixed(2);
-        setNewRefBalance(parseFloat(formattedValue));
-    }
-    if (newBalance.target.value === '') {
-      setNewRefBalance(0);
-    }
-    setNewRefBalance(floatValue);
-
-  }
 
   return (
     <>
@@ -100,14 +61,14 @@ const Accounts: FC<AccountsProps> = () =>  {
           <div className='row'>
             <div className='item' style={{width: '75%'}}>
               <h2 className='section-header'>Add Account</h2>
-              <input type='text' placeholder='Account Name' onChange={handleAccountNameChange}/>
-              <select onChange={handleAccountTypeChange}>
+              <input type='text' name='name' placeholder='Account Name' onChange={handleNewAccountDataChange}/>
+              <select onChange={handleNewAccountDataChange} name='type'>
                 <option value="None">Select Type</option>
                 {accountTypes.map((type, index) => (
                   <option key={index} value={type}>{type}</option>
                 ))}
               </select>
-              <select onChange={handleAccountSourceChange}>
+              <select onChange={handleNewAccountDataChange} name='source'>
                 <option value="None">Select Type</option>
                 {accountSources.map((source, index) => (
                   <option key={index} value={source}>{source}</option>
@@ -116,7 +77,7 @@ const Accounts: FC<AccountsProps> = () =>  {
               <div style={{width: '32%'}}>
                 <DatePicker label="Reference Date" onChange={(date) => handleNewRefDate(date)}/>
               </div>
-              <input type='number' placeholder='Reference Balance' onChange={(e) => handleNewRefBalance(e)}/>
+              <input type='number' name='refBalance' placeholder='Reference Balance' onChange={handleNewAccountDataChange}/>
             </div>
             <button className='special-button' onClick={addAccount}>Add Account</button>
           </div>
@@ -126,10 +87,10 @@ const Accounts: FC<AccountsProps> = () =>  {
           <div className='row'>
             <h2 className='section-header'>Accounts</h2>
           </div>
-          {loading ? (
+          {accounts.length == 0 ? (
               <div className='loading'>Loading...</div>
             ) : (
-              accountsState.map((account, index) => (
+              accounts.map((account: Account, index: any) => (
                 <div key={index} className='account-row'>
 
                   <div className='item'>

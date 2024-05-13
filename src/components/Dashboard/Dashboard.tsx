@@ -1,9 +1,8 @@
-import { MenuItem, Select } from '@mui/material';
-import { LineChart } from '@mui/x-charts/LineChart';
+import { LinearProgress, MenuItem, Select } from '@mui/material';
+import { LineChart, lineElementClasses } from '@mui/x-charts/LineChart';
 import { FC, useEffect, useState } from 'react';
 import { Account, Transaction } from '../../services/Classes/classes';
 import { InitializeDataForContext, TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
-import { convertNumberToCurrency } from '../../services/Classes/formatService';
 import NavBar from '../NavBar/NavBar'; // Make sure the path is correct
 import './Dashboard.scss';
 
@@ -20,9 +19,9 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const initializeDataForContext = InitializeDataForContext();
 
   //FILTERS:
-  const [filteredAccount, setFilteredAccount] = useState<string>('All');
-  const [filteredCategory, setFilteredCategory] = useState<string>('All');
+  const [filterData, setFilterData] = useState<any>({'account': 'All', 'category': 'All'});
 
+  //GRAPH PARAMETERS:
   const customize = {
     height: 300,
     legend: { hidden: true },
@@ -37,17 +36,34 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   } as const;
 
   const series = [
-    ...accounts.map((account: Account) => ({
-      dataKey: account.name,
-      label: account.name,
-      ...stackStrategy,
-    })),
     {
       dataKey: 'sum',
-      label: 'Sum',
-      // ...stackStrategy,
+      label: 'Net Value',
+      stackId: 'sum',
+      id: 'sum',
+      color: '#2c5364',
+      ...stackStrategy,
     },
   ]
+
+  const graphStyling = {
+      [`& .${lineElementClasses.root}`]: {
+      },
+      '& .MuiAreaElement-series-sum': {
+        fill: 'url(#graphGradient)',
+      },
+  }
+
+  const filterStyling = {
+    border: '1px solid white',
+    color: 'white',
+    '& .MuiSelect-icon': {
+      color: 'white',
+    },
+    padding: '0px'
+
+  }
+
 
   useEffect(() => {
     initializeDataForContext();
@@ -58,38 +74,43 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       processTransactionsIntoCategories(transactions);
       initializeGraphData();
     }
-  }, [transactions, accounts])
+  }, [transactions, accounts, filterData])
 
   const initializeGraphData = async () => {
-    console.log('initializing graph data');
-    //STEPS:
-    //1. make a set of all the unique dates in the transactions
-    //2. process all the accounts into the object of net values using the processTransactionsIntoNetValue function
-    //3. for each date starting at the oldest to newest, get the net value of each account for that day, if that value doesnt exist that day then use the most recent value
-    //4. create an object for each date with the net value of each account
-    //5. go through the object and add a new key called sum that is the sum of all the net values for that day for all the accounts
-    //6. set the transactionsByAccount state to the object
-
-    //STEP 1
+    console.log('Initializing graph data');
     const allDates: number[] = [];
     for (const transaction of transactions) {
       allDates.push(transaction.timestamp);
     }
     const uniqueDates = Array.from(new Set(allDates));
-
-    //STEP 2
     const data: any[] = [];
-    for (const account of accounts) {
-      data.push(await processTransactionsIntoNetValue(transactions, account));
+
+    const filteredTransactions = transactions.filter((transaction: Transaction) => {
+      if (filterData.account !== 'All') {
+        return transaction.account === filterData.account;
+      }
+      if (filterData.category !== 'All') {
+        return transaction.category === filterData.category;
+      }
+      return true;
+    });
+
+    let filteredAccounts = accounts.filter((account: Account) => {
+      if (filterData.account !== 'All') {
+        return account.name === filterData.account && filteredTransactions
+          .find((transaction: Transaction) => transaction.account === account.name);
+      }
+      return filteredTransactions.find((transaction: Transaction) => transaction.account === account.name);
+    });
+
+    for (const account of filteredAccounts) {
+      data.push(await processTransactionsIntoNetValue(filteredTransactions, account));
     }
 
-    //STEP 3 & 4
     const organizedData: any[] = [];
     for (const date of uniqueDates) {
-      //for every date
       let obj: any = { date };
       for (const account of data) {
-        //for every account
         const accountValue = account.amount.find((entry: any) => entry.date === date);
         if (date == uniqueDates[0]) {
           obj[account.account] = accountValue ? accountValue.netValue : account.amount[0].netValue;
@@ -114,22 +135,15 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       }
       organizedData.push(obj);
     }
-
-    //STEP 5
     for (let i = 0; i < organizedData.length; i++) {
       let sum = 0;
-      for (const account of accounts) {
+      for (const account of filteredAccounts) {
         sum += organizedData[i][account.name];
       }
       organizedData[i].sum = sum;
     }
-
-    console.log('organized data with sum', organizedData);
-    
-    //STEP 6
     setTransactionsByAccount(organizedData);
-
-
+    setNetValue(organizedData[organizedData.length - 1].sum);
   }
 
 
@@ -140,6 +154,15 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   const processTransactionsIntoCategories = (transactions: Transaction[]) => {
     const data: any[] = [];
+    transactions = transactions.filter((transaction) => {
+      if (filterData.account !== 'All') {
+        return transaction.account === filterData.account;
+      }
+      if (filterData.category !== 'All') {
+        return transaction.category === filterData.category;
+      }
+      return true;
+    });
     transactions.forEach((transaction: Transaction) => {
       const categoryIndex = data.findIndex((d) => d.category === transaction.category);
       if (categoryIndex === -1) {
@@ -200,36 +223,34 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
           console.log(`Invalid netValue at index ${i}: ${originalValue}`);
         }
       }
-      const decimalNetValue = convertNumberToCurrency(netValue);
-      setNetValue(decimalNetValue);
       return { account: account.name, amount: filteredData };
     }
 
-  const handleAccountSelect = (event: any) => {
-    setFilteredAccount(event.target.value);
-    //to do
+  const handleFilterSelect = (event: any) => {
+    setFilterData({ ...filterData, [event.target.name]: event.target.value });
   }
-
-  const handleCategorySelect = (event: any) => {
-    setFilteredCategory(event.target.value);
-    //to do
-  }
-
 
   return (
     <>
       <NavBar />
+
+      {transactionsByAccount.length === 0 ? <LinearProgress color="inherit" /> : null}
+
       <div className='dashboard'>
         <div className='dashboard-container'>
+
           <div className='row'>
             <h3 className='special-title'>Total Net Value: {netValue}</h3>
+
             <div className='filters'>
               <Select
                 labelId="account-select"
                 id="account-select"
-                value={filteredAccount}
+                name='account'
+                value={filterData.account}
                 label="Account"
-                onChange={handleAccountSelect}
+                onChange={handleFilterSelect}
+                sx={filterStyling}
               >
                 <MenuItem value='All'>All</MenuItem>
                 {accounts.map((account: Account, index: any) => (
@@ -239,22 +260,24 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
               <Select
                 labelId="category-select"
                 id="category-select"
-                value={filteredCategory}
+                name='category'
+                value={filterData.category}
                 label="Category"
-                onChange={handleCategorySelect}
+                onChange={handleFilterSelect}
+                sx={filterStyling}
               >
                 <MenuItem value='All'>All</MenuItem>
                 {categoryData.map((category: any, index: any) => (
                   <MenuItem key={index} value={category.category}>{category.category}</MenuItem>
                 ))}
               </Select>
-              {/* <DateRangePicker
-                defaultValue={[dayjs('2022-04-17'), dayjs('2022-04-21')]}
-              /> */}
             </div>
+
           </div>
+
           <div className='line-chart container' style={{width: '100%'}}>
           <LineChart
+          sx={graphStyling}
           dataset={transactionsByAccount}
           {...customize}
             xAxis={[{dataKey: 'date', scaleType: 'time', label: 'Date'}]}
@@ -286,15 +309,23 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
             ))}
           </div>
 
-
         </div>
-
 
         <div style={{margin: '5%'}}></div>
 
         <button onClick={handleLogout}>Logout</button>
         <button onClick={test}>TEST</button>
       </div>
+
+
+      <svg style={{ height: 0 }}>
+        <defs>
+        <linearGradient id="graphGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" style={{ stopColor: 'white', stopOpacity: 1 }} />
+          <stop offset="100%" style={{ stopColor: '#2c5364', stopOpacity: 1 }} />
+        </linearGradient>
+        </defs>
+      </svg>
     </>
   );
 };

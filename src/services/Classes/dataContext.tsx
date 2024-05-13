@@ -65,7 +65,6 @@ export function AppDataProvider({ children }: any){
     const initializeTransactions = async () => {
         if (!transactions) {
             TransactionProcessingLocal.getAllTransactions().then((transactions) => {
-                console.log('getting transactions in context...')
                 if (transactions) {
                     setTransactions(transactions);
                 }
@@ -76,7 +75,6 @@ export function AppDataProvider({ children }: any){
     const initializeAccounts = async () => {
         if (!userAccounts) {
             TransactionProcessingLocal.getAllAccounts().then((accounts) => {
-                console.log('getting accounts in context...')
                 if (accounts) {
                     setUserAccounts(accounts);
                 }
@@ -87,7 +85,6 @@ export function AppDataProvider({ children }: any){
     const initializeCategories = async () => {
         if (!userCategories) {
             TransactionProcessingLocal.getAllCategories().then((categories) => {
-                console.log('getting categories in context...')
                 if (categories) {
                     setUserCategories(categories);
                 }
