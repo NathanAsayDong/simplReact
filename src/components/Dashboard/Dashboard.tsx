@@ -1,5 +1,6 @@
 import { LinearProgress, MenuItem, Select } from '@mui/material';
 import { LineChart, lineElementClasses } from '@mui/x-charts/LineChart';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { FC, useEffect, useState } from 'react';
 import { Account, Transaction } from '../../services/Classes/classes';
 import { InitializeDataForContext, TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
@@ -20,6 +21,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   //FILTERS:
   const [filterData, setFilterData] = useState<any>({'account': 'All', 'category': 'All'});
+  const [dateRanges, setDateRanges] = useState<any>({startDate: null, endDate: null});
 
   //GRAPH PARAMETERS:
   const customize = {
@@ -56,12 +58,9 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   const filterStyling = {
     border: '1px solid white',
+    borderRadius: '5px',
     color: 'white',
-    '& .MuiSelect-icon': {
-      color: 'white',
-    },
-    padding: '0px'
-
+    padding: '0px',
   }
 
 
@@ -175,7 +174,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   }
 
   const processTransactionsIntoNetValue = async (transactions: Transaction[], account: Account) => {
-      //filter out any transactions not from the account
       transactions = transactions.filter((transaction) => transaction.account === account.name);
       const refStartDate = new Date(account.refDate).getTime();
       const refBalance = account.refBalance;
@@ -230,6 +228,11 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     setFilterData({ ...filterData, [event.target.name]: event.target.value });
   }
 
+  const handleDataRangeSelect = (event: any) => {
+    console.log('Date range selected:', event.target.name);
+    setDateRanges({ ...dateRanges, [event.target.name]: event.target.value });
+  }
+
   return (
     <>
       <NavBar />
@@ -243,6 +246,18 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
             <h3 className='special-title'>Total Net Value: {netValue}</h3>
 
             <div className='filters'>
+              <DatePicker
+                label="Start Date"
+                value={dateRanges.startDate}
+                onChange={handleDataRangeSelect}
+                sx={filterStyling}
+              />
+              <DatePicker
+                label="End Date"
+                value={dateRanges.startDate}
+                onChange={handleDataRangeSelect}
+                sx={filterStyling}
+              />
               <Select
                 labelId="account-select"
                 id="account-select"

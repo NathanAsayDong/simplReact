@@ -174,3 +174,40 @@ button:focus-visible {
     }
 }
 
+/* MUI */
+
+.MuiDatePicker-root {
+  color: white;
+  border: 1px solid white;
+  opacity: 0.8;
+  background-color: #2c5364;
+}
+
+.MuiInputLabel-root {
+  color: #203a43;
+}
+
+.MuiInputBase-root {
+  background-color: white;
+  opacity: 0.8;
+}
+
+.MuiSvgIcon-root {
+  color: #203a43;
+}
+
+.MuiOutlinedInput-input {
+  color: #203a43;
+}
+
+.MuiOutlinedInput-input {
+  color: 
+  #203a43;
+}
+
+.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input {
+  color: #203a43;
+}
+
+
+

@@ -6,7 +6,6 @@ import Accounts from './components/Accounts/Accounts';
 import Budgets from './components/Budgets/Budgets';
 import CategoryManagement from './components/CategoryManagement/CategoryManagement';
 import TransactionsManagement from './components/TransactionsManagement/TransactionsManagement';
-import UploadTransactions from './components/uploadTransactions/uploadTransactions';
 import './index.css';
 import { AppDataProvider } from './services/Classes/dataContext';
 
@@ -20,11 +19,6 @@ const router = createBrowserRouter([
   {
     path: '/budgets',
     element: <Budgets />,
-    errorElement: <h1>404 Not Found</h1>
-  },
-  {
-    path: '/upload',
-    element: <UploadTransactions />,
     errorElement: <h1>404 Not Found</h1>
   },
   {

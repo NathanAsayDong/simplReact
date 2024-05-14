@@ -49,18 +49,12 @@ const ImportCsv: FC<ImportCsvProps> = () => {
     else {
       setLoading(true);
       const account = accounts.find((account: Account) => account.name === selectedAccount);
-      const res = await TransactionProcessingLocal.processTransactions(csvContent, account);
+      await TransactionProcessingLocal.processTransactions(csvContent, account);
       setCsvContent('');
       setSelectedAccount('None');
       setNumTransactions(0);
       setLoading(false);
     }
-  }
-
-
-  const getAllTransactions = async () => {
-    const response = await TransactionProcessingLocal.getAllTransactions();
-    console.log('response', response);
   }
 
   return (
