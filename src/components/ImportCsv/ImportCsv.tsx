@@ -10,14 +10,12 @@ interface ImportCsvProps {}
 const ImportCsv: FC<ImportCsvProps> = () => {
   const [csvContent, setCsvContent] = useState<any>('');
   const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
-  const [netValue, setNetValue] = useState<number>(0);
-  const [testApiResponse, setTestApiResponse] = useState<String>('');
-
 
   const accounts = UserAccountsData() || [];
   const [selectedAccount, setSelectedAccount] = useState<String>('');
   const [numTransactions, setNumTransactions] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+
 
   const handleAccountChange = (e: any) => {
     setSelectedAccount(e.target.value);
@@ -69,7 +67,9 @@ const ImportCsv: FC<ImportCsvProps> = () => {
     <>
     <div className='body'>
       <div className='container'>
-        <h1 className='title'>Import CSV</h1>
+        <div className='row'>
+          <h2 className='title'>Upload New Transactions</h2>
+        </div>
         <div className='row'>
         <input type="file" id="upload-csv" accept=".csv" onChange={handleFileUpload} />
           <select onChange={handleAccountChange}>
@@ -84,7 +84,6 @@ const ImportCsv: FC<ImportCsvProps> = () => {
           }
         </button>
         </div>
-        <button onClick={getAllTransactions}>Get All Transactions</button>
         {csvContent && <p className='csv-content'>{csvHeaders}</p>}
       </div>
     </div>

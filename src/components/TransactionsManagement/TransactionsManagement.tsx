@@ -1,7 +1,9 @@
+import LinearProgress from '@mui/material/LinearProgress';
 import { FC, useEffect, useState } from 'react';
 import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
 import { Transaction } from '../../services/Classes/classes';
-import { SetTransactionData, SetUserCategoryData, TransactionData, UserCategoriesData } from '../../services/Classes/dataContext';
+import { InitializeDataForContext, SetTransactionData, SetUserCategoryData, TransactionData, UserCategoriesData } from '../../services/Classes/dataContext';
+import ImportCsv from '../ImportCsv/ImportCsv';
 import NavBar from '../NavBar/NavBar';
 import './TransactionsManagement.scss';
 
@@ -11,43 +13,23 @@ interface TransactionsManagementProps {}
 const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   const transactions = TransactionData() || [];
   const updateTransactions = SetTransactionData();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const categories = UserCategoriesData() || [];
   const [updateCategoryValue, setUpdateCategoryValue] = useState<string>('');
   const [potentialUpdatedTransactions, setPotentialUpdatedTransactions] = useState<Transaction[]>([]);
   const updateCategories = SetUserCategoryData();
+  const initializeDataForContext = InitializeDataForContext();
+
 
 
 
   useEffect(() => {
-    if (transactions.length > 0 || categories.length > 0) {
-      setLoading(false);
-    }
-    else {
+    if (transactions.length < 0 || categories.length < 0) {
       setLoading(true);
-      initializeTransactions();
-      initializeCategories();
+      initializeDataForContext();
     }
   }, [transactions, categories]);
 
-
-  const initializeTransactions = async () => {
-    if (transactions.length === 0) {
-      const res = await TransactionProcessingLocal.getAllTransactions();
-      if (res) {
-        updateTransactions(res);
-        setLoading(false);
-      }
-    }
-  };
-
-  const initializeCategories = async () => {
-    const res = await TransactionProcessingLocal.getAllCategories();
-    if (res) {
-      updateCategories(res);
-      setLoading(false);
-    }
-  };
 
   const handleNewCategoryChange = (id: number, event: any) => {
     setUpdateCategoryValue(event.target.value);
@@ -65,7 +47,12 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     await TransactionProcessingLocal.updateCategoryForTransaction(id, category).then(
       (res: any) => {
         if (res) {
-          initializeTransactions();
+          updateTransactions(transactions.map((transaction: Transaction) => {
+            if (transaction.id === id) {
+              transaction.category = category;
+            }
+            return transaction;
+          }));
         }
       }
     );
@@ -74,13 +61,20 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   return (
   <>
     <NavBar />
+
+    {loading ? <LinearProgress color="inherit" /> : null}
+
+    <ImportCsv />
+
+    <div style={{margin: '3%'}}></div>
+
     <div className='body'>
 
         <div className='container'>
           <div className='row'>
             <h2 className='section-header'>Accounts</h2>
           </div>
-          {loading ? (
+          {transactions.length == 0 ? (
               <div className='loading'>Loading...</div>
             ) : (
               transactions.map((transaction: Transaction, index: any) => (
