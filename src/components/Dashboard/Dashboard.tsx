@@ -1,6 +1,7 @@
 import { LinearProgress, MenuItem, Select } from '@mui/material';
 import { LineChart, lineElementClasses } from '@mui/x-charts/LineChart';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
 import { Account, Transaction } from '../../services/Classes/classes';
 import { InitializeDataForContext, TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
@@ -16,7 +17,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const accounts = UserAccountsData() || [];
   const [categoryData, setCategoryData] = useState<any[]>([]);
   const [netValue, setNetValue] = useState<number>(0);
-  const [transactionsByAccount, setTransactionsByAccount] = useState<any[]>([]);
+  const [netValueByAccount, setNetValueByAccount] = useState<any[]>([]);
   const initializeDataForContext = InitializeDataForContext();
 
   //FILTERS:
@@ -73,10 +74,9 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       processTransactionsIntoCategories(transactions);
       initializeGraphData();
     }
-  }, [transactions, accounts, filterData])
+  }, [transactions, accounts, filterData, dateRanges])
 
   const initializeGraphData = async () => {
-    console.log('Initializing graph data');
     const allDates: number[] = [];
     for (const transaction of transactions) {
       allDates.push(transaction.timestamp);
@@ -106,7 +106,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       data.push(await processTransactionsIntoNetValue(filteredTransactions, account));
     }
 
-    const organizedData: any[] = [];
+    let  organizedData: any[] = [];
     for (const date of uniqueDates) {
       let obj: any = { date };
       for (const account of data) {
@@ -141,14 +141,22 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       }
       organizedData[i].sum = sum;
     }
-    setTransactionsByAccount(organizedData);
+
+    if (dateRanges.startDate) {
+      organizedData = organizedData.filter((entry) => entry.date >= dateRanges.startDate.toDate().getTime());
+    }
+    if (dateRanges.endDate) {
+      organizedData = organizedData.filter((entry) => entry.date <= dateRanges.endDate.toDate().getTime());
+    }
+
+    setNetValueByAccount(organizedData);
     setNetValue(organizedData[organizedData.length - 1].sum);
   }
 
 
   const test = async () => {
     console.log('Testing');
-    console.log('transactions by account', transactionsByAccount);
+    console.log('transactions by account', netValueByAccount);
   };
 
   const processTransactionsIntoCategories = (transactions: Transaction[]) => {
@@ -228,16 +236,23 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     setFilterData({ ...filterData, [event.target.name]: event.target.value });
   }
 
-  const handleDataRangeSelect = (event: any) => {
-    console.log('Date range selected:', event.target.name);
-    setDateRanges({ ...dateRanges, [event.target.name]: event.target.value });
-  }
+  const handleStartDateSelect = (date: any) => {
+    if (date && dayjs(date).isValid()) {
+      setDateRanges((prev: any) => ({ ...prev, startDate: date }));
+    }
+  };
+
+  const handleEndDateSelect = (date: any) => {
+    if (date && dayjs(date).isValid()) {
+      setDateRanges((prev: any) => ({ ...prev, endDate: date }));
+    }
+  };
 
   return (
     <>
       <NavBar />
 
-      {transactionsByAccount.length === 0 ? <LinearProgress color="inherit" /> : null}
+      {netValueByAccount.length === 0 ? <LinearProgress color="inherit" /> : null}
 
       <div className='dashboard'>
         <div className='dashboard-container'>
@@ -249,13 +264,13 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
               <DatePicker
                 label="Start Date"
                 value={dateRanges.startDate}
-                onChange={handleDataRangeSelect}
+                onChange={handleStartDateSelect}
                 sx={filterStyling}
               />
               <DatePicker
                 label="End Date"
-                value={dateRanges.startDate}
-                onChange={handleDataRangeSelect}
+                value={dateRanges.endDate}
+                onChange={handleEndDateSelect}
                 sx={filterStyling}
               />
               <Select
@@ -293,7 +308,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
           <div className='line-chart container' style={{width: '100%'}}>
           <LineChart
           sx={graphStyling}
-          dataset={transactionsByAccount}
+          dataset={netValueByAccount}
           {...customize}
             xAxis={[{dataKey: 'date', scaleType: 'time', label: 'Date'}]}
             series={series}
