@@ -23,20 +23,40 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
    
    const login = async () => {
       if (email === '' || password === '') {
+         alert('Email and password cannot be empty');
+         return;
+      }
+      if (!email.includes('@') || !email.includes('.')) {
+         alert('Invalid email');
          return;
       }
       const success = await attemptLogin(email, password);
       if (success) {
          localStorage.setItem('id', success.authToken);
          handleLogin();
-      }
-      else {
+      } else {
          alert('Failed to login');
       }
    }
 
    const createAccount = async () => {
       if (email === '' || password === '') {
+         return;
+      }
+      if (!email.includes('@') || !email.includes('.')) {
+         alert('Invalid email');
+         return;
+      }
+      if (password.length < 8) {
+         alert('Password must be at least 8 characters long');
+         return;
+      }
+      if (!password.match(/[0-9]/)) {
+         alert('Password must contain at least one number');
+         return;
+      }
+      if (!password.match(/[A-Z]/)) {
+         alert('Password must contain at least one capital letter');
          return;
       }
       const success = await attemptCreateAccount(email, password);
@@ -68,7 +88,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
             {userWantsToCreateAccount && <button onClick={createAccount}>Create Account</button>}
             {!userWantsToCreateAccount && <p onClick={toggleCreateAccount}> Create Account? </p>}
             {userWantsToCreateAccount && <p onClick={toggleCreateAccount}> Already a user? </p>}
-            </div>
+         </div>
       </div>
    </>
    );
