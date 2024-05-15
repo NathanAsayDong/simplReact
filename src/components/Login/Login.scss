@@ -1,5 +1,6 @@
 .loginForm {
-    max-width: 300px;
+    max-width: 400px;
+    min-width: 300px;
     padding: 20px;
     border: 1px solid #ffffff;
     border-radius: 10px;
@@ -23,7 +24,7 @@
 }
 
 .loginForm button {
-    width: 100%;
+    width: 82%;
     padding: 10px;
     margin-top: 10px;
     cursor: pointer;
@@ -52,5 +53,9 @@
 }
 .slogan {
     color: white;
+}
+
+.slogan h1 {
+    width: 700px;
 }
 
