@@ -1,30 +1,6 @@
 import { Account, Transaction } from './classes';
 
-const url = 'https://simpl-api-ca96d9ccde88.herokuapp.com/'
-const localUrl = 'http://localhost:8080/'
-
-export class TransactionProcessing {
-    public static processTransactions = (csvData: any) => {
-        url + 'upload-transactions-csv'
-        fetch(url + 'upload-transactions-csv', {
-            method: 'POST',
-            body: JSON.stringify(csvData),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to upload CSV');
-            }
-            return response.json();
-        })
-        .catch(error => {
-            throw new Error('Error uploading CSV: ' + error.message);
-        });
-    }
-}
-
+const baseUrl = __API_URL__;
 
 export class TransactionProcessingLocal {
     public static processTransactions = async (csvData: any, account: Account) => {
@@ -32,7 +8,7 @@ export class TransactionProcessingLocal {
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
             
-            const url = localUrl + 'upload-transactions-csv' + '?account=' + account.name + '&accountType=' + '&userId=' + id;
+            const url = baseUrl + 'upload-transactions-csv' + '?account=' + account.name + '&accountType=' + '&userId=' + id;
             
             const response = await fetch(url, {
                 method: 'POST',
@@ -60,7 +36,7 @@ export class TransactionProcessingLocal {
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
 
-            const url = localUrl + 'get-transactions-all' + '?userId=' + id;
+            const url = baseUrl + 'get-transactions-all' + '?userId=' + id;
 
             const response = await fetch(url);
 
@@ -88,7 +64,7 @@ export class TransactionProcessingLocal {
         try {
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
-            const url = localUrl + 'get-transactions-account' + '?userId=' + id + '&account=' + account.name;
+            const url = baseUrl + 'get-transactions-account' + '?userId=' + id + '&account=' + account.name;
             const response = await fetch(url);
             if (!response.ok) {
                 const errorBody = await response.text(); // Or response.json() if the server sends JSON
@@ -113,7 +89,7 @@ export class TransactionProcessingLocal {
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
 
-            const url = localUrl + 'get-accounts-all' + '?userId=' + id;
+            const url = baseUrl + 'get-accounts-all' + '?userId=' + id;
 
             const response = await fetch(url);
 
@@ -139,7 +115,7 @@ export class TransactionProcessingLocal {
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
 
-            const url = localUrl + 'add-account' + '?userId=' + id;
+            const url = baseUrl + 'add-account' + '?userId=' + id;
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -173,7 +149,7 @@ export class TransactionProcessingLocal {
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
 
-            const url = localUrl + 'delete-account' + '?userId=' + id;
+            const url = baseUrl + 'delete-account' + '?userId=' + id;
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -203,7 +179,7 @@ export class TransactionProcessingLocal {
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
 
-            const url = localUrl + 'get-categories-all' + '?userId=' + id;
+            const url = baseUrl + 'get-categories-all' + '?userId=' + id;
 
             const response = await fetch(url);
 
@@ -225,7 +201,7 @@ export class TransactionProcessingLocal {
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
 
-            const url = localUrl + 'add-category' + '?userId=' + id;
+            const url = baseUrl + 'add-category' + '?userId=' + id;
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -255,7 +231,7 @@ export class TransactionProcessingLocal {
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
 
-            const url = localUrl + 'delete-category' + '?userId=' + id;
+            const url = baseUrl + 'delete-category' + '?userId=' + id;
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -285,7 +261,7 @@ export class TransactionProcessingLocal {
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
 
-            const url = localUrl + 'update-category-transaction' + '?userId=' + id;
+            const url = baseUrl + 'update-category-transaction' + '?userId=' + id;
 
             const response = await fetch(url, {
                 method: 'POST',

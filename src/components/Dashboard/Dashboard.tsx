@@ -156,7 +156,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   const test = async () => {
     console.log('Testing');
-    console.log('transactions by account', netValueByAccount);
+    console.log('api url', __API_URL__);
   };
 
   const processTransactionsIntoCategories = (transactions: Transaction[]) => {

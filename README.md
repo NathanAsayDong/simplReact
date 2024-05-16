@@ -38,3 +38,6 @@ vite generate component <component-name>
 npx generate-react-cli component <component name here>
 
 MASTER DOC: https://docs.google.com/document/d/1uAUbe3f7aD5KCwo7efaJo6VUBhHIYD74xG4_sJH2B4U/edit?usp=sharing
+
+
+RUN LOCAL: npm run dev:local
