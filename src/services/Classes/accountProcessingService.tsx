@@ -1,6 +1,7 @@
 import { Account, Transaction } from './classes';
 
 const baseUrl = __API_URL__;
+console.log('API URL:', baseUrl);
 
 export class TransactionProcessingLocal {
     public static processTransactions = async (csvData: any, account: Account) => {

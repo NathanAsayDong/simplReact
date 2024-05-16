@@ -1,8 +1,10 @@
 import LinearProgress from '@mui/material/LinearProgress';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
 import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
 import { Transaction } from '../../services/Classes/classes';
-import { InitializeDataForContext, SetTransactionData, SetUserCategoryData, TransactionData, UserCategoriesData } from '../../services/Classes/dataContext';
+import { InitializeDataForContext, SetTransactionData, TransactionData, UserCategoriesData } from '../../services/Classes/dataContext';
 import ImportCsv from '../ImportCsv/ImportCsv';
 import NavBar from '../NavBar/NavBar';
 import './TransactionsManagement.scss';
@@ -12,23 +14,62 @@ interface TransactionsManagementProps {}
 
 const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   const transactions = TransactionData() || [];
+  const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>(transactions);
   const updateTransactions = SetTransactionData();
   const [loading, setLoading] = useState<boolean>(false);
   const categories = UserCategoriesData() || [];
   const [updateCategoryValue, setUpdateCategoryValue] = useState<string>('');
   const [potentialUpdatedTransactions, setPotentialUpdatedTransactions] = useState<Transaction[]>([]);
-  const updateCategories = SetUserCategoryData();
   const initializeDataForContext = InitializeDataForContext();
+  const [dateRanges, setDateRanges] = useState<any>({startDate: null, endDate: null});
 
 
+  const handleStartDateSelect = (date: any) => {
+    if (date && dayjs(date).isValid()) {
+      setDateRanges((prev: any) => ({ ...prev, startDate: date }));
+    }
+  };
+
+  const handleEndDateSelect = (date: any) => {
+    if (date && dayjs(date).isValid()) {
+      setDateRanges((prev: any) => ({ ...prev, endDate: date }));
+    }
+  };
+
+  const filterStyling = {
+    border: '1px solid white',
+    borderRadius: '5px',
+    color: 'white',
+    padding: '0px',
+  }
 
 
   useEffect(() => {
-    if (transactions.length < 0 || categories.length < 0) {
       setLoading(true);
       initializeDataForContext();
-    }
+      setLoading(false);
   }, [transactions, categories]);
+
+  useEffect(() => {
+    if (!dateRanges.startDate && !dateRanges.endDate) {
+      setFilteredTransactions(transactions);
+    } 
+    if (dateRanges.startDate && !dateRanges.endDate) {
+      setFilteredTransactions(transactions.filter((transaction: Transaction) => {
+        return dayjs(transaction.timestamp).isAfter(dateRanges.startDate);
+      }));
+    }
+    if (!dateRanges.startDate && dateRanges.endDate) {
+      setFilteredTransactions(transactions.filter((transaction: Transaction) => {
+        return dayjs(transaction.timestamp).isBefore(dateRanges.endDate);
+      }));
+    }
+    if (dateRanges.startDate && dateRanges.endDate) {
+      setFilteredTransactions(transactions.filter((transaction: Transaction) => {
+        return dayjs(transaction.timestamp).isAfter(dateRanges.startDate) && dayjs(transaction.timestamp).isBefore(dateRanges.endDate);
+      }));
+    }
+  }, [dateRanges, transactions])
 
 
   const handleNewCategoryChange = (id: number, event: any) => {
@@ -44,6 +85,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
       alert('There was an issue');
       return;
     }
+    setLoading(true);
     await TransactionProcessingLocal.updateCategoryForTransaction(id, category).then(
       (res: any) => {
         if (res) {
@@ -54,7 +96,12 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
             return transaction;
           }));
         }
+        setLoading(false);
       }
+    ).catch((err: any) => {
+      setLoading(false);
+      alert('There was an issue');
+    }
     );
   }
 
@@ -68,16 +115,35 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
     <div style={{margin: '3%'}}></div>
 
+
+
     <div className='body'>
+
+      <div className='container'>
+        <div className='row'>
+          <DatePicker
+            label="Start Date"
+            value={dateRanges.startDate}
+            onChange={handleStartDateSelect}
+            sx={filterStyling}
+          />
+          <DatePicker
+            label="End Date"
+            value={dateRanges.endDate}
+            onChange={handleEndDateSelect}
+            sx={filterStyling}
+          />
+        </div>
+      </div>
 
         <div className='container'>
           <div className='row'>
             <h2 className='section-header'>Accounts</h2>
           </div>
-          {transactions.length == 0 ? (
+          {filteredTransactions.length == 0 ? (
               <div className='loading'>Loading...</div>
             ) : (
-              transactions.map((transaction: Transaction, index: any) => (
+              filteredTransactions.map((transaction: Transaction, index: any) => (
                 <div key={index} className='account-row'>
 
                   <div className='item' style={{width: '24%'}}>

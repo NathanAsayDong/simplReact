@@ -4,7 +4,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
 import { Account, Transaction } from '../../services/Classes/classes';
-import { InitializeDataForContext, TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
+import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import NavBar from '../NavBar/NavBar'; // Make sure the path is correct
 import './Dashboard.scss';
 
@@ -18,7 +18,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const [categoryData, setCategoryData] = useState<any[]>([]);
   const [netValue, setNetValue] = useState<number>(0);
   const [netValueByAccount, setNetValueByAccount] = useState<any[]>([]);
-  const initializeDataForContext = InitializeDataForContext();
 
   //FILTERS:
   const [filterData, setFilterData] = useState<any>({'account': 'All', 'category': 'All'});
@@ -63,11 +62,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     color: 'white',
     padding: '0px',
   }
-
-
-  useEffect(() => {
-    initializeDataForContext();
-  }, [ ])
 
   useEffect(() => {
     if (transactions.length > 0 && accounts.length > 0) {

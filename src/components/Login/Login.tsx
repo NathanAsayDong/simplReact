@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { attemptCreateAccount, attemptLogin } from '../../services/Classes/userStoreService';
+import { attemptCreateAccount, attemptLogin } from '../../services/Classes/userApiService';
 import './Login.scss';
 
 

@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import Dashboard from './components/Dashboard/Dashboard'
 import Login from './components/Login/Login'
+import { InitializeDataForContext } from './services/Classes/dataContext'
 
 function App() {
   const [isLoggin, setIsLoggin] = useState(false)
+  const initializeDataForContext = InitializeDataForContext();
 
   const handleLogin = () => {
     setIsLoggin(true);
@@ -17,7 +19,7 @@ function App() {
 
   const initializePage = () => {
     const id = localStorage.getItem('id');
-    if (id !== 'undefined' && id !== null && id !== '' && id !== undefined) {
+    if (id !== 'undefined' && id !== null && id !== '' && id !== undefined && !isLoggin) {
       setIsLoggin(true);
     }
     else {
@@ -27,7 +29,8 @@ function App() {
 
   useEffect(() => {
     initializePage();
-  }, [])
+    initializeDataForContext();
+  }, [ ])
 
   if (isLoggin) {
     return (

@@ -19,10 +19,8 @@ const Accounts: FC<AccountsProps> = () =>  {
   const [newAccountData, setNewAccountData] = useState<any>({name: '', type: '', source: '', refDate: '', refBalance: 0});
   const initializeDataForContext = InitializeDataForContext();
 
-
-
-  
   useEffect(() => {
+    console.log('called in accounts.tsx')
     initializeDataForContext();
   }, [ ]);
   
