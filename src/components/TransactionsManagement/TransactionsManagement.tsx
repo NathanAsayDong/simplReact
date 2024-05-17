@@ -18,7 +18,6 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   const updateTransactions = SetTransactionData();
   const [loading, setLoading] = useState<boolean>(false);
   const categories = UserCategoriesData() || [];
-  const [updateCategoryValue, setUpdateCategoryValue] = useState<string>('');
   const [potentialUpdatedTransactions, setPotentialUpdatedTransactions] = useState<Transaction[]>([]);
   const initializeDataForContext = InitializeDataForContext();
   const [dateRanges, setDateRanges] = useState<any>({startDate: null, endDate: null});
@@ -73,7 +72,6 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
 
   const handleNewCategoryChange = (id: number, event: any) => {
-    setUpdateCategoryValue(event.target.value);
     let transaction = transactions.find((transaction: Transaction) => transaction.id === id);
     transaction.category = event.target.value;
     setPotentialUpdatedTransactions([...potentialUpdatedTransactions, transaction]); //we arent checking for pre-exisitng but this is good for now i think
@@ -98,7 +96,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
         }
         setLoading(false);
       }
-    ).catch((err: any) => {
+    ).catch(() => {
       setLoading(false);
       alert('There was an issue');
     }

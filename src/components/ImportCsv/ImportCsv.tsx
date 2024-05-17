@@ -9,7 +9,7 @@ interface ImportCsvProps {}
 
 const ImportCsv: FC<ImportCsvProps> = () => {
   const [csvContent, setCsvContent] = useState<any>('');
-  const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
+  const [csvHeaders] = useState<string[]>([]);
 
   const accounts = UserAccountsData() || [];
   const [selectedAccount, setSelectedAccount] = useState<String>('');

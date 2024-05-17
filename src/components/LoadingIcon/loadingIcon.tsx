@@ -3,11 +3,9 @@ import './loadingIcon.scss'; // Ensure the CSS file is correctly linked
 
 class LoadingIcon extends React.Component {
   start() {
-    document.querySelector('.loading-container').style.display = 'flex';
   }
 
   stop() {
-    document.querySelector('.loading-container').style.display = 'none';
   }
 
   render() {
