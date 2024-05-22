@@ -1,7 +1,7 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DatePicker } from '@mui/x-date-pickers';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
 import { Account, accountSources, accountTypes } from '../../services/Classes/classes';
 import { InitializeDataForContext, SetUserAccountData, UserAccountsData } from '../../services/Classes/dataContext';
@@ -17,12 +17,9 @@ const Accounts: FC<AccountsProps> = () =>  {
 
   const [newRefDate, setNewRefDate] = useState<string>(new Date().toLocaleDateString());
   const [newAccountData, setNewAccountData] = useState<any>({name: '', type: '', source: '', refDate: '', refBalance: 0});
-  const initializeDataForContext = InitializeDataForContext();
 
-  useEffect(() => {
-    console.log('called in accounts.tsx')
-    initializeDataForContext();
-  }, [ ]);
+  // I dont actually need to use an effect here becuase i only want to initialize the data once
+  InitializeDataForContext();
   
   const handleNewAccountDataChange = (e: any) => {
     setNewAccountData({...newAccountData, [e.target.name]: e.target.value});
