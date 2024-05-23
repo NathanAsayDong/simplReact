@@ -1,8 +1,8 @@
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { createContext, useContext, useState } from 'react';
-import { TransactionProcessingLocal } from './accountProcessingService';
 import { Account, Transaction } from './classes';
+import { DataApiService } from './dataApiService';
 
 
 type TransactionDataContextType = Transaction[] | null;
@@ -64,7 +64,7 @@ export function AppDataProvider({ children }: any){
 
     const initializeTransactions = async () => {
         if (!transactions) {
-            TransactionProcessingLocal.getAllTransactions().then((transactions) => {
+            DataApiService.getAllTransactions().then((transactions) => {
                 if (transactions) {
                     setTransactions(transactions);
                 }
@@ -74,7 +74,7 @@ export function AppDataProvider({ children }: any){
 
     const initializeAccounts = async () => {
         if (!userAccounts) {
-            TransactionProcessingLocal.getAllAccounts().then((accounts) => {
+            DataApiService.getAllAccounts().then((accounts) => {
                 if (accounts) {
                     setUserAccounts(accounts);
                 }
@@ -84,7 +84,7 @@ export function AppDataProvider({ children }: any){
 
     const initializeCategories = async () => {
         if (!userCategories) {
-            TransactionProcessingLocal.getAllCategories().then((categories) => {
+            DataApiService.getAllCategories().then((categories) => {
                 if (categories) {
                     setUserCategories(categories);
                 }

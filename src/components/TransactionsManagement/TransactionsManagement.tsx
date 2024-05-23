@@ -2,8 +2,8 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
-import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
 import { Transaction } from '../../services/Classes/classes';
+import { DataApiService } from '../../services/Classes/dataApiService';
 import { InitializeDataForContext, SetTransactionData, TransactionData, UserCategoriesData } from '../../services/Classes/dataContext';
 import ImportCsv from '../ImportCsv/ImportCsv';
 import NavBar from '../NavBar/NavBar';
@@ -84,7 +84,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
       return;
     }
     setLoading(true);
-    await TransactionProcessingLocal.updateCategoryForTransaction(id, category).then(
+    await DataApiService.updateCategoryForTransaction(id, category).then(
       (res: any) => {
         if (res) {
           updateTransactions(transactions.map((transaction: Transaction) => {

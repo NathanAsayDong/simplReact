@@ -2,7 +2,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LinearProgress from '@mui/material/LinearProgress';
 import { FC, useEffect, useState } from 'react';
-import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
+import { DataApiService } from '../../services/Classes/dataApiService';
 import { InitializeDataForContext, SetUserCategoryData, UserCategoriesData } from '../../services/Classes/dataContext';
 import NavBar from '../NavBar/NavBar';
 import './CategoryManagement.scss';
@@ -33,7 +33,7 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
   const addCategory = async () => {
     setLoading(true);
     const val = newCategory.toLowerCase().replace(/\b[a-z]/g, (letter) => letter.toUpperCase()); // Capitalize first letter and lowercase the rest
-    const res = await TransactionProcessingLocal.addCategory(val);
+    const res = await DataApiService.addCategory(val);
     if (res) {
       updateCategories(categories.append(val));
     }
@@ -43,7 +43,7 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
   
   const deleteCategory = async (category: string) => {
     setLoading(true);
-    const res = await TransactionProcessingLocal.deleteCategory(category);
+    const res = await DataApiService.deleteCategory(category);
     if (res) {
       updateCategories(categories.filter((cat: string) => cat !== category));
     }

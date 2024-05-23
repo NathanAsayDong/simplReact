@@ -2,8 +2,8 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DatePicker } from '@mui/x-date-pickers';
 import { FC, useState } from 'react';
-import { TransactionProcessingLocal } from '../../services/Classes/accountProcessingService';
 import { Account, accountSources, accountTypes } from '../../services/Classes/classes';
+import { DataApiService } from '../../services/Classes/dataApiService';
 import { InitializeDataForContext, SetUserAccountData, UserAccountsData } from '../../services/Classes/dataContext';
 import NavBar from '../NavBar/NavBar';
 import './Accounts.scss';
@@ -13,37 +13,36 @@ interface AccountsProps {}
 const Accounts: FC<AccountsProps> = () =>  {
   const accounts = UserAccountsData() || [];
   const updateAccounts = SetUserAccountData();
-
-
-  const [newRefDate, setNewRefDate] = useState<string>(new Date().toLocaleDateString());
   const [newAccountData, setNewAccountData] = useState<any>({name: '', type: '', source: '', refDate: '', refBalance: 0});
+  const initializeData = InitializeDataForContext();
 
-  // I dont actually need to use an effect here becuase i only want to initialize the data once
-  InitializeDataForContext();
+  initializeData();
   
   const handleNewAccountDataChange = (e: any) => {
     setNewAccountData({...newAccountData, [e.target.name]: e.target.value});
   }
 
   const addAccount = async () => {
+    console.log('new account: ', newAccountData)
     if (newAccountData.name === '' || newAccountData.type === '' || newAccountData.source === '' || newAccountData.refDate === '' || newAccountData.refBalance === 0) {
       alert('Please fill out all fields');
       return;
     }
     else {
-      const account = new Account(newAccountData.name, newAccountData.type, newAccountData.source, newRefDate, newAccountData.refBalance);
-      TransactionProcessingLocal.addAccount(account);
-      updateAccounts(accounts.append(account));
+      const account = new Account(newAccountData.name, newAccountData.type, newAccountData.source, newAccountData.refDate , newAccountData.refBalance);
+      DataApiService.addAccount(account).then(() => {
+        updateAccounts(accounts.concat(account));
+      });
     }
   }
 
   const deleteAccount = async (account: Account) => {
-    TransactionProcessingLocal.deleteAccount(account);
+    DataApiService.deleteAccount(account);
     updateAccounts(accounts.filter((acc: Account) => acc !== account));
   }
 
   const handleNewRefDate = (newValue: any) => {
-    setNewRefDate(newValue.$d.toLocaleDateString());
+    setNewAccountData({...newAccountData, refDate: newValue.$d.toLocaleDateString()});
   }
 
 

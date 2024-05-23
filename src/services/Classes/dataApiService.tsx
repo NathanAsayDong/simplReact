@@ -3,7 +3,7 @@ import { Account, Transaction } from './classes';
 const baseUrl = __API_URL__;
 console.log('API URL:', baseUrl);
 
-export class TransactionProcessingLocal {
+export class DataApiService {
     public static processTransactions = async (csvData: any, account: Account) => {
         try {
             const id = localStorage.getItem('id');
