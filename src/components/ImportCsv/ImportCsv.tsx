@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { Account } from '../../services/Classes/classes';
-import { TransactionProcessingLocal } from '../../services/Classes/dataApiService';
+import { DataApiService } from '../../services/Classes/dataApiService';
 
 import { UserAccountsData } from '../../services/Classes/dataContext';
 import './ImportCsv.scss';
@@ -49,7 +49,7 @@ const ImportCsv: FC<ImportCsvProps> = () => {
     else {
       setLoading(true);
       const account = accounts.find((account: Account) => account.name === selectedAccount);
-      await TransactionProcessingLocal.processTransactions(csvContent, account);
+      await DataApiService.processTransactions(csvContent, account);
       setCsvContent('');
       setSelectedAccount('None');
       setNumTransactions(0);

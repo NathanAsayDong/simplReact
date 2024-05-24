@@ -4,7 +4,6 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { FC, useEffect, useState } from 'react';
 import { DataApiService } from '../../services/Classes/dataApiService';
 import { InitializeDataForContext, SetUserCategoryData, UserCategoriesData } from '../../services/Classes/dataContext';
-import NavBar from '../NavBar/NavBar';
 import './CategoryManagement.scss';
 
 
@@ -52,8 +51,6 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
 
   return (
     <>
-    <NavBar />
-
     {loading ? <LinearProgress color="inherit" /> : null}
 
     <div className='body'>

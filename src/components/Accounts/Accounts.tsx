@@ -5,7 +5,6 @@ import { FC, useState } from 'react';
 import { Account, accountSources, accountTypes } from '../../services/Classes/classes';
 import { DataApiService } from '../../services/Classes/dataApiService';
 import { InitializeDataForContext, SetUserAccountData, UserAccountsData } from '../../services/Classes/dataContext';
-import NavBar from '../NavBar/NavBar';
 import './Accounts.scss';
 
 interface AccountsProps {}
@@ -48,7 +47,6 @@ const Accounts: FC<AccountsProps> = () =>  {
 
   return (
     <>
-      <NavBar />
       <div className='body'>
 
         <div className='container'>

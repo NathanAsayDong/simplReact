@@ -1,8 +1,15 @@
 import { useEffect, useState } from 'react'
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import './App.css'
+import Accounts from './components/Accounts/Accounts'
+import Budgets from './components/Budgets/Budgets'
+import CategoryManagement from './components/CategoryManagement/CategoryManagement'
 import Dashboard from './components/Dashboard/Dashboard'
 import Login from './components/Login/Login'
+import NavBar from './components/NavBar/NavBar'
+import TransactionsManagement from './components/TransactionsManagement/TransactionsManagement'
 import { InitializeDataForContext } from './services/Classes/dataContext'
+
 
 function App() {
   const [isLoggin, setIsLoggin] = useState(false)
@@ -34,7 +41,16 @@ function App() {
 
   if (isLoggin) {
     return (
-        <Dashboard handleLogout={handleLogout}/>
+      <Router>
+        <NavBar />
+      <Routes>
+        <Route path="/" element={<Dashboard handleLogout={handleLogout}/>} />
+        <Route path="/budgets" element={<Budgets />} />
+        <Route path="/accounts" element={<Accounts />} />
+        <Route path="/manage-categories" element={<CategoryManagement />} />
+        <Route path="/manage-transactions" element={<TransactionsManagement />} />
+      </Routes>
+    </Router>
     )
   }
   else {

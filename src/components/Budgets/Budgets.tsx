@@ -2,7 +2,6 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { FC, useState } from 'react';
 import { Budget } from '../../services/Classes/classes';
-import NavBar from '../NavBar/NavBar';
 import './Budgets.css';
 
 const Budgets: FC = () => {
@@ -25,7 +24,6 @@ const Budgets: FC = () => {
 
   return (
     <div>
-      <NavBar />
       <div className="container">
         <form onSubmit={handleSubmit}>
           <div className="form-group">

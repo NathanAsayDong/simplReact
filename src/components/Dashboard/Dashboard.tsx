@@ -5,7 +5,6 @@ import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
 import { Account, Transaction } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
-import NavBar from '../NavBar/NavBar'; // Make sure the path is correct
 import './Dashboard.scss';
 
 interface DashboardProps {
@@ -244,8 +243,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   return (
     <>
-      <NavBar />
-
       {netValueByAccount.length === 0 ? <LinearProgress color="inherit" /> : null}
 
       <div className='dashboard'>

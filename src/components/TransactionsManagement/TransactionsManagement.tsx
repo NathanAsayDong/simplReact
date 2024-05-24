@@ -6,7 +6,6 @@ import { Transaction } from '../../services/Classes/classes';
 import { DataApiService } from '../../services/Classes/dataApiService';
 import { InitializeDataForContext, SetTransactionData, TransactionData, UserCategoriesData } from '../../services/Classes/dataContext';
 import ImportCsv from '../ImportCsv/ImportCsv';
-import NavBar from '../NavBar/NavBar';
 import './TransactionsManagement.scss';
 
 
@@ -105,8 +104,6 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
   return (
   <>
-    <NavBar />
-
     {loading ? <LinearProgress color="inherit" /> : null}
 
     <ImportCsv />
