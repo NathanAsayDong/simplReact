@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
 import { Account, Transaction } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
+import { getDatesFromTransactions, getFilteredAccounts, getFilteredTransactions } from './Dashboard.Service';
 import './Dashboard.scss';
 
 interface DashboardProps {
@@ -70,44 +71,24 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   }, [transactions, accounts, filterData, dateRanges])
 
   const initializeGraphData = async () => {
-    const allDates: number[] = [];
-    for (const transaction of transactions) {
-      allDates.push(transaction.timestamp);
-    }
-    const uniqueDates = Array.from(new Set(allDates));
+    const dates: number[] = getDatesFromTransactions(transactions);
+    const filteredTransactions = getFilteredTransactions(transactions, filterData);
+    const filteredAccounts = getFilteredAccounts(accounts, filterData);
     const data: any[] = [];
-
-    const filteredTransactions = transactions.filter((transaction: Transaction) => {
-      if (filterData.account !== 'All') {
-        return transaction.account === filterData.account;
-      }
-      if (filterData.category !== 'All') {
-        return transaction.category === filterData.category;
-      }
-      return true;
-    });
-
-    let filteredAccounts = accounts.filter((account: Account) => {
-      if (filterData.account !== 'All') {
-        return account.name === filterData.account && filteredTransactions
-          .find((transaction: Transaction) => transaction.account === account.name);
-      }
-      return filteredTransactions.find((transaction: Transaction) => transaction.account === account.name);
-    });
 
     for (const account of filteredAccounts) {
       data.push(await processTransactionsIntoNetValue(filteredTransactions, account));
     }
 
     let  organizedData: any[] = [];
-    for (const date of uniqueDates) {
+    for (const date of dates) {
       let obj: any = { date };
       for (const account of data) {
         const accountValue = account.amount.find((entry: any) => entry.date === date);
-        if (date == uniqueDates[0]) {
+        if (date == dates[0]) {
           obj[account.account] = accountValue ? accountValue.netValue : account.amount[0].netValue;
         }
-        else if (date == uniqueDates[uniqueDates.length - 1]) {
+        else if (date == dates[dates.length - 1]) {
           obj[account.account] = accountValue ? accountValue.netValue : account.amount[account.amount.length - 1].netValue;
         }
         else {
