@@ -101,18 +101,32 @@ button:focus-visible {
 }
 
 
+.container-transparent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+  opacity: .8;
+  color: black;
+  padding: 5px;
+  width: 90%;
+}
+
 .container {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 1em;
   border-radius: 25px;
   border: 1px solid #9FAFCA;
   opacity: .8;
   background: #FFF;
-  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
   color: black;
-  padding: 2em;
-  box-shadow: inset 0px 0px 12px 1px #2c5364
+  padding: 5px;
+  box-shadow: inset 0px 0px 12px 1px #2c5364;
+  width: 90%;
 }
 
 .row {
@@ -123,7 +137,44 @@ button:focus-visible {
   gap: 1em;
 }
 
-/* Company Styling */
+.inner-row {
+  box-shadow: inset 0px 0px 12px 1px #2c5364;
+  border-radius: 20px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  padding-left: 5%;
+  padding-right: 5%;
+  gap: 5%;
+  transition: all 0.3s ease;
+  width: 88%;
+  background: #FFF;
+  overflow: hidden;
+  &:hover {
+      transform: scale(1.005);
+  }
+}
+
+.inner-row-transparent {
+  box-shadow: inset 0px 0px 12px 1px #2c5364;
+  border-radius: 20px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  padding-left: 5%;
+  padding-right: 5%;
+  gap: 5%;
+  transition: all 0.3s ease;
+  width: 88%;
+  overflow: hidden;
+  &:hover {
+      transform: scale(1.005);
+  }
+}
+
+.unselected {
+  opacity: .7;
+}
 
 .centerPage {
   display: flex;
@@ -160,21 +211,6 @@ button:focus-visible {
   color: #ffffff;
 }
 
-.inner-row {
-    box-shadow: inset 0px 0px 12px 1px #2c5364;
-    border-radius: 20px;
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    padding-left: 5%;
-    padding-right: 5%;
-    gap: 5%;
-    transition: all 0.3s ease;
-
-    &:hover {
-        transform: scale(1.005);
-    }
-}
 
 /* MUI */
 

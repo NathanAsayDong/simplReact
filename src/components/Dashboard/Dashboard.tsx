@@ -217,7 +217,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       }
       for (let i = 0; i < filteredData.length; i++) {
         const originalValue = filteredData[i].netValue;
-        filteredData[i].netValue = parseFloat(filteredData[i].netValue.toFixed(2));
+        filteredData[i].netValue = parseFloat(filteredData[i].netValue);
         if (isNaN(filteredData[i].netValue)) {
           console.log(`Invalid netValue at index ${i}: ${originalValue}`);
         }
@@ -246,8 +246,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       {netValueByAccount.length === 0 ? <LinearProgress color="inherit" /> : null}
 
       <div className='dashboard'>
-        <div className='dashboard-container'>
-
           <div className='row'>
             <h3 className='special-title'>Total Net Value: {netValue}</h3>
 
@@ -296,7 +294,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
           </div>
 
-          <div className='line-chart container' style={{width: '100%'}}>
+        <div style={{width: '100%'}}>
           <LineChart
           sx={graphStyling}
           dataset={netValueByAccount}
@@ -304,10 +302,8 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
             xAxis={[{dataKey: 'date', scaleType: 'time', label: 'Date'}]}
             series={series}
             tooltip={{ trigger: 'item' }}
-            width={1500}
-            height={400}
           />
-          </div>
+        </div>
 
           <div style={{margin: '5%'}}></div>
 
@@ -315,7 +311,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
             <h3 className='special-title'>Categories</h3>
           </div>
 
-          <div className='container' style={{width: '100%'}}>
+          <div className='container-transparent'>
             {categoryData.map((category, index) => (
               <div key={index} className='inner-row' style={{justifyContent: 'space-between'}}>
                 <div className='item'>
@@ -336,8 +332,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
         <button onClick={handleLogout}>Logout</button>
         <button onClick={test}>TEST</button>
-      </div>
-
 
       <svg style={{ height: 0 }}>
         <defs>
