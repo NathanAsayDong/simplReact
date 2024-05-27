@@ -30,7 +30,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const customize = {
     height: 300,
     legend: { hidden: true },
-    margin: { top: 5 },
     stackingOrder: 'descending',
   };
 
@@ -48,16 +47,30 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       stackId: 'sum',
       id: 'sum',
       color: '#2c5364',
+      valueFormatter: (value: any) => `$${value.toFixed(2)}`,
       ...stackStrategy,
     },
   ]
 
   const graphStyling = {
       [`& .${lineElementClasses.root}`]: {
+        stroke: 'white',
+        strokeWidth: 2,
+        '&.MuiChartsLineElement-highlighted': {
+          stroke: 'white',
+          strokeWidth: 3,
+        },
+        '&.MuiChartsLineElement-faded': {
+          stroke: 'white',
+          strokeWidth: 1,
+        },
       },
       '& .MuiAreaElement-series-sum': {
         fill: 'url(#graphGradient)',
       },
+      '& .MuiChartsAxis-tickLabel': {
+        fill: 'white !important',
+      }
   }
 
   const filterStyling = {
@@ -268,13 +281,16 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
           sx={graphStyling}
           dataset={netValueByAccount}
           {...customize}
-            xAxis={[{dataKey: 'date',
-            scaleType: 'time',
-            label: 'Date',
-            valueFormatter: (value: any) => dayjs(value).format(getDateFormat())}]}
-            series={series}
-            tooltip={{ trigger: 'item' }}
-            
+          series={series}
+          tooltip={{ trigger: 'item' }}
+          xAxis={[{dataKey: 'date',
+          scaleType: 'time',
+          label: 'Date',
+          valueFormatter: (value: any) => dayjs(value).format(getDateFormat())
+          }]}
+          yAxis={[{
+              valueFormatter: (value: any) => `$${value.toFixed(2)}`, 
+          }]}
           />
         </div>
 

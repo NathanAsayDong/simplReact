@@ -21,10 +21,6 @@
     gap: 1rem;
 }
 
-.css-15f6tv6-MuiResponsiveChart-container {
-    scale: 1;
-}
-
 .date-scale-options {
     display: flex;
     gap: 5px;
@@ -36,4 +32,20 @@
 .scale-option {
     border-radius: 2px;
     padding: 4px;
+}
+
+
+
+.css-15f6tv6-MuiResponsiveChart-container {
+    scale: 1;
+}
+
+.MuiChartsSurface-root{
+    padding: 5px;
+    color: white;
+}
+
+.MuiChartsAxis-tickLabel {
+    color: white;
+    fill: white;
 }
