@@ -17,6 +17,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const transactions = TransactionData() || [];
   const accounts = UserAccountsData() || [];
   const [categoryData, setCategoryData] = useState<any[]>([]);
+  const [accountData, setAccountData] = useState<any[]>([]);
   const [netValue, setNetValue] = useState<number>(0);
   const [netValueByAccount, setNetValueByAccount] = useState<any[]>([]);
 
@@ -68,7 +69,9 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   useEffect(() => {
     if (transactions.length > 0 && accounts.length > 0) {
+      console.log('transactions', transactions);
       processTransactionsIntoCategories(transactions);
+      processTransactionsIntoAccounts(transactions, accounts);
       initializeGraphData();
     }
   }, [transactions, accounts, filterData, dateRanges, dateScale])
@@ -91,7 +94,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   };
 
   const initializeGraphData = async () => {
-    console.log('date scale', dateScale)
     const dates: number[] = getDatesFromTransactions(transactions, dateScale);
     const filteredTransactions = getFilteredTransactions(transactions, filterData);
     const filteredAccounts = getFilteredAccounts(accounts, filteredTransactions, filterData);
@@ -136,7 +138,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       }
       organizedData[i].sum = sum;
     }
-    console.log('this is organized data', organizedData);
 
     if (dateRanges.startDate) {
       organizedData = organizedData.filter((entry) => entry.date >= dateRanges.startDate.toDate().getTime());
@@ -175,6 +176,22 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       }
     });
     setCategoryData(data);
+  }
+
+  const processTransactionsIntoAccounts = (transactions: Transaction[], accounts: Account[]) => {
+    const data: any[] = []; // {name: 'Uccu', amount: 100}
+    transactions.forEach((transaction: Transaction) => {
+      const accountIndex = data.findIndex((d) => d.name === transaction.account);
+      let accountType = accounts.find((account) => account.name === transaction.account)?.type;
+      console.log('accountType', accountType);
+      const amount = accountType === 'Credit' ? transaction.amount * -1 : transaction.amount;
+      if (accountIndex === -1) {
+        data.push({ name: transaction.account, amount: amount });
+      } else {
+        data[accountIndex].amount += transaction.amount;
+      }
+    });
+    setAccountData(data);
   }
 
   const handleFilterSelect = (event: any) => {
@@ -281,13 +298,31 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
                 </div>
                 <div className='item'>
                   <h3>Amount:</h3>
-                  <h3>{category.amount * -1}</h3>
+                  <h3>${category.amount * -1}</h3>
                 </div>
               </div>
             ))}
           </div>
 
-        </div>
+          <div className='row'>
+            <h3 className='special-title'>Accounts</h3>
+          </div>
+
+          <div className='container-transparent'>
+            {accountData.map((account, index) => (
+              <div key={index} className='inner-row' style={{justifyContent: 'space-between'}}>
+                <div className='item'>
+                  <h3>{account.name}</h3>
+                </div>
+                <div className='item'>
+                  <h3>Difference:</h3>
+                  <h3>${(account.amount * -1).toFixed(2)}</h3>
+                </div>
+              </div>
+            ))}
+          </div>
+
+      </div>
 
         <div style={{margin: '5%'}}></div>
 
