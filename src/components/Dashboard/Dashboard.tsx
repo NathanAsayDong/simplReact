@@ -1,8 +1,9 @@
 import { LinearProgress, MenuItem, Select } from '@mui/material';
-import { LineChart, lineElementClasses } from '@mui/x-charts/LineChart';
+import { lineElementClasses } from '@mui/x-charts/LineChart';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
+import { Area, AreaChart } from 'recharts';
 import { Account, Transaction } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import { scaleDate } from '../../services/Classes/formatService';
@@ -276,7 +277,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
           </div>
 
-        <div style={{width: '100%'}}>
+        {/* <div style={{width: '100%'}}>
           <LineChart
           sx={graphStyling}
           dataset={netValueByAccount}
@@ -292,14 +293,18 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
               valueFormatter: (value: any) => `$${value.toFixed(2)}`, 
           }]}
           />
-        </div>
+        </div> */}
+
+        <AreaChart width={730} height={250} data={netValueByAccount}>
+          <Area dataKey='sum' stroke='#2c5364' fill='url(#graphGradient)' />
+        </AreaChart>
 
         <div className='date-scale-options'>
           <button className='scale-option' value='day' onClick={changeDateScale}>Day</button>
           <button className='scale-option' value='week' onClick={changeDateScale}>Week</button>
           <button className='scale-option' value='month' onClick={changeDateScale}>Month</button>
           <button className='scale-option' value='year' onClick={changeDateScale}>Year</button>
-        </div>
+        A</div>
 
           <div className='row'>
             <h3 className='special-title'>Categories</h3>
