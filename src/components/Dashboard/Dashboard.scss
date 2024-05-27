@@ -8,6 +8,7 @@
     height: 100%;
     justify-content: center;
     align-items: center;
+    padding: 0 2rem;
 }
 
 .dashboard-container {
@@ -22,4 +23,17 @@
 
 .css-15f6tv6-MuiResponsiveChart-container {
     scale: 1;
+}
+
+.date-scale-options {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: flex-end;
+    width: 90%;
+}
+
+.scale-option {
+    border-radius: 2px;
+    padding: 4px;
 }

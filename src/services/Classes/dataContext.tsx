@@ -108,7 +108,7 @@ export function AppDataProvider({ children }: any){
                             <UserCategoriesDataContext.Provider value={ userCategories }>
                                 <SetUserCategoryDataContext.Provider value={ updateCategories }>
                                     <InitializeDataContext.Provider value={ initializeData }>
-                                        {children}
+                                            {children}
                                     </InitializeDataContext.Provider>
                                 </SetUserCategoryDataContext.Provider>
                             </UserCategoriesDataContext.Provider>

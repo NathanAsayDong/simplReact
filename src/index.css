@@ -35,6 +35,10 @@ body {
   padding: 0;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
@@ -42,7 +46,6 @@ h1 {
 }
 
 h2 {
-
   color: #ffffff;
 }
 
@@ -62,15 +65,16 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
   border-radius: 25px;
-  border: 1px solid #9FAFCA;
-  opacity: 0.5;
-  background: #FFF;
+  border: 1px solid #2c5364;
+  background: #2c5364;
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
-  color: black;
+  color: rgb(205 205 205);
 }
 
 button:hover {
   border-color: #9d9d9d;
+  color: white;
+
 }
 button:focus,
 button:focus-visible {
@@ -135,6 +139,7 @@ button:focus-visible {
   align-items: center;
   width: 100%;
   gap: 1em;
+  overflow: hidden;
 }
 
 .inner-row {

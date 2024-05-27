@@ -5,7 +5,8 @@ import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
 import { Account, Transaction } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
-import { getDatesFromTransactions, getFilteredAccounts, getFilteredTransactions } from './Dashboard.Service';
+import { scaleDate } from '../../services/Classes/formatService';
+import { getDatesFromTransactions, getFilteredAccounts, getFilteredTransactions, processTransactionsIntoNetValue } from './Dashboard.Service';
 import './Dashboard.scss';
 
 interface DashboardProps {
@@ -22,6 +23,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   //FILTERS:
   const [filterData, setFilterData] = useState<any>({'account': 'All', 'category': 'All'});
   const [dateRanges, setDateRanges] = useState<any>({startDate: null, endDate: null});
+  const [dateScale, setDateScale] = useState<any>('day');
 
   //GRAPH PARAMETERS:
   const customize = {
@@ -35,6 +37,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     stack: 'total',
     area: true,
     stackOffset: 'none',
+    connectNulls: true, //its possible i did this wrong, check later
   } as const;
 
   const series = [
@@ -68,12 +71,30 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       processTransactionsIntoCategories(transactions);
       initializeGraphData();
     }
-  }, [transactions, accounts, filterData, dateRanges])
+  }, [transactions, accounts, filterData, dateRanges, dateScale])
+
+  const changeDateScale = (event: any) => {
+    setDateScale(event.target.value);
+  }
+
+  const getDateFormat = () => {
+    switch (dateScale) {
+      case 'week':
+        return 'MM/DD/YYYY';
+      case 'month':
+        return 'MMM YYYY';
+      case 'year':
+        return 'YYYY';
+      default:
+        return 'MM/DD/YYYY';
+    }
+  };
 
   const initializeGraphData = async () => {
-    const dates: number[] = getDatesFromTransactions(transactions);
+    console.log('date scale', dateScale)
+    const dates: number[] = getDatesFromTransactions(transactions, dateScale);
     const filteredTransactions = getFilteredTransactions(transactions, filterData);
-    const filteredAccounts = getFilteredAccounts(accounts, filterData);
+    const filteredAccounts = getFilteredAccounts(accounts, filteredTransactions, filterData);
     const data: any[] = [];
 
     for (const account of filteredAccounts) {
@@ -84,12 +105,12 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     for (const date of dates) {
       let obj: any = { date };
       for (const account of data) {
-        const accountValue = account.amount.find((entry: any) => entry.date === date);
+        const accountValue = account.amount.find((entry: any) => scaleDate(entry.date, dateScale) === date);
         if (date == dates[0]) {
-          obj[account.account] = accountValue ? accountValue.netValue : account.amount[0].netValue;
+          obj[account.account] = accountValue ? accountValue?.netValue : account.amount[0]?.netValue;
         }
         else if (date == dates[dates.length - 1]) {
-          obj[account.account] = accountValue ? accountValue.netValue : account.amount[account.amount.length - 1].netValue;
+          obj[account.account] = accountValue ? accountValue?.netValue : account.amount[account.amount.length - 1]?.netValue;
         }
         else {
           if (!accountValue) {
@@ -102,7 +123,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
               i--;
             }
           } else {
-            obj[account.account] = accountValue.netValue;
+            obj[account.account] = accountValue?.netValue;
           }
         }
       }
@@ -115,6 +136,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       }
       organizedData[i].sum = sum;
     }
+    console.log('this is organized data', organizedData);
 
     if (dateRanges.startDate) {
       organizedData = organizedData.filter((entry) => entry.date >= dateRanges.startDate.toDate().getTime());
@@ -154,57 +176,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     });
     setCategoryData(data);
   }
-
-  const processTransactionsIntoNetValue = async (transactions: Transaction[], account: Account) => {
-      transactions = transactions.filter((transaction) => transaction.account === account.name);
-      const refStartDate = new Date(account.refDate).getTime();
-      const refBalance = account.refBalance;
-      const data: any[] = [];
-      const beforeTrns = transactions.filter((transaction) => transaction.timestamp < refStartDate);
-      const afterTrns = transactions.filter((transaction) => transaction.timestamp >= refStartDate);
-      let netValue = refBalance;
-      let i = 0;
-      let j = 0;
-      while (i < beforeTrns.length && j < afterTrns.length) {
-        if (beforeTrns[i].timestamp < afterTrns[j].timestamp) {
-          netValue += beforeTrns[i].amount;
-          data.push({ date: beforeTrns[i].timestamp, netValue });
-          i++;
-        } else {
-          netValue -= afterTrns[j].amount;
-          data.push({ date: afterTrns[j].timestamp, netValue });
-          j++;
-        }
-      }
-      while (i < beforeTrns.length) {
-        netValue += beforeTrns[i].amount;
-        data.push({ date: beforeTrns[i].timestamp, netValue });
-        i++;
-      }
-      while (j < afterTrns.length) {
-        netValue -= afterTrns[j].amount;
-        data.push({ date: afterTrns[j].timestamp, netValue });
-        j++;
-      }
-
-      const filteredData: any[] = [];
-      for (let i = 0; i < data.length; i++) {
-        const dateIndex = filteredData.findIndex((d) => d.date === data[i].date);
-        if (dateIndex === -1) {
-          filteredData.push(data[i]);
-        } else {
-          filteredData[dateIndex] = data[i];
-        }
-      }
-      for (let i = 0; i < filteredData.length; i++) {
-        const originalValue = filteredData[i].netValue;
-        filteredData[i].netValue = parseFloat(filteredData[i].netValue);
-        if (isNaN(filteredData[i].netValue)) {
-          console.log(`Invalid netValue at index ${i}: ${originalValue}`);
-        }
-      }
-      return { account: account.name, amount: filteredData };
-    }
 
   const handleFilterSelect = (event: any) => {
     setFilterData({ ...filterData, [event.target.name]: event.target.value });
@@ -280,13 +251,22 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
           sx={graphStyling}
           dataset={netValueByAccount}
           {...customize}
-            xAxis={[{dataKey: 'date', scaleType: 'time', label: 'Date'}]}
+            xAxis={[{dataKey: 'date',
+            scaleType: 'time',
+            label: 'Date',
+            valueFormatter: (value: any) => dayjs(value).format(getDateFormat())}]}
             series={series}
             tooltip={{ trigger: 'item' }}
+            
           />
         </div>
 
-          <div style={{margin: '5%'}}></div>
+        <div className='date-scale-options'>
+          <button className='scale-option' value='day' onClick={changeDateScale}>Day</button>
+          <button className='scale-option' value='week' onClick={changeDateScale}>Week</button>
+          <button className='scale-option' value='month' onClick={changeDateScale}>Month</button>
+          <button className='scale-option' value='year' onClick={changeDateScale}>Year</button>
+        </div>
 
           <div className='row'>
             <h3 className='special-title'>Categories</h3>
