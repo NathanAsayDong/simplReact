@@ -3,7 +3,7 @@ import { lineElementClasses } from '@mui/x-charts/LineChart';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
-import { Area, AreaChart } from 'recharts';
+import { Area, AreaChart, XAxis, YAxis } from 'recharts';
 import { Account, Transaction } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import { scaleDate } from '../../services/Classes/formatService';
@@ -160,6 +160,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       organizedData = organizedData.filter((entry) => entry.date <= dateRanges.endDate.toDate().getTime());
     }
 
+    console.log('organizedData', organizedData);
     setNetValueByAccount(organizedData);
     setNetValue(organizedData[organizedData.length - 1].sum);
   }
@@ -197,7 +198,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     transactions.forEach((transaction: Transaction) => {
       const accountIndex = data.findIndex((d) => d.name === transaction.account);
       let accountType = accounts.find((account) => account.name === transaction.account)?.type;
-      console.log('accountType', accountType);
       const amount = accountType === 'Credit' ? transaction.amount * -1 : transaction.amount;
       if (accountIndex === -1) {
         data.push({ name: transaction.account, amount: amount });
@@ -223,6 +223,10 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       setDateRanges((prev: any) => ({ ...prev, endDate: date }));
     }
   };
+
+  const dateFormatter = (value: any) => {
+    return dayjs(value).format(getDateFormat());
+  }
 
   return (
     <>
@@ -295,16 +299,23 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
           />
         </div> */}
 
-        <AreaChart width={730} height={250} data={netValueByAccount}>
-          <Area dataKey='sum' stroke='#2c5364' fill='url(#graphGradient)' />
-        </AreaChart>
+          <AreaChart width={1000} height={250} data={netValueByAccount} style={{padding: '10px'}}>
+            <Area dataKey='sum' stroke='#2c5364' fill='url(#graphGradient)'/>
+            <XAxis dataKey="date" tickFormatter={dateFormatter}
+            tick={{ fill: 'white' }} tickLine={{ stroke: 'white' }}
+            ></XAxis>
+            <YAxis 
+            tick={{ fill: 'white', fontSize: 12, width: 300 }} tickLine={{ stroke: 'white' }}
+            tickFormatter={(value) => `$${value.toFixed(2)}`}
+            />
+          </AreaChart>
 
         <div className='date-scale-options'>
           <button className='scale-option' value='day' onClick={changeDateScale}>Day</button>
           <button className='scale-option' value='week' onClick={changeDateScale}>Week</button>
           <button className='scale-option' value='month' onClick={changeDateScale}>Month</button>
           <button className='scale-option' value='year' onClick={changeDateScale}>Year</button>
-        A</div>
+        </div>
 
           <div className='row'>
             <h3 className='special-title'>Categories</h3>
