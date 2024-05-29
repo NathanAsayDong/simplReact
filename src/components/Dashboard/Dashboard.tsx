@@ -4,7 +4,7 @@ import { LinearProgress, MenuItem, Select } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Account, Transaction } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import { dateFormatPretty, scaleDate } from '../../services/Classes/formatService';
@@ -232,9 +232,9 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
           </div>
 
-        <div className='row'>
+        <div className='row' style={{marginTop: '10px'}}>
           <div className='graph-container'>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={500}>
               <AreaChart data={netValueByAccount}>
                 <Tooltip content={<CustomTooltip dateFormat={getDateFormat()}/>} />
                 <Area dataKey='sum' stroke='white' fill='url(#graphGradient)' type="monotone"/>
@@ -250,15 +250,25 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
             </ResponsiveContainer>
           </div>
 
-
+          <div className='pie-container'>
+            <ResponsiveContainer width="100%" height={500}>
+              <PieChart>
+                <Pie data={netValueByAccount} dataKey="sum" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
-        <div className='date-scale-options'>
-          <button className='scale-option' value='day' onClick={changeDateScale}>Day</button>
-          <button className='scale-option' value='week' onClick={changeDateScale}>Week</button>
-          <button className='scale-option' value='month' onClick={changeDateScale}>Month</button>
-          <button className='scale-option' value='year' onClick={changeDateScale}>Year</button>
+        <div className='row' style={{margin: '10px'}}>
+          <div className='date-scale-options'>
+            <button className='scale-option' value='day' onClick={changeDateScale}>Day</button>
+            <button className='scale-option' value='week' onClick={changeDateScale}>Week</button>
+            <button className='scale-option' value='month' onClick={changeDateScale}>Month</button>
+            <button className='scale-option' value='year' onClick={changeDateScale}>Year</button>
+          </div>
         </div>
+
+
 
           <div className='row'>
             <h3 className='special-title'>Categories</h3>
@@ -282,16 +292,16 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
             <h3 className='special-title'>Accounts</h3>
           </div>
 
-          <div className='container-transparent'>
+          <div className='swiper-row'>
             {accountData.map((account, index) => (
-              <div key={index} className='inner-row' style={{justifyContent: 'space-between'}}>
-                <div className='item'>
+              <div key={index} className='category-card'>
+                <div className='card-name archivo-font'>
                   <h3>{account.name}</h3>
                 </div>
-                <div className='item'>
-                  <h3>Difference:</h3>
-                  <h3>${(account.amount * -1).toFixed(2)}</h3>
+                <div className='card-amount roboto-light'>
+                  <p>${account.amount.toFixed(2) * -1}</p>
                 </div>
+                <FontAwesomeIcon icon={faEllipsis} className='card-more-dots'/>
               </div>
             ))}
           </div>

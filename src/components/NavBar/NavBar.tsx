@@ -1,4 +1,4 @@
-import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faGear } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -36,7 +36,7 @@ const NavBar: FC<NavBarProps> = () => {
 
             <Link to="/manage-transactions"><h2 className='nav-item'>Transactions</h2></Link>
 
-            <FontAwesomeIcon icon={faUser} className='account-icon' />
+            <FontAwesomeIcon icon={faGear} className='account-icon' />
         </div>
         )}
 
