@@ -14,6 +14,21 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.archivo-font {
+  font-family: "Archivo", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+
+.roboto-light {
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
 a {
   font-weight: 500;
   color: #a7a7a7;
@@ -49,9 +64,6 @@ h2 {
   color: #ffffff;
 }
 
-p {
-  color: #ffffff
-}
 
 input {
   background-color: white;
@@ -148,7 +160,6 @@ button:focus-visible {
   align-items: center;
   gap: 1em;
   width: 100%;
-  overflow: scroll;
 }
 
 .inner-row {

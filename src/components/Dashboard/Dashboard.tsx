@@ -1,3 +1,5 @@
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinearProgress, MenuItem, Select } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
@@ -264,13 +266,14 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
           <div className='swiper-row'>
             {categoryData.map((category, index) => (
-              <div key={index} className='category-card' style={{justifyContent: 'space-between'}}>
-                <div className='item'>
+              <div key={index} className='category-card'>
+                <div className='card-name archivo-font'>
                   <h3>{category.category}</h3>
                 </div>
-                <div className='item'>
-                  <h3>${category.amount * -1}</h3>
+                <div className='card-amount roboto-light'>
+                  <p>${category.amount * -1}</p>
                 </div>
+                <FontAwesomeIcon icon={faEllipsis} className='card-more-dots'/>
               </div>
             ))}
           </div>
