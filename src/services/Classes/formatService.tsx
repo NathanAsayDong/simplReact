@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const convertNumberToCurrency = (num: number): number => {
     return parseFloat(num.toFixed(2));
 }
@@ -21,4 +23,8 @@ export const scaleDate = (date: number, scale: string): number => {
         default:
             return date;
     }
+}
+
+export const dateFormatPretty = (value: any, dateFormat: string) => {
+    return dayjs(value).format(dateFormat);
 }

@@ -11,9 +11,10 @@
     padding: 0 2rem;
 }
 
-.dashboard-container {
-    justify-content: center;
-    width: 100%;
+.graph-container {
+    width: 60%;
+    border: 3px solid white;
+    border-radius: 10px;
 }
 
 .filters {
@@ -34,18 +35,22 @@
     padding: 4px;
 }
 
-
-
-.css-15f6tv6-MuiResponsiveChart-container {
-    scale: 1;
-}
-
-.MuiChartsSurface-root{
-    padding: 5px;
-    color: white;
-}
-
-.MuiChartsAxis-tickLabel {
-    color: white;
-    fill: white;
+.category-card {
+    box-shadow: inset 0px 0px 12px 1px #2c5364;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    padding: 1% 5% 1% 5%;
+    gap: 5%;
+    transition: all 0.3s ease;
+    width: 5rem;
+    height: 8rem;
+    background: #FFF;
+    color: black;
+    overflow: hidden;
+    &:hover {
+        transform: scale(1.005);
+    }
 }

@@ -1,12 +1,11 @@
 import { LinearProgress, MenuItem, Select } from '@mui/material';
-import { lineElementClasses } from '@mui/x-charts/LineChart';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
-import { Area, AreaChart, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Account, Transaction } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
-import { scaleDate } from '../../services/Classes/formatService';
+import { dateFormatPretty, scaleDate } from '../../services/Classes/formatService';
 import { getDatesFromTransactions, getFilteredAccounts, getFilteredTransactions, processTransactionsIntoNetValue } from './Dashboard.Service';
 import './Dashboard.scss';
 
@@ -27,52 +26,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const [dateRanges, setDateRanges] = useState<any>({startDate: null, endDate: null});
   const [dateScale, setDateScale] = useState<any>('day');
 
-  //GRAPH PARAMETERS:
-  const customize = {
-    height: 300,
-    legend: { hidden: true },
-    stackingOrder: 'descending',
-  };
-
-  const stackStrategy = {
-    stack: 'total',
-    area: true,
-    stackOffset: 'none',
-    connectNulls: true, //its possible i did this wrong, check later
-  } as const;
-
-  const series = [
-    {
-      dataKey: 'sum',
-      label: 'Net Value',
-      stackId: 'sum',
-      id: 'sum',
-      color: '#2c5364',
-      valueFormatter: (value: any) => `$${value.toFixed(2)}`,
-      ...stackStrategy,
-    },
-  ]
-
-  const graphStyling = {
-      [`& .${lineElementClasses.root}`]: {
-        stroke: 'white',
-        strokeWidth: 2,
-        '&.MuiChartsLineElement-highlighted': {
-          stroke: 'white',
-          strokeWidth: 3,
-        },
-        '&.MuiChartsLineElement-faded': {
-          stroke: 'white',
-          strokeWidth: 1,
-        },
-      },
-      '& .MuiAreaElement-series-sum': {
-        fill: 'url(#graphGradient)',
-      },
-      '& .MuiChartsAxis-tickLabel': {
-        fill: 'white !important',
-      }
-  }
 
   const filterStyling = {
     border: '1px solid white',
@@ -224,17 +177,13 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     }
   };
 
-  const dateFormatter = (value: any) => {
-    return dayjs(value).format(getDateFormat());
-  }
-
   return (
     <>
       {netValueByAccount.length === 0 ? <LinearProgress color="inherit" /> : null}
 
       <div className='dashboard'>
           <div className='row'>
-            <h3 className='special-title'>Total Net Value: {netValue}</h3>
+            <h3 className='special-title'>Net Value: ${netValue.toFixed(2)}</h3>
 
             <div className='filters'>
               <DatePicker
@@ -281,34 +230,26 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
           </div>
 
-        {/* <div style={{width: '100%'}}>
-          <LineChart
-          sx={graphStyling}
-          dataset={netValueByAccount}
-          {...customize}
-          series={series}
-          tooltip={{ trigger: 'item' }}
-          xAxis={[{dataKey: 'date',
-          scaleType: 'time',
-          label: 'Date',
-          valueFormatter: (value: any) => dayjs(value).format(getDateFormat())
-          }]}
-          yAxis={[{
-              valueFormatter: (value: any) => `$${value.toFixed(2)}`, 
-          }]}
-          />
-        </div> */}
+        <div className='row'>
+          <div className='graph-container'>
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={netValueByAccount}>
+                <Tooltip content={<CustomTooltip dateFormat={getDateFormat()}/>} />
+                <Area dataKey='sum' stroke='white' fill='url(#graphGradient)' type="monotone"/>
+                <XAxis dataKey="date" tickFormatter={(value) => dateFormatPretty(value, getDateFormat())}
+                tick={{ fill: 'white' }} tickLine={{ stroke: 'white' }}
+                ></XAxis>
+                <YAxis
+                tick={{ fill: 'white', fontSize: 12, width: 300 }} tickLine={{ stroke: 'white' }}
+                tickFormatter={(value) => `$${value.toFixed(2)}`}
+                orientation='right'
+                ></YAxis>
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
 
-          <AreaChart width={1000} height={250} data={netValueByAccount} style={{padding: '10px'}}>
-            <Area dataKey='sum' stroke='#2c5364' fill='url(#graphGradient)'/>
-            <XAxis dataKey="date" tickFormatter={dateFormatter}
-            tick={{ fill: 'white' }} tickLine={{ stroke: 'white' }}
-            ></XAxis>
-            <YAxis 
-            tick={{ fill: 'white', fontSize: 12, width: 300 }} tickLine={{ stroke: 'white' }}
-            tickFormatter={(value) => `$${value.toFixed(2)}`}
-            />
-          </AreaChart>
+
+        </div>
 
         <div className='date-scale-options'>
           <button className='scale-option' value='day' onClick={changeDateScale}>Day</button>
@@ -321,15 +262,13 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
             <h3 className='special-title'>Categories</h3>
           </div>
 
-          <div className='container-transparent'>
+          <div className='swiper-row'>
             {categoryData.map((category, index) => (
-              <div key={index} className='inner-row' style={{justifyContent: 'space-between'}}>
+              <div key={index} className='category-card' style={{justifyContent: 'space-between'}}>
                 <div className='item'>
-                  <h3>Category:</h3>
                   <h3>{category.category}</h3>
                 </div>
                 <div className='item'>
-                  <h3>Amount:</h3>
                   <h3>${category.amount * -1}</h3>
                 </div>
               </div>
@@ -371,6 +310,20 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       </svg>
     </>
   );
+};
+
+const CustomTooltip = ({ active, payload, label, dateFormat }: any) => {
+  if (active && payload && payload.length) {
+    const formattedDate = dateFormatPretty(label, dateFormat);
+    return (
+      <div className="custom-tooltip">
+        <p className="label">{`Date : ${formattedDate}`}</p>
+        <p className="intro">{`Value : $${payload[0].value.toFixed(2)}`}</p>
+      </div>
+    );
+  }
+
+  return null;
 };
 
 export default Dashboard;

@@ -142,14 +142,22 @@ button:focus-visible {
   overflow: hidden;
 }
 
-.inner-row {
-  box-shadow: inset 0px 0px 12px 1px #2c5364;
-  border-radius: 20px;
+.swiper-row {
   display: flex;
   justify-content: start;
   align-items: center;
-  padding-left: 5%;
-  padding-right: 5%;
+  gap: 1em;
+  width: 100%;
+  overflow: scroll;
+}
+
+.inner-row {
+  box-shadow: inset 0px 0px 12px 1px #2c5364;
+  border-radius: 10px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  padding: 1% 5% 1% 5%;
   gap: 5%;
   transition: all 0.3s ease;
   width: 88%;
@@ -162,12 +170,11 @@ button:focus-visible {
 
 .inner-row-transparent {
   box-shadow: inset 0px 0px 12px 1px #2c5364;
-  border-radius: 20px;
+  border-radius: 10px;
   display: flex;
   justify-content: start;
   align-items: center;
-  padding-left: 5%;
-  padding-right: 5%;
+  padding: 1% 5% 1% 5%;
   gap: 5%;
   transition: all 0.3s ease;
   width: 88%;
