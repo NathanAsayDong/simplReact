@@ -1,11 +1,12 @@
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { LinearProgress, MenuItem, Select } from '@mui/material';
+import { LinearProgress, MenuItem, Modal, Select } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
 import { Area, AreaChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Account, Transaction } from '../../services/Classes/classes';
+import { DashboardConfig } from '../../modals/DashboardConfig/DasboardConfig';
+import { Account, DashboardFilterData, Transaction } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import { dateFormatPretty, scaleDate } from '../../services/Classes/formatService';
 import { getDatesFromTransactions, getFilteredAccounts, getFilteredTransactions, processTransactionsIntoNetValue } from './Dashboard.Service';
@@ -22,11 +23,19 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const [accountData, setAccountData] = useState<any[]>([]);
   const [netValue, setNetValue] = useState<number>(0);
   const [netValueByAccount, setNetValueByAccount] = useState<any[]>([]);
+  const [showConfigModal, setShowConfigModal] = useState<boolean>(false);
 
   //FILTERS:
   const [filterData, setFilterData] = useState<any>({'account': 'All', 'category': 'All'});
   const [dateRanges, setDateRanges] = useState<any>({startDate: null, endDate: null});
   const [dateScale, setDateScale] = useState<any>('day');
+
+  const [dashboardFilterData, setDashboardFilterData] = useState<DashboardFilterData>(new DashboardFilterData(['All'], ['All'], dayjs().subtract(7, 'day').unix(), dayjs().unix(), 'day', ['All'], ['All']));
+
+  const test = async () => {
+    console.log('Testing');
+    console.log('api url', __API_URL__);
+  };
 
 
   const filterStyling = {
@@ -38,7 +47,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   useEffect(() => {
     if (transactions.length > 0 && accounts.length > 0) {
-      console.log('transactions', transactions);
       processTransactionsIntoCategories(transactions);
       processTransactionsIntoAccounts(transactions, accounts);
       initializeGraphData();
@@ -120,12 +128,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     setNetValue(organizedData[organizedData.length - 1].sum);
   }
 
-
-  const test = async () => {
-    console.log('Testing');
-    console.log('api url', __API_URL__);
-  };
-
   const processTransactionsIntoCategories = (transactions: Transaction[]) => {
     const data: any[] = [];
     transactions = transactions.filter((transaction) => {
@@ -146,6 +148,24 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       }
     });
     setCategoryData(data);
+    data.forEach((category) => {
+      if (!dashboardFilterData.categoryOptions.includes(category.category)) {
+        dashboardFilterData.categoryOptions.push(category.category);
+      }
+    });
+  }
+
+  const categoryDataToPositivesOnly = (categoryData: any[]) => {
+    const data: any[] = [];
+    categoryData.forEach((category) => {
+      if (category.amount < 0) {
+        data.push({ category: category.category, amount: category.amount * -1 });
+      }
+      else {
+        data.push(category);
+      }
+    });
+    return data;
   }
 
   const processTransactionsIntoAccounts = (transactions: Transaction[], accounts: Account[]) => {
@@ -161,6 +181,11 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       }
     });
     setAccountData(data);
+    data.forEach((account) => {
+      if (!dashboardFilterData.accountOptions.includes(account.name)) {
+        dashboardFilterData.accountOptions.push(account.name);
+      }
+    });
   }
 
   const handleFilterSelect = (event: any) => {
@@ -188,6 +213,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
             <h3 className='special-title'>Net Value: ${netValue.toFixed(2)}</h3>
 
             <div className='filters'>
+              <button onClick={() => setShowConfigModal(true)}>OPEN MODAL</button>
               <DatePicker
                 label="Start Date"
                 value={dateRanges.startDate}
@@ -234,16 +260,16 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
         <div className='row' style={{marginTop: '10px'}}>
           <div className='graph-container'>
-            <ResponsiveContainer width="100%" height={500}>
+            <ResponsiveContainer width="100%" height={500} style={{scale: '1.01'}}>
               <AreaChart data={netValueByAccount}>
                 <Tooltip content={<CustomTooltip dateFormat={getDateFormat()}/>} />
-                <Area dataKey='sum' stroke='white' fill='url(#graphGradient)' type="monotone"/>
+                <Area dataKey='sum' stroke='white' fill='none'  type="monotone" />
                 <XAxis dataKey="date" tickFormatter={(value) => dateFormatPretty(value, getDateFormat())}
-                tick={{ fill: 'white' }} tickLine={{ stroke: 'white' }}
+                tick={{ fill: 'white' }} tickLine={{ stroke: 'none' }} mirror={true} stroke='none'
                 ></XAxis>
                 <YAxis
-                tick={{ fill: 'white', fontSize: 12, width: 300 }} tickLine={{ stroke: 'white' }}
-                tickFormatter={(value) => `$${value.toFixed(2)}`}
+                tick={{ fill: 'white', fontSize: 12, width: 300 }} tickLine={{ stroke: 'none' }}
+                tickFormatter={(value) => `$${value.toFixed(2)}`} mirror={true} stroke='none'
                 orientation='right'
                 ></YAxis>
               </AreaChart>
@@ -252,14 +278,14 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
           <div className='pie-container'>
             <ResponsiveContainer width="100%" height={500}>
-              <PieChart>
-                <Pie data={netValueByAccount} dataKey="sum" nameKey="name" cx="50%" cy="50%" outerRadius={50} fill="#8884d8" />
+              <PieChart >
+                <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="#8884d8" />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className='row' style={{margin: '10px'}}>
+        <div className='row'>
           <div className='date-scale-options'>
             <button className='scale-option' value='day' onClick={changeDateScale}>Day</button>
             <button className='scale-option' value='week' onClick={changeDateScale}>Week</button>
@@ -312,6 +338,19 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
         <button onClick={handleLogout}>Logout</button>
         <button onClick={test}>TEST</button>
+
+
+      {/* --------------------------------------- CONFIG ITEMS --------------------------------------- */}
+
+
+      <Modal
+        open={showConfigModal}
+        onClose={() => setShowConfigModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <DashboardConfig filterObject={dashboardFilterData} />
+      </Modal>
 
       <svg style={{ height: 0 }}>
         <defs>

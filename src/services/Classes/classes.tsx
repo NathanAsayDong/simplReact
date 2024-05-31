@@ -54,3 +54,23 @@ export class Account {
         return this.source;
     }
 }
+
+export class DashboardFilterData {
+    selectedAccounts: string[];
+    selectedCategories: string[];
+    startDate: number | null;
+    endDate: number | null;
+    areaChartDateScale: 'day' | 'week' | 'month' | 'year';
+    accountOptions: string[];
+    categoryOptions: string[];
+
+    constructor(selectedAccounts: string[], selectedCategories: string[], startDate: number, endDate: number, areaChartDateScale: 'day' | 'week' | 'month' | 'year', accountOptions: string[], categoryOptions: string[]) {
+        this.selectedAccounts = selectedAccounts;
+        this.selectedCategories = selectedCategories;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.areaChartDateScale = areaChartDateScale;
+        this.accountOptions = accountOptions;
+        this.categoryOptions = categoryOptions;
+    }
+}

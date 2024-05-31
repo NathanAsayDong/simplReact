@@ -60,11 +60,6 @@ h1 {
   color: #ffffff;
 }
 
-h2 {
-  color: #ffffff;
-}
-
-
 input {
   background-color: white;
 }
@@ -150,7 +145,6 @@ button:focus-visible {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  gap: 1em;
   overflow: hidden;
 }
 
@@ -159,7 +153,7 @@ button:focus-visible {
   justify-content: start;
   align-items: center;
   gap: 1em;
-  width: 100%;
+  width: 95%;
 }
 
 .inner-row {
