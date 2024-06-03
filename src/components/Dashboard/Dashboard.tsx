@@ -1,12 +1,11 @@
-import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis, faGear } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { LinearProgress, MenuItem, Modal, Select } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LinearProgress, Modal } from '@mui/material';
 import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
 import { Area, AreaChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { DashboardConfig } from '../../modals/DashboardConfig/DasboardConfig';
-import { Account, DashboardFilterData, Transaction } from '../../services/Classes/classes';
+import { Account, DashboardFilterData, Transaction, defaultDashboardFilterData } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import { dateFormatPretty, scaleDate } from '../../services/Classes/formatService';
 import { getDatesFromTransactions, getFilteredAccounts, getFilteredTransactions, processTransactionsIntoNetValue } from './Dashboard.Service';
@@ -26,24 +25,13 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false);
 
   //FILTERS:
-  const [filterData, setFilterData] = useState<any>({'account': 'All', 'category': 'All'});
-  const [dateRanges, setDateRanges] = useState<any>({startDate: null, endDate: null});
   const [dateScale, setDateScale] = useState<any>('day');
-
-  const [dashboardFilterData, setDashboardFilterData] = useState<DashboardFilterData>(new DashboardFilterData(['All'], ['All'], dayjs().subtract(7, 'day').unix(), dayjs().unix(), 'day', ['All'], ['All']));
+  const [dashboardFilterData, setDashboardFilterData] = useState<DashboardFilterData>(defaultDashboardFilterData);
 
   const test = async () => {
     console.log('Testing');
     console.log('api url', __API_URL__);
   };
-
-
-  const filterStyling = {
-    border: '1px solid white',
-    borderRadius: '5px',
-    color: 'white',
-    padding: '0px',
-  }
 
   useEffect(() => {
     if (transactions.length > 0 && accounts.length > 0) {
@@ -51,7 +39,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       processTransactionsIntoAccounts(transactions, accounts);
       initializeGraphData();
     }
-  }, [transactions, accounts, filterData, dateRanges, dateScale])
+  }, [transactions, accounts, dateScale, dashboardFilterData])
 
   const changeDateScale = (event: any) => {
     setDateScale(event.target.value);
@@ -72,13 +60,14 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   const initializeGraphData = async () => {
     const dates: number[] = getDatesFromTransactions(transactions, dateScale);
-    const filteredTransactions = getFilteredTransactions(transactions, filterData);
-    const filteredAccounts = getFilteredAccounts(accounts, filteredTransactions, filterData);
+    const filteredTransactions = getFilteredTransactions(transactions, dashboardFilterData);
+    const filteredAccounts = getFilteredAccounts(accounts, filteredTransactions, dashboardFilterData);
     const data: any[] = [];
 
     for (const account of filteredAccounts) {
       data.push(await processTransactionsIntoNetValue(filteredTransactions, account));
     }
+    console.log('data', data);
 
     let  organizedData: any[] = [];
     for (const date of dates) {
@@ -116,11 +105,13 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       organizedData[i].sum = sum;
     }
 
-    if (dateRanges.startDate) {
-      organizedData = organizedData.filter((entry) => entry.date >= dateRanges.startDate.toDate().getTime());
+    if (dashboardFilterData.startDate !== null && dashboardFilterData.startDate !== undefined) {
+      organizedData = organizedData.filter((entry) => {
+        return dayjs(entry.date).unix() >= dayjs(dashboardFilterData.startDate).unix()!
+      });
     }
-    if (dateRanges.endDate) {
-      organizedData = organizedData.filter((entry) => entry.date <= dateRanges.endDate.toDate().getTime());
+    if (dashboardFilterData.endDate !== null && dashboardFilterData.endDate !== undefined) {
+      organizedData = organizedData.filter((entry) => { return dayjs(entry.date).unix() <= dayjs(dashboardFilterData.endDate!).unix() });
     }
 
     console.log('organizedData', organizedData);
@@ -131,11 +122,11 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const processTransactionsIntoCategories = (transactions: Transaction[]) => {
     const data: any[] = [];
     transactions = transactions.filter((transaction) => {
-      if (filterData.account !== 'All') {
-        return transaction.account === filterData.account;
+      if (!dashboardFilterData.selectedAccounts.includes('All')) {
+        return dashboardFilterData.selectedAccounts.includes(transaction.account);
       }
-      if (filterData.category !== 'All') {
-        return transaction.category === filterData.category;
+      if (!dashboardFilterData.selectedCategories.includes('All')) {
+        return dashboardFilterData.selectedCategories.includes(transaction.category);
       }
       return true;
     });
@@ -188,20 +179,11 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     });
   }
 
-  const handleFilterSelect = (event: any) => {
-    setFilterData({ ...filterData, [event.target.name]: event.target.value });
-  }
-
-  const handleStartDateSelect = (date: any) => {
-    if (date && dayjs(date).isValid()) {
-      setDateRanges((prev: any) => ({ ...prev, startDate: date }));
-    }
-  };
-
-  const handleEndDateSelect = (date: any) => {
-    if (date && dayjs(date).isValid()) {
-      setDateRanges((prev: any) => ({ ...prev, endDate: date }));
-    }
+  const handleOpenConfigModal = () => setShowConfigModal(true);
+  const handleCloseConfigModal = () => setShowConfigModal(false);
+  const handleApplyConfigModal = (newFilter: DashboardFilterData) => {
+    setDashboardFilterData(newFilter);
+    setShowConfigModal(false);
   };
 
   return (
@@ -213,52 +195,12 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
             <h3 className='special-title'>Net Value: ${netValue.toFixed(2)}</h3>
 
             <div className='filters'>
-              <button onClick={() => setShowConfigModal(true)}>OPEN MODAL</button>
-              <DatePicker
-                label="Start Date"
-                value={dateRanges.startDate}
-                onChange={handleStartDateSelect}
-                sx={filterStyling}
-              />
-              <DatePicker
-                label="End Date"
-                value={dateRanges.endDate}
-                onChange={handleEndDateSelect}
-                sx={filterStyling}
-              />
-              <Select
-                labelId="account-select"
-                id="account-select"
-                name='account'
-                value={filterData.account}
-                label="Account"
-                onChange={handleFilterSelect}
-                sx={filterStyling}
-              >
-                <MenuItem value='All'>All</MenuItem>
-                {accounts.map((account: Account, index: any) => (
-                  <MenuItem key={index} value={account.name}>{account.name}</MenuItem>
-                ))}
-              </Select>
-              <Select
-                labelId="category-select"
-                id="category-select"
-                name='category'
-                value={filterData.category}
-                label="Category"
-                onChange={handleFilterSelect}
-                sx={filterStyling}
-              >
-                <MenuItem value='All'>All</MenuItem>
-                {categoryData.map((category: any, index: any) => (
-                  <MenuItem key={index} value={category.category}>{category.category}</MenuItem>
-                ))}
-              </Select>
+              <FontAwesomeIcon icon={faGear} className='icon' onClick={handleOpenConfigModal}/>
             </div>
 
           </div>
 
-        <div className='row' style={{marginTop: '10px'}}>
+        <div className='row'>
           <div className='graph-container'>
             <ResponsiveContainer width="100%" height={500} style={{scale: '1.01'}}>
               <AreaChart data={netValueByAccount}>
@@ -280,6 +222,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
             <ResponsiveContainer width="100%" height={500}>
               <PieChart >
                 <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="#8884d8" />
+                <Tooltip content={<CustomTooltip dateFormat={getDateFormat()}/>} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -294,8 +237,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
           </div>
         </div>
 
-
-
           <div className='row'>
             <h3 className='special-title'>Categories</h3>
           </div>
@@ -307,7 +248,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
                   <h3>{category.category}</h3>
                 </div>
                 <div className='card-amount roboto-light'>
-                  <p>${category.amount * -1}</p>
+                  <p>${category.amount.toFixed(2) * -1}</p>
                 </div>
                 <FontAwesomeIcon icon={faEllipsis} className='card-more-dots'/>
               </div>
@@ -345,11 +286,11 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
       <Modal
         open={showConfigModal}
-        onClose={() => setShowConfigModal(false)}
+        // onClose={handleConfigModalClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <DashboardConfig filterObject={dashboardFilterData} />
+        <DashboardConfig filterObject={dashboardFilterData} onClose={handleCloseConfigModal} onApply={handleApplyConfigModal}/>
       </Modal>
 
       <svg style={{ height: 0 }}>

@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export class Transaction {
     id: number;
     timestamp: number;
@@ -58,13 +60,15 @@ export class Account {
 export class DashboardFilterData {
     selectedAccounts: string[];
     selectedCategories: string[];
-    startDate: number | null;
-    endDate: number | null;
+    startDate: Date | null | undefined;
+    endDate: Date | null | undefined;
     areaChartDateScale: 'day' | 'week' | 'month' | 'year';
     accountOptions: string[];
     categoryOptions: string[];
+    lineChartMode: 'netValue' | 'category' | 'account';
+    pieChartMode: 'category' | 'account';
 
-    constructor(selectedAccounts: string[], selectedCategories: string[], startDate: number, endDate: number, areaChartDateScale: 'day' | 'week' | 'month' | 'year', accountOptions: string[], categoryOptions: string[]) {
+    constructor(selectedAccounts: string[], selectedCategories: string[], startDate: Date, endDate: Date, areaChartDateScale: 'day' | 'week' | 'month' | 'year', accountOptions: string[], categoryOptions: string[], lineChartMode: 'netValue' | 'category' | 'account', pieChartMode: 'category' | 'account') {
         this.selectedAccounts = selectedAccounts;
         this.selectedCategories = selectedCategories;
         this.startDate = startDate;
@@ -72,5 +76,9 @@ export class DashboardFilterData {
         this.areaChartDateScale = areaChartDateScale;
         this.accountOptions = accountOptions;
         this.categoryOptions = categoryOptions;
+        this.lineChartMode = lineChartMode;
+        this.pieChartMode = pieChartMode;
     }
 }
+
+export const defaultDashboardFilterData = new DashboardFilterData(['All'], ['All'], dayjs().subtract(7, 'day').toDate(), dayjs().toDate(), 'day', ['All'], ['All'], 'netValue', 'category');

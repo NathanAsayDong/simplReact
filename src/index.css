@@ -154,6 +154,8 @@ button:focus-visible {
   align-items: center;
   gap: 1em;
   width: 95%;
+  overflow: scroll;
+  padding: 10px;
 }
 
 .inner-row {
@@ -219,6 +221,32 @@ button:focus-visible {
 
   &:hover {
       transform: scale(1.2);
+      text-shadow: 0 0 5px rgb(255, 255, 255);
+  }
+}
+
+.confirm-button {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgb(79, 168, 79);
+  border: 1px solid rgb(79, 168, 79);
+  color: white;
+
+  &:hover {
+      transform: scale(1.02);
+      text-shadow: 0 0 5px rgb(255, 255, 255);
+  }
+}
+
+.cancel-button {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgb(172 172 172);
+  border: 1px solid rgb(172 172 172);
+  color: white;
+
+  &:hover {
+      transform: scale(1.02);
       text-shadow: 0 0 5px rgb(255, 255, 255);
   }
 }
