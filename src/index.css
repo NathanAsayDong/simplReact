@@ -154,8 +154,15 @@ button:focus-visible {
   align-items: center;
   gap: 1em;
   width: 95%;
-  overflow: scroll;
+  overflow-x: scroll;
+  scrollbar-color: white;
   padding: 10px;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    background: transparent;
+  }
 }
 
 .inner-row {

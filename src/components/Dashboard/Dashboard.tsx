@@ -200,12 +200,12 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
           </div>
 
-        <div className='row'>
+        <div className='row' style={{gap: '10px', padding: '10px'}}>
           <div className='graph-container'>
             <ResponsiveContainer width="100%" height={500} style={{scale: '1.01'}}>
               <AreaChart data={netValueByAccount}>
                 <Tooltip content={<CustomTooltip dateFormat={getDateFormat()}/>} />
-                <Area dataKey='sum' stroke='white' fill='none'  type="monotone" />
+                <Area dataKey='sum' stroke='white' strokeWidth={2} fill='url(#graphGradient)'  type="monotone" />
                 <XAxis dataKey="date" tickFormatter={(value) => dateFormatPretty(value, getDateFormat())}
                 tick={{ fill: 'white' }} tickLine={{ stroke: 'none' }} mirror={true} stroke='none'
                 ></XAxis>
@@ -219,9 +219,9 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
           </div>
 
           <div className='pie-container'>
-            <ResponsiveContainer width="100%" height={500}>
+            <ResponsiveContainer width="100%" height={500} style={{scale: '1.11'}}>
               <PieChart >
-                <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="#8884d8" />
+                <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="url(#graphGradient2)" />
                 <Tooltip content={<CustomTooltip dateFormat={getDateFormat()}/>} />
               </PieChart>
             </ResponsiveContainer>
@@ -296,8 +296,12 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       <svg style={{ height: 0 }}>
         <defs>
         <linearGradient id="graphGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" style={{ stopColor: 'white', stopOpacity: 1 }} />
-          <stop offset="100%" style={{ stopColor: '#2c5364', stopOpacity: 1 }} />
+          <stop offset="0%" style={{ stopColor: 'white', stopOpacity: 0 }} />
+          <stop offset="100%" style={{ stopColor: 'white', stopOpacity: 1 }} />
+        </linearGradient>
+        <linearGradient id="graphGradient2" x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" style={{ stopColor: 'white', stopOpacity: 0 }} />
+          <stop offset="100%" style={{ stopColor: 'white', stopOpacity: .7 }} />
         </linearGradient>
         </defs>
       </svg>
