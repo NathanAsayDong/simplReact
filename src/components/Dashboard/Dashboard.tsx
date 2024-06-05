@@ -16,13 +16,15 @@ interface DashboardProps {
 }
 
 const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
-  const transactions = TransactionData() || [];
-  const accounts = UserAccountsData() || [];
-  const [categoryData, setCategoryData] = useState<any[]>([]);
-  const [accountData, setAccountData] = useState<any[]>([]);
-  const [netValue, setNetValue] = useState<number>(0);
-  const [netValueByAccount, setNetValueByAccount] = useState<any[]>([]);
-  const [showConfigModal, setShowConfigModal] = useState<boolean>(false);
+
+  //VARIABLES:
+  const transactions = TransactionData() || []; //context transactions
+  const accounts = UserAccountsData() || []; //context accounts
+  const [categoryData, setCategoryData] = useState<any[]>([]); //processed transactions into categories
+  const [accountData, setAccountData] = useState<any[]>([]); //processed transactions into accounts
+  const [netValue, setNetValue] = useState<number>(0); //some number we use for net value when processing transactions to accounts
+  const [netValueByAccount, setNetValueByAccount] = useState<any[]>([]); //graph date for accounts {date, account^n, sum}
+  const [showConfigModal, setShowConfigModal] = useState<boolean>(false); //config modal object that we use for filtering, modes, and sorting
 
   //FILTERS:
   const [dateScale, setDateScale] = useState<any>('day');
@@ -204,7 +206,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
           <div className='graph-container'>
             <ResponsiveContainer width="100%" height={500} style={{scale: '1.01'}}>
               <AreaChart data={netValueByAccount}>
-                <Tooltip content={<CustomTooltip dateFormat={getDateFormat()}/>} />
+                <Tooltip content={<CustomTooltipArea dateFormat={getDateFormat()}/>} />
                 <Area dataKey='sum' stroke='white' strokeWidth={2} fill='url(#graphGradient)'  type="monotone" />
                 <XAxis dataKey="date" tickFormatter={(value) => dateFormatPretty(value, getDateFormat())}
                 tick={{ fill: 'white' }} tickLine={{ stroke: 'none' }} mirror={true} stroke='none'
@@ -221,8 +223,8 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
           <div className='pie-container'>
             <ResponsiveContainer width="100%" height={500} style={{scale: '1.11'}}>
               <PieChart >
-                <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="url(#graphGradient2)" />
-                <Tooltip content={<CustomTooltip dateFormat={getDateFormat()}/>} />
+                <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="url(#graphGradient2)" label/>
+                <Tooltip content={<CustomTooltipPie />} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -286,7 +288,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
       <Modal
         open={showConfigModal}
-        // onClose={handleConfigModalClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -309,17 +310,42 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   );
 };
 
-const CustomTooltip = ({ active, payload, label, dateFormat }: any) => {
+const CustomTooltipArea = ({ active, payload, label, dateFormat }: any) => {
   if (active && payload && payload.length) {
     const formattedDate = dateFormatPretty(label, dateFormat);
     return (
-      <div className="custom-tooltip">
-        <p className="label">{`Date : ${formattedDate}`}</p>
-        <p className="intro">{`Value : $${payload[0].value.toFixed(2)}`}</p>
+      <div className="box">
+        <div className='content'>
+          <p className='archivo-font-bold'>Date: </p>
+          <p>{formattedDate}</p>
+        </div>
+        <div className='content'>
+          <p className='archivo-font-bold'>Value: </p>
+          <p>${payload[0].value.toFixed(2)}</p>
+        </div>
       </div>
     );
   }
+  return null;
+};
 
+const CustomTooltipPie = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    console.log('payload', payload);
+    console.log('label', label);
+    return (
+      <div className="box">
+        <div className='content'>
+          <p className='archivo-font-bold'>Label: </p>
+          <p>{payload[0].name}</p>
+        </div>
+        <div className='content'>
+          <p className='archivo-font-bold'>Value: </p>
+          <p>${payload[0].value.toFixed(2)}</p>
+        </div>
+      </div>
+    );
+  }
   return null;
 };
 
