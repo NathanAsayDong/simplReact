@@ -131,55 +131,55 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
         </div>
       </div>
 
-        <div className='container'>
-          <div className='row'>
-            <h2 className='section-header'>Accounts</h2>
-          </div>
-          {filteredTransactions.length == 0 ? (
-              <div className='loading'>Loading...</div>
-            ) : (
-              filteredTransactions.map((transaction: Transaction, index: any) => (
-                <div key={index} className='account-row'>
+      <div className='row'>
+            <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Transactions</h3>
+      </div>
+      <div className='container'>
+        {filteredTransactions.length == 0 ? (
+            <div className='loading'>Loading...</div>
+          ) : (
+            filteredTransactions.map((transaction: Transaction, index: any) => (
+              <div key={index} className='transaction-row'>
 
-                  <div className='item' style={{width: '24%'}}>
-                    <h3>Description:</h3>
-                    <h3>{transaction.description}</h3>
-                  </div>
-
-                  <div className='item'>
-                    <h3>Amount:</h3>
-                    <h3>{transaction.amount}</h3>
-                  </div>
-
-                  <div className='item' style={{width: '24%'}}>
-                    <h3>Category:</h3>
-                    <select onChange={(event) => handleNewCategoryChange(transaction.id, event)}>
-                        <option value="none">{transaction.category}</option>
-                        {categories.map((category: any, index: any) => (
-                          <option key={index} value={category}>{category}</option>
-                        ))}
-                      </select>
-                  </div>
-
-                  <div className='item'>
-                    <h3>Timestamp:</h3>
-                    <h3>{new Date(transaction.timestamp).toLocaleDateString()}</h3>
-                  </div>
-
-
-                  <div className='item'>
-                    <h3>Account:</h3>
-                    <h3>{transaction.account}</h3>
-                  </div>
-
-                  <div className='item' style={{marginRight: '5%', marginLeft: 'auto'}}>
-                    <button className='special-button' onClick={() => updateCategory(transaction.id)}>Update Category</button>
-                  </div>
-
+                <div className='item' style={{width: '24%', marginLeft: '5%'}}>
+                  <h3>Description:</h3>
+                  <h3>{transaction.description}</h3>
                 </div>
-              ))
-            )}
-        </div>
+
+                <div className='item'>
+                  <h3>Amount:</h3>
+                  <h3>{transaction.amount}</h3>
+                </div>
+
+                <div className='item' style={{width: '24%'}}>
+                  <h3>Category:</h3>
+                  <select onChange={(event) => handleNewCategoryChange(transaction.id, event)}>
+                      <option value="none">{transaction.category}</option>
+                      {categories.map((category: any, index: any) => (
+                        <option key={index} value={category}>{category}</option>
+                      ))}
+                    </select>
+                </div>
+
+                <div className='item'>
+                  <h3>Timestamp:</h3>
+                  <h3>{new Date(transaction.timestamp).toLocaleDateString()}</h3>
+                </div>
+
+
+                <div className='item'>
+                  <h3>Account:</h3>
+                  <h3>{transaction.account}</h3>
+                </div>
+
+                <div className='item' style={{marginRight: '5%', marginLeft: 'auto'}}>
+                  <button className='special-button' onClick={() => updateCategory(transaction.id)}>Update Category</button>
+                </div>
+
+              </div>
+            ))
+          )}
+      </div>
 
     </div>
   </>

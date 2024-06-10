@@ -42,7 +42,7 @@ function App() {
   if (isLoggin) {
     return (
       <Router>
-        <NavBar />
+        <NavBar handleLogout={handleLogout}/>
       <Routes>
         <Route path="/" element={<Dashboard handleLogout={handleLogout}/>} />
         <Route path="/budgets" element={<Budgets />} />

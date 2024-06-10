@@ -1,6 +1,8 @@
 import { Account, DashboardFilterData, Transaction } from "../../services/Classes/classes";
 import { scaleDate } from "../../services/Classes/formatService";
 
+// --------------------- BASIC HELPERS ---------------------
+
 export const getDatesFromTransactions = (transactions: Transaction[], dateScale: string): number[] => {
     const dates = transactions.map((transaction) => {
         return scaleDate(transaction.timestamp, dateScale)
@@ -9,19 +11,43 @@ export const getDatesFromTransactions = (transactions: Transaction[], dateScale:
 }
 
 export const getFilteredTransactions = (transactions: Transaction[], filterData: DashboardFilterData): Transaction[] => {
+    const startDateNum = filterData.startDate?.getTime() || null;
+    const endDateNum = filterData.endDate?.getTime() || null;
     let filteredTransaction = transactions.filter((transaction) => {
-        if (filterData.selectedAccounts.includes('All') && filterData.selectedCategories.includes('All')) {
-            return true;
-        } else if (filterData.selectedAccounts.includes('All') && filterData.selectedCategories.includes(transaction.category)) {
-            return true;
-        } else if (filterData.selectedAccounts.includes(transaction.account) && filterData.selectedCategories.includes('All')) {
-            return true;
-        } else if (filterData.selectedAccounts.includes(transaction.account) && filterData.selectedCategories.includes(transaction.category)) {
-            return true;
+        if ((!startDateNum || transaction.timestamp >= startDateNum) && (!endDateNum || transaction.timestamp <= endDateNum)) {
+            if (filterData.selectedAccounts.includes('All') && filterData.selectedCategories.includes('All')) {
+                return true;
+            } else if (filterData.selectedAccounts.includes('All') && filterData.selectedCategories.includes(transaction.category)) {
+                return true;
+            } else if (filterData.selectedAccounts.includes(transaction.account) && filterData.selectedCategories.includes('All')) {
+                return true;
+            } else if (filterData.selectedAccounts.includes(transaction.account) && filterData.selectedCategories.includes(transaction.category)) {
+                return true;
+            }
         }
         return false;
     });
     return filteredTransaction;
+}
+
+export const filterTransactionsByDate = (transactions: Transaction[], filterData: DashboardFilterData): Transaction[] => {
+    const startDateNum = filterData.startDate?.getTime() || null;
+    const endDateNum = filterData.endDate?.getTime() || null;
+    return transactions.filter((transaction) => {
+        return (!startDateNum || transaction.timestamp >= startDateNum) && (!endDateNum || transaction.timestamp <= endDateNum);
+    });
+}
+
+export const filterTransactionsByCategory = (transactions: Transaction[], filterData: DashboardFilterData): Transaction[] => {
+    return transactions.filter((transaction) => {
+        return filterData.selectedCategories.includes(transaction.category) || filterData.selectedCategories.includes('All');
+    });
+}
+
+export const filterTransactionsByAccount = (transactions: Transaction[], filterData: DashboardFilterData): Transaction[] => {
+    return transactions.filter((transaction) => {
+        return filterData.selectedAccounts.includes(transaction.account) || filterData.selectedAccounts.includes('All');
+    });
 }
 
 export const getFilteredAccounts = (accounts: Account[], filteredTransactions: Transaction[], filterData: DashboardFilterData): Account[] => {
@@ -32,6 +58,25 @@ export const getFilteredAccounts = (accounts: Account[], filteredTransactions: T
         return (filterData.selectedAccounts.includes(account.name)) && filteredTransactions.some((transaction) => transaction.account === account.name);
     });
 }
+
+export const getFilteredCategories = (transactions: Transaction[], filterData: DashboardFilterData): string[] => {
+    const categories = transactions.map((transaction) => transaction.category);
+    return Array.from(new Set(categories)).filter((category) => filterData.selectedCategories.includes(category) || filterData.selectedCategories.includes('All'));
+}
+
+// --------------------- PROCESSING ---------------------
+
+
+
+
+
+
+
+
+
+
+
+// --------------------- LINE CHART ---------------------
 
 export const processTransactionsIntoNetValue = async (transactions: Transaction[], account: Account) => {
     transactions = transactions.filter((transaction) => transaction.account === account.name);
@@ -49,7 +94,6 @@ export const processTransactionsIntoNetValue = async (transactions: Transaction[
         netValue -= afterTrns[j].amount;
         data.push({ date: afterTrns[j].timestamp, netValue });
     }
-    console.log('data', data) 
     const filteredData: any[] = [];
     for (let i = 0; i < data.length; i++) {
         const dateIndex = filteredData.findIndex((d) => d.date === data[i].date);
@@ -59,7 +103,6 @@ export const processTransactionsIntoNetValue = async (transactions: Transaction[
         filteredData[dateIndex] = data[i];
         }
     }
-    console.log('filtered data', filteredData)
     for (let i = 0; i < filteredData.length; i++) {
         const originalValue = filteredData[i].netValue;
         filteredData[i].netValue = parseFloat(filteredData[i].netValue);
@@ -69,6 +112,55 @@ export const processTransactionsIntoNetValue = async (transactions: Transaction[
     }
     return { account: account.name, amount: filteredData };
 }
+
+export const getGraphDataAccount = async (transactions: Transaction[], accounts: Account[], dateScale: string): Promise<any[]> => {
+    const dates = getDatesFromTransactions(transactions, dateScale); //get dates
+    const data: any[] = [];
+    for (let i = 0; i < accounts.length; i++) { //for all the accounts get an attribute thats an array of their net values
+        const accountData = await processTransactionsIntoNetValue(transactions, accounts[i]);
+        data.push(accountData);
+    }
+    const graphData: any[] = [];
+    for (const date of dates) { //for everyday, for each account check if it has a value, if it doenst add 0's
+        let obj: any = { date };
+        for (const account of data) {
+            const accountValue = account.amount.find((entry: any) => scaleDate(entry.date, dateScale) === date);
+            if (date == dates[0]) {
+                obj[account.account] = accountValue ? accountValue?.netValue : account.amount[0]?.netValue;
+            }
+            else if (date == dates[dates.length - 1]) {
+                obj[account.account] = accountValue ? accountValue?.netValue : account.amount[account.amount.length - 1]?.netValue;
+            }
+            else {
+                if (!accountValue) {
+                let i = graphData.length - 1;
+                while (i >= 0) {
+                    if (graphData[i][account.account]) {
+                    obj[account.account] = graphData[i][account.account];
+                    break;
+                    }
+                    i--;
+                }
+                } else {
+                obj[account.account] = accountValue?.netValue;
+                }
+            }
+        }
+        graphData.push(obj);
+    }
+    for (let i = 0; i < graphData.length; i++) { //for each day, sum all the accounts
+        let sum = 0;
+        for (const account of accounts) {
+            sum += graphData[i][account.name];
+        }
+        graphData[i].sum = sum;
+    }
+    return graphData;
+}
+
+
+
+
 
 
 

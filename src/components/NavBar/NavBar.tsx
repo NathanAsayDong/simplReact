@@ -1,14 +1,19 @@
 import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Modal } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { UserIconModal } from '../../modals/UserIconModal/UserIconModal';
 import './NavBar.scss';
 
-interface NavBarProps {}
+interface NavBarProps {
+    handleLogout: () => void;
+}
 
-const NavBar: FC<NavBarProps> = () => {
+const NavBar: FC<NavBarProps> = ({handleLogout}) => {
     const [isMobile, setIsMobile] = useState<boolean>(false);
     const [showDropdown, setShowDropdown] = useState<boolean>(false);
+    const [showUserModal, setShowUserModal] = useState<boolean>(false);
 
     useEffect(() => {
         if (window.innerWidth <= 1000) {
@@ -36,7 +41,7 @@ const NavBar: FC<NavBarProps> = () => {
 
             <Link to="/manage-transactions"><h2 className='nav-item'>Transactions</h2></Link>
 
-            <FontAwesomeIcon icon={faUser} className='account-icon' />
+            <FontAwesomeIcon icon={faUser} onClick={() => setShowUserModal(true)} className='account-icon' />
         </div>
         )}
 
@@ -49,7 +54,18 @@ const NavBar: FC<NavBarProps> = () => {
             </div>
         )}
 
+
+    <Modal
+        open={showUserModal}
+        onClose={() => setShowUserModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        >
+        <UserIconModal handleLogout={handleLogout}/>
+    </Modal>
+
     </div>
+
     );
 };
 

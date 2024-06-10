@@ -1,0 +1,14 @@
+.transaction-row {
+    box-shadow: inset 0px 0px 12px 1px #2c5364;
+    border-radius: 20px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    transition: all 0.3s ease;
+    width: 100%;
+    height: 80px;
+
+    &:hover {
+        transform: scale(1.005);
+    }
+}

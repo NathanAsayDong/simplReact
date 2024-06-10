@@ -7,8 +7,8 @@ import { Area, AreaChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YA
 import { DashboardConfig } from '../../modals/DashboardConfig/DasboardConfig';
 import { Account, DashboardFilterData, Transaction, defaultDashboardFilterData } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
-import { dateFormatPretty, scaleDate } from '../../services/Classes/formatService';
-import { getDatesFromTransactions, getFilteredAccounts, getFilteredTransactions, processTransactionsIntoNetValue } from './Dashboard.Service';
+import { convertNumberToCurrency, dateFormatPretty } from '../../services/Classes/formatService';
+import { getDatesFromTransactions, getFilteredAccounts, getFilteredCategories, getFilteredTransactions, getGraphDataAccount } from './Dashboard.Service';
 import './Dashboard.scss';
 
 interface DashboardProps {
@@ -37,8 +37,12 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   useEffect(() => {
     if (transactions.length > 0 && accounts.length > 0) {
-      processTransactionsIntoCategories(transactions);
-      processTransactionsIntoAccounts(transactions, accounts);
+      const filteredTransactions = getFilteredTransactions(transactions, dashboardFilterData);
+      const filteredAccounts = getFilteredAccounts(accounts, filteredTransactions, dashboardFilterData);
+      const filteredCategories = getFilteredCategories(filteredTransactions, dashboardFilterData);
+
+      processTransactionsIntoCategories(filteredTransactions);
+      processTransactionsIntoAccounts(filteredTransactions, filteredAccounts);
       initializeGraphData();
     }
   }, [transactions, accounts, dateScale, dashboardFilterData])
@@ -64,49 +68,9 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     const dates: number[] = getDatesFromTransactions(transactions, dateScale);
     const filteredTransactions = getFilteredTransactions(transactions, dashboardFilterData);
     const filteredAccounts = getFilteredAccounts(accounts, filteredTransactions, dashboardFilterData);
-    const data: any[] = [];
+    const filteredCategories = getFilteredCategories(filteredTransactions, dashboardFilterData);
 
-    for (const account of filteredAccounts) {
-      data.push(await processTransactionsIntoNetValue(filteredTransactions, account));
-    }
-    console.log('data', data);
-
-    let  organizedData: any[] = [];
-    for (const date of dates) {
-      let obj: any = { date };
-      for (const account of data) {
-        const accountValue = account.amount.find((entry: any) => scaleDate(entry.date, dateScale) === date);
-        if (date == dates[0]) {
-          obj[account.account] = accountValue ? accountValue?.netValue : account.amount[0]?.netValue;
-        }
-        else if (date == dates[dates.length - 1]) {
-          obj[account.account] = accountValue ? accountValue?.netValue : account.amount[account.amount.length - 1]?.netValue;
-        }
-        else {
-          if (!accountValue) {
-            let i = organizedData.length - 1;
-            while (i >= 0) {
-              if (organizedData[i][account.account]) {
-                obj[account.account] = organizedData[i][account.account];
-                break;
-              }
-              i--;
-            }
-          } else {
-            obj[account.account] = accountValue?.netValue;
-          }
-        }
-      }
-      organizedData.push(obj);
-    }
-    for (let i = 0; i < organizedData.length; i++) {
-      let sum = 0;
-      for (const account of filteredAccounts) {
-        sum += organizedData[i][account.name];
-      }
-      organizedData[i].sum = sum;
-    }
-
+    let organizedData = await getGraphDataAccount(filteredTransactions, filteredAccounts, dateScale);
     if (dashboardFilterData.startDate !== null && dashboardFilterData.startDate !== undefined) {
       organizedData = organizedData.filter((entry) => {
         return dayjs(entry.date).unix() >= dayjs(dashboardFilterData.startDate).unix()!
@@ -116,7 +80,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
       organizedData = organizedData.filter((entry) => { return dayjs(entry.date).unix() <= dayjs(dashboardFilterData.endDate!).unix() });
     }
 
-    console.log('organizedData', organizedData);
     setNetValueByAccount(organizedData);
     setNetValue(organizedData[organizedData.length - 1].sum);
   }
@@ -140,6 +103,12 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
         data[categoryIndex].amount += transaction.amount;
       }
     });
+    console.log('data category', data);
+    data.forEach((category) => {
+      category.amount = convertNumberToCurrency(category.amount);
+    });
+
+
     setCategoryData(data);
     data.forEach((category) => {
       if (!dashboardFilterData.categoryOptions.includes(category.category)) {
@@ -190,7 +159,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   return (
     <>
-      {netValueByAccount.length === 0 ? <LinearProgress color="inherit" /> : null}
+      {netValueByAccount.length === 0 ? <LinearProgress style={{marginBottom: '16px'}} color="inherit" /> : null}
 
       <div className='dashboard'>
           <div className='row'>
@@ -221,9 +190,9 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
           </div>
 
           <div className='pie-container'>
-            <ResponsiveContainer width="100%" height={500} style={{scale: '1.11'}}>
+            <ResponsiveContainer width="100%" height={500} >
               <PieChart >
-                <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="url(#graphGradient2)" label/>
+                <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="url(#graphGradient2)" label={(entry) => entry.name}/>
                 <Tooltip content={<CustomTooltipPie />} />
               </PieChart>
             </ResponsiveContainer>
@@ -348,5 +317,6 @@ const CustomTooltipPie = ({ active, payload, label }: any) => {
   }
   return null;
 };
+
 
 export default Dashboard;
