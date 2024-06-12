@@ -73,7 +73,8 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   const handleNewCategoryChange = (id: number, event: any) => {
     let transaction = transactions.find((transaction: Transaction) => transaction.id === id);
     transaction.category = event.target.value;
-    setPotentialUpdatedTransactions([...potentialUpdatedTransactions, transaction]); //we arent checking for pre-exisitng but this is good for now i think
+    setPotentialUpdatedTransactions([...potentialUpdatedTransactions, transaction]);
+    updateCategory(id);
   }
 
   const updateCategory = async (id: number) => {
@@ -113,7 +114,9 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
 
     <div className='body'>
-
+      <div className='row'>
+            <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Transactions</h3>
+      </div>
       <div className='container'>
         <div className='row'>
           <DatePicker
@@ -130,25 +133,21 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
           />
         </div>
       </div>
-
-      <div className='row'>
-            <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Transactions</h3>
-      </div>
-      <div className='container'>
+      <div className='container-transparent'>
         {filteredTransactions.length == 0 ? (
             <div className='loading'>Loading...</div>
           ) : (
             filteredTransactions.map((transaction: Transaction, index: any) => (
               <div key={index} className='transaction-row'>
 
-                <div className='item' style={{width: '24%', marginLeft: '5%'}}>
+                <div className='item' style={{width: '24%', maxWidth: '24%',marginLeft: '2%'}}>
                   <h3>Description:</h3>
-                  <h3>{transaction.description}</h3>
+                  <h3 className='description-text'>{transaction.description}</h3>
                 </div>
 
                 <div className='item'>
                   <h3>Amount:</h3>
-                  <h3>{transaction.amount}</h3>
+                  <h3>${transaction.amount.toFixed(2)}</h3>
                 </div>
 
                 <div className='item' style={{width: '24%'}}>
@@ -170,10 +169,6 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
                 <div className='item'>
                   <h3>Account:</h3>
                   <h3>{transaction.account}</h3>
-                </div>
-
-                <div className='item' style={{marginRight: '5%', marginLeft: 'auto'}}>
-                  <button className='special-button' onClick={() => updateCategory(transaction.id)}>Update Category</button>
                 </div>
 
               </div>

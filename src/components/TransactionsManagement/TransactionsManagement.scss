@@ -1,14 +1,24 @@
 .transaction-row {
     box-shadow: inset 0px 0px 12px 1px #2c5364;
-    border-radius: 20px;
+    background-color: white;
+    border-radius: 10px;
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
     transition: all 0.3s ease;
     width: 100%;
     height: 80px;
+    gap: 10px;
 
     &:hover {
         transform: scale(1.005);
     }
+}
+
+.description-text {
+    display: flex;
+    white-space: nowrap;
+    overflow: scroll;
+    text-overflow: ellipsis;
+    width: 100%;
 }

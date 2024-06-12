@@ -60,10 +60,10 @@ const ImportCsv: FC<ImportCsvProps> = () => {
   return (
     <>
     <div className='body'>
-      <div className='container'>
-        <div className='row'>
-          <h2 className='title'>Upload New Transactions</h2>
+    <div className='row'>
+          <h2 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Upload New Transactions</h2>
         </div>
+      <div className='container'>
         <div className='row'>
         <input type="file" id="upload-csv" accept=".csv" onChange={handleFileUpload} />
           <select onChange={handleAccountChange}>
