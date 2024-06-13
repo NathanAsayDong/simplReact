@@ -9,6 +9,7 @@
     width: 100%;
     height: 80px;
     gap: 10px;
+    overflow: hidden;
 
     &:hover {
         transform: scale(1.005);
@@ -21,4 +22,16 @@
     overflow: scroll;
     text-overflow: ellipsis;
     width: 100%;
+}
+
+.select-category {
+    padding: 0.5em;
+    border-radius: 7px;
+    border: 1px solid #9FAFCA;
+    opacity: 0.5;
+    background: #FFF;
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+    color: black;
+    width: 90%;
+    height: 78%;
 }

@@ -38,6 +38,12 @@
   font-style: normal;
 }
 
+.roboto-bold {
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
 a {
   font-weight: 500;
   color: #a7a7a7;
@@ -288,7 +294,6 @@ button:focus-visible {
 
 .MuiInputBase-root {
   background-color: white;
-  opacity: 0.8;
 }
 
 .MuiSvgIcon-root {
