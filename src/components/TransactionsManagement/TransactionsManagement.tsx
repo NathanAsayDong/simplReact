@@ -22,7 +22,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
   //  --------------------- VARIABLES ---------------------
   const [loading, setLoading] = useState<boolean>(false);
-  const [potentialUpdatedTransactions, setPotentialUpdatedTransactions] = useState<Transaction[]>([]);
+  const [loadingProgress, setLoadingProgress] = useState<number>(0);
 
   //  --------------------- FILTER DATA ---------------------
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>(transactions);
@@ -51,43 +51,29 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     }
   };
 
-  useEffect(() => {
+  useEffect(() => { //somehow we are pinging the api over and over
       setLoading(true);
       initializeDataForContext();
       setLoading(false);
   }, [transactions, categories]);
 
   useEffect(() => {
-    if (!dateRanges.startDate && !dateRanges.endDate) {
+    if (!dateRanges.startDate && !dateRanges.endDate && filteredCategories.includes('All') && filteredAccounts.includes('All')) {
       setFilteredTransactions(transactions);
-    } 
-    if (dateRanges.startDate && !dateRanges.endDate) {
-      setFilteredTransactions(transactions.filter((transaction: Transaction) => {
-        return dayjs(transaction.timestamp).isAfter(dateRanges.startDate);
-      }));
     }
-    if (!dateRanges.startDate && dateRanges.endDate) {
-      setFilteredTransactions(transactions.filter((transaction: Transaction) => {
-        return dayjs(transaction.timestamp).isBefore(dateRanges.endDate);
-      }));
-    }
-    if (dateRanges.startDate && dateRanges.endDate) {
-      setFilteredTransactions(transactions.filter((transaction: Transaction) => {
-        return dayjs(transaction.timestamp).isAfter(dateRanges.startDate) && dayjs(transaction.timestamp).isBefore(dateRanges.endDate);
-      }));
+    else {
+      let trans = transactions.filter((transaction: Transaction) => {
+        return (!dateRanges.startDate || dayjs(transaction.timestamp).isAfter(dateRanges.startDate))
+        && (!dateRanges.endDate || dayjs(transaction.timestamp).isBefore(dateRanges.endDate))
+        && (filteredCategories.includes('All') || filteredCategories.includes(transaction.category)
+        && (filteredAccounts.includes('All') || filteredAccounts.includes(transaction.account)));
+      });
+      setFilteredTransactions(trans)
     }
   }, [dateRanges, transactions, filteredCategories, filteredAccounts]);
 
-
-  const handleNewCategoryChange = (id: number, event: any) => {
-    let transaction = transactions.find((transaction: Transaction) => transaction.id === id);
-    transaction.category = event.target.value;
-    setPotentialUpdatedTransactions([...potentialUpdatedTransactions, transaction]);
-    updateCategory(id);
-  }
-
-  const updateCategory = async (id: number) => {
-    const category = potentialUpdatedTransactions.find((transaction: Transaction) => transaction.id === id)?.category;
+  const updateCategory = async (id: number, event: any) => {
+    const category = event.target.value;
     if (!category) {
       alert('There was an issue');
       return;
@@ -103,10 +89,22 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
             return transaction;
           }));
         }
-        setLoading(false);
+        for (let i = 0; i <+ 100; i++) {
+          setTimeout(() => {
+            setLoadingProgress(i);
+          }, 1000);
+        }
+        setTimeout(() => {
+          setLoadingProgress(0);
+          setLoading(false);
+        }, 1000);
       }
     ).catch(() => {
       setLoading(false);
+      setLoadingProgress(100);
+      setTimeout(() => {
+        setLoadingProgress(0);
+      }, 1000);
       alert('There was an issue');
     }
     );
@@ -114,10 +112,20 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
   const handleFilterSelect = (event: any) => {
     if (event.target.name === 'category') {
+      console.log(event.target.value);
+      if (event.target.value.includes('All')) {
+        setFilteredCategories(['All']);
+      } else {
       setFilteredCategories(event.target.value);
+      }
     }
     if (event.target.name === 'account') {
+      console.log(event.target.value);
+      if (event.target.value.includes('All')) {
+        setFilteredAccounts(['All']);
+      } else {
       setFilteredAccounts(event.target.value);
+      }
     }
   }
 
@@ -125,7 +133,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   <>
     {loading ? <LinearProgress color="inherit" /> : null}
 
-    <ImportCsv />
+    <ImportCsv setLoading={setLoading} setLoadingProgress={setLoadingProgress} />
 
     <div className='body'>
       <div className='row'>
@@ -202,7 +210,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
                 <div className='item' style={{width: '18%', marginRight: '2%'}}>
                   <h3 className='roboto-bold'>Category:</h3>
-                  <select className='select-category' onChange={(event) => handleNewCategoryChange(transaction.id, event)}>
+                  <select className='select-category' onChange={(event) => updateCategory(transaction.id, event)}>
                       <option value="none">{transaction.category}</option>
                       {categories.map((category: any, index: any) => (
                         <option key={index} value={category}>{category}</option>

@@ -54,29 +54,29 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
     {loading ? <LinearProgress color="inherit" /> : null}
 
     <div className='body'>
-
+      <div className='row'>
+        <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Add Category</h3>
+      </div>
       <div className='container'>
-        <div className='row'>
-          <div className='item' style={{width: '75%'}}>
-            <h2 className='section-header'>Add Category</h2>
-            <input type='text' placeholder='Category' onChange={handleCategoryChange} value={newCategory}/>
-          </div>
-          <button className='special-button' onClick={addCategory}>Add Category</button>
+        <div className='row' style={{padding: '10px'}}>
+          <input type='text' placeholder='Category' style={{marginLeft: '10px', width: '50%'}} onChange={handleCategoryChange} value={newCategory}/>
+          <button className='special-button' style={{marginRight: '10px'}} onClick={addCategory}>Add Category</button>
         </div>
       </div>
 
-      <div className='container'>
-        <div className='row'>
-          <h2 className='section-header'>Categories</h2>
-        </div>
+      <div className='row'>
+        <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Categories</h3>
+      </div>
+
+      <div className='container-transparent'>
         {categories.length == 0 ? (
             <div className='loading'>Loading...</div>
           ) : (
             categories.map((category: string, index: any) => (
-              <div key={index} className='account-row'>
+              <div key={index} className='transaction-row'>
 
-                <div className='item' style={{width: '24%'}}>
-                  <h3>Category:</h3>
+                <div className='item' style={{width: '24%', marginLeft: '20px'}}>
+                  <h3 className='roboto-bold'>Category:</h3>
                   <h3>{category}</h3>
                 </div>
 

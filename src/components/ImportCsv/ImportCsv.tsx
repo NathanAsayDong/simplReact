@@ -5,16 +5,20 @@ import { DataApiService } from '../../services/Classes/dataApiService';
 import { UserAccountsData } from '../../services/Classes/dataContext';
 import './ImportCsv.scss';
 
-interface ImportCsvProps {}
+interface ImportCsvProps {
+  setLoading: (loading: boolean) => void;
+  setLoadingProgress: (progress: number) => void;
+}
 
-const ImportCsv: FC<ImportCsvProps> = () => {
+const ImportCsv: FC<ImportCsvProps> = ({setLoading, setLoadingProgress}) => {
   const [csvContent, setCsvContent] = useState<any>('');
   const [csvHeaders] = useState<string[]>([]);
 
   const accounts = UserAccountsData() || [];
   const [selectedAccount, setSelectedAccount] = useState<String>('');
   const [numTransactions, setNumTransactions] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [batches, setBatches] = useState<number>(0);
+  const [loading2, setLoading2] = useState<boolean>(false);
 
 
   const handleAccountChange = (e: any) => {
@@ -33,6 +37,7 @@ const ImportCsv: FC<ImportCsvProps> = () => {
           if (text) {
             const lines = text.toString().split('\n');
             setNumTransactions(lines.length-1);
+            setBatches(Math.ceil((lines.length-1)/10));
           }
         } catch (error) {
           console.error(error);
@@ -48,12 +53,26 @@ const ImportCsv: FC<ImportCsvProps> = () => {
     }
     else {
       setLoading(true);
+      setLoading2(true);
       const account = accounts.find((account: Account) => account.name === selectedAccount);
-      await DataApiService.processTransactions(csvContent, account);
-      setCsvContent('');
-      setSelectedAccount('None');
-      setNumTransactions(0);
-      setLoading(false);
+      if (!account) {
+        alert('Account not found');
+        return;
+      }
+      DataApiService.processTransactions(csvContent, account);
+      for (let i = 0; i <+ 100; i++) {
+        setTimeout(() => {
+          setLoadingProgress(i);
+        }, 1000);
+      }
+      setTimeout(() => {
+        setCsvContent('');
+        setSelectedAccount('None');
+        setNumTransactions(0);
+        setLoading(false);
+        setLoading2(false);
+        setLoadingProgress(0);
+      }, 5000);
     }
   }
 
@@ -65,7 +84,7 @@ const ImportCsv: FC<ImportCsvProps> = () => {
         </div>
       <div className='container'>
         <div className='row'>
-        <input type="file" id="upload-csv" accept=".csv" onChange={handleFileUpload} />
+        <input type="file" id="upload-csv" accept=".csv" onChange={handleFileUpload}/>
           <select onChange={handleAccountChange}>
             <option value="None">Select Account</option>
             {accounts.map((account: Account, key: any) => {
@@ -73,12 +92,11 @@ const ImportCsv: FC<ImportCsvProps> = () => {
             })}
           </select>
           <button onClick={uploadCsv} className='special-button'>
-          { loading ? 'Uploading...' :
+          { loading2 ? 'Uploading...' :
             `Upload ${numTransactions}`
           }
         </button>
         </div>
-        {csvContent && <p className='csv-content'>{csvHeaders}</p>}
       </div>
     </div>
     </>

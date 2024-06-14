@@ -25,6 +25,8 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   const [netValue, setNetValue] = useState<number>(0); //some number we use for net value when processing transactions to accounts
   const [netValueByAccount, setNetValueByAccount] = useState<any[]>([]); //graph date for accounts {date, account^n, sum}
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false); //config modal object that we use for filtering, modes, and sorting
+  const [loading, setLoading] = useState<boolean>(false); //loading state
+  
 
   //FILTERS:
   const [dateScale, setDateScale] = useState<any>('day');
@@ -65,6 +67,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   };
 
   const initializeGraphData = async () => {
+    setLoading(true);
     const dates: number[] = getDatesFromTransactions(transactions, dateScale);
     const filteredTransactions = getFilteredTransactions(transactions, dashboardFilterData);
     const filteredAccounts = getFilteredAccounts(accounts, filteredTransactions, dashboardFilterData);
@@ -82,6 +85,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
     setNetValueByAccount(organizedData);
     setNetValue(organizedData[organizedData.length - 1].sum);
+    setLoading(false);
   }
 
   const processTransactionsIntoCategories = (transactions: Transaction[]) => {
@@ -159,7 +163,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   return (
     <>
-      {netValueByAccount.length === 0 ? <LinearProgress style={{marginBottom: '16px'}} color="inherit" /> : null}
+      {loading === false ? <LinearProgress style={{marginBottom: '16px'}} color="inherit" /> : null}
 
       <div className='dashboard'>
           <div className='row'>
