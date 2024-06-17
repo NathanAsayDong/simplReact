@@ -41,7 +41,7 @@ function App() {
 
   if (isLoggin) {
     return (
-      <Router>
+    <Router>
         <NavBar handleLogout={handleLogout}/>
       <Routes>
         <Route path="/" element={<Dashboard handleLogout={handleLogout}/>} />
@@ -50,6 +50,9 @@ function App() {
         <Route path="/manage-categories" element={<CategoryManagement />} />
         <Route path="/manage-transactions" element={<TransactionsManagement />} />
       </Routes>
+        <div className='footer'>
+            <p>© 2024 - Budget Tracker</p>
+        </div>
     </Router>
     )
   }

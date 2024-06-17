@@ -12,7 +12,7 @@ interface ImportCsvProps {
 
 const ImportCsv: FC<ImportCsvProps> = ({setLoading, setLoadingProgress}) => {
   const [csvContent, setCsvContent] = useState<any>('');
-  const [csvHeaders] = useState<string[]>([]);
+  // const [csvHeaders] = useState<string[]>([]);
 
   const accounts = UserAccountsData() || [];
   const [selectedAccount, setSelectedAccount] = useState<String>('');
@@ -38,6 +38,7 @@ const ImportCsv: FC<ImportCsvProps> = ({setLoading, setLoadingProgress}) => {
             const lines = text.toString().split('\n');
             setNumTransactions(lines.length-1);
             setBatches(Math.ceil((lines.length-1)/10));
+            console.log('batches: ', batches);
           }
         } catch (error) {
           console.error(error);
@@ -78,27 +79,27 @@ const ImportCsv: FC<ImportCsvProps> = ({setLoading, setLoadingProgress}) => {
 
   return (
     <>
-    <div className='body'>
-    <div className='row'>
-          <h2 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Upload New Transactions</h2>
-        </div>
-      <div className='container'>
+      <div style={{alignItems: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '1em'}}>
         <div className='row'>
-        <input type="file" id="upload-csv" accept=".csv" onChange={handleFileUpload}/>
-          <select onChange={handleAccountChange}>
-            <option value="None">Select Account</option>
-            {accounts.map((account: Account, key: any) => {
-              return <option value={account.name} key={key}>{account.name}</option>
-            })}
-          </select>
-          <button onClick={uploadCsv} className='special-button'>
-          { loading2 ? 'Uploading...' :
-            `Upload ${numTransactions}`
-          }
-        </button>
+            <h2 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Upload New Transactions</h2>
+        </div>
+        <div className='container'>
+          <div className='row'>
+          <input type="file" id="upload-csv" accept=".csv" onChange={handleFileUpload}/>
+            <select onChange={handleAccountChange}>
+              <option value="None">Select Account</option>
+              {accounts.map((account: Account, key: any) => {
+                return <option value={account.name} key={key}>{account.name}</option>
+              })}
+            </select>
+            <button onClick={uploadCsv} className='special-button'>
+            { loading2 ? 'Uploading...' :
+              `Upload ${numTransactions}`
+            }
+          </button>
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 };

@@ -26,7 +26,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
   //  --------------------- FILTER DATA ---------------------
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>(transactions);
-  const [dateRanges, setDateRanges] = useState<any>({startDate: null, endDate: null});
+  const [dateRanges, setDateRanges] = useState<any>({startDate: dayjs().subtract(2, 'week'), endDate: dayjs()});
   const [filteredCategories, setFilteredCategories] = useState<string[]>(['All']);
   const [filteredAccounts, setFilteredAccounts] = useState<string[]>(['All']);
 
@@ -106,6 +106,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
         setLoadingProgress(0);
       }, 1000);
       alert('There was an issue');
+      console.log(loadingProgress)
     }
     );
   }

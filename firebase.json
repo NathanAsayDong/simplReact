@@ -11,18 +11,6 @@
         "source": "**",
         "destination": "/index.html"
       }
-    ],
-    "redirects": [
-      {
-        "source": "/",
-        "destination": "https://www.simplfinances.com",
-        "type": 301
-      },
-      {
-        "source": "/www.simplfinances.com",
-        "destination": "https://simplfinances.com",
-        "type": 301
-      }
     ]
   }
 }

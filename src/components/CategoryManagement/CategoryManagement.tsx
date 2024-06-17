@@ -34,7 +34,7 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
     const val = newCategory.toLowerCase().replace(/\b[a-z]/g, (letter) => letter.toUpperCase()); // Capitalize first letter and lowercase the rest
     const res = await DataApiService.addCategory(val);
     if (res) {
-      updateCategories(categories.append(val));
+      updateCategories(categories.concat(val));
     }
     setLoading(false);
     setNewCategory('');

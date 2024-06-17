@@ -21,6 +21,7 @@ h2 {
     padding-right: 1rem;
     padding: 1rem;
     margin-bottom: 1rem;
+    background: linear-gradient(180deg, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .5) 0%, rgba(255, 255, 255, 0) 100%)
 }
 
 .nav-items {
@@ -36,8 +37,8 @@ h2 {
 
 .navbar .nav-item:hover {
     color: rgb(255, 255, 255); 
-    transform: scale(1.2); 
-    text-shadow: 0 0 5px rgb(255, 255, 255);
+    transform: scale(1.1); 
+    text-shadow: 0 0 2px rgb(255, 255, 255, 0.4);
 }
 
 .navbar .account-icon {

@@ -8,7 +8,7 @@ import { DashboardConfig } from '../../modals/DashboardConfig/DasboardConfig';
 import { Account, DashboardFilterData, Transaction, defaultDashboardFilterData } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import { convertNumberToCurrency, dateFormatPretty } from '../../services/Classes/formatService';
-import { getDatesFromTransactions, getFilteredAccounts, getFilteredCategories, getFilteredTransactions, getGraphDataAccount } from './Dashboard.Service';
+import { getFilteredAccounts, getFilteredTransactions, getGraphDataAccount } from './Dashboard.Service';
 import './Dashboard.scss';
 
 interface DashboardProps {
@@ -39,13 +39,15 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   useEffect(() => {
     if (transactions.length > 0 && accounts.length > 0) {
+      setLoading(true);
       const filteredTransactions = getFilteredTransactions(transactions, dashboardFilterData);
       const filteredAccounts = getFilteredAccounts(accounts, filteredTransactions, dashboardFilterData);
-      const filteredCategories = getFilteredCategories(filteredTransactions, dashboardFilterData);
+      // const filteredCategories = getFilteredCategories(filteredTransactions, dashboardFilterData);
 
       processTransactionsIntoCategories(filteredTransactions);
       processTransactionsIntoAccounts(filteredTransactions, filteredAccounts);
       initializeGraphData();
+      setLoading(false);
     }
   }, [transactions, accounts, dateScale, dashboardFilterData])
 
@@ -67,11 +69,10 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   };
 
   const initializeGraphData = async () => {
-    setLoading(true);
-    const dates: number[] = getDatesFromTransactions(transactions, dateScale);
+    // const dates: number[] = getDatesFromTransactions(transactions, dateScale);
     const filteredTransactions = getFilteredTransactions(transactions, dashboardFilterData);
     const filteredAccounts = getFilteredAccounts(accounts, filteredTransactions, dashboardFilterData);
-    const filteredCategories = getFilteredCategories(filteredTransactions, dashboardFilterData);
+    // const filteredCategories = getFilteredCategories(filteredTransactions, dashboardFilterData);
 
     let organizedData = await getGraphDataAccount(filteredTransactions, filteredAccounts, dateScale);
     if (dashboardFilterData.startDate !== null && dashboardFilterData.startDate !== undefined) {
@@ -82,10 +83,8 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
     if (dashboardFilterData.endDate !== null && dashboardFilterData.endDate !== undefined) {
       organizedData = organizedData.filter((entry) => { return dayjs(entry.date).unix() <= dayjs(dashboardFilterData.endDate!).unix() });
     }
-
     setNetValueByAccount(organizedData);
-    setNetValue(organizedData[organizedData.length - 1].sum);
-    setLoading(false);
+    setNetValue(organizedData[organizedData.length - 1]?.sum || 0);
   }
 
   const processTransactionsIntoCategories = (transactions: Transaction[]) => {
@@ -163,7 +162,7 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
   return (
     <>
-      {loading === false ? <LinearProgress style={{marginBottom: '16px'}} color="inherit" /> : null}
+      {loading === true ? <LinearProgress style={{marginBottom: '16px'}} color="inherit" /> : null}
 
       <div className='dashboard'>
           <div className='row'>
@@ -192,7 +191,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
               </AreaChart>
             </ResponsiveContainer>
           </div>
-
           <div className='pie-container'>
             <ResponsiveContainer width="100%" height={500} >
               <PieChart >

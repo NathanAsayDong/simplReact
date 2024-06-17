@@ -48,11 +48,13 @@ const Accounts: FC<AccountsProps> = () =>  {
   return (
     <>
       <div className='body'>
+        <div className='row'>
+            <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Add Account</h3>
+        </div>
 
         <div className='container'>
           <div className='row'>
-            <div className='item' style={{width: '75%'}}>
-              <h2 className='section-header'>Add Account</h2>
+            <div className='item' style={{width: '80%', gap: '1em', marginLeft: '1em'}}>
               <input type='text' name='name' placeholder='Account Name' onChange={handleNewAccountDataChange}/>
               <select onChange={handleNewAccountDataChange} name='type'>
                 <option value="None">Select Type</option>
@@ -75,43 +77,42 @@ const Accounts: FC<AccountsProps> = () =>  {
           </div>
         </div>
 
-        <div className='container'>
-          <div className='row'>
-            <h2 className='section-header'>Accounts</h2>
-          </div>
+        <div className='row'>
+            <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Accounts</h3>
+        </div>
+        <div className='container-transparent'>
           {accounts.length == 0 ? (
               <div className='loading'>Loading...</div>
             ) : (
               accounts.map((account: Account, index: any) => (
-                <div key={index} className='account-row'>
+                <div key={index} className='transaction-row'>
 
-                  <div className='item'>
-                    <h3>Account:</h3>
+                  <div className='item' style={{width: '15%', maxWidth: '15%',marginLeft: '2%'}}> 
+                    <h3 className='roboto-bold'>Account:</h3>
                     <h3>{account.name}</h3>
                   </div>
 
-                  <div className='item'>
-                    <h3>Type:</h3>
+                  <div className='item' style={{width: '15%'}}>
+                    <h3 className='roboto-bold'>Type:</h3>
                     <h3>{account.type}</h3>
                   </div>
 
-                  <div className='item'>
-                    <h3>Source:</h3>
+                  <div className='item' style={{width: '15%'}}>
+                    <h3 className='roboto-bold'>Source:</h3>
                     <h3>{account.source}</h3>
                   </div>
 
                   <div className='item'>
-                    <h3>Reference Date:</h3>
+                    <h3 className='roboto-bold'>Reference Date:</h3>
                     <h3>{account.refDate}</h3>
                   </div>
 
                   <div className='item'>
-                    <h3>Reference Balance:</h3>
-                    <h3>{account.refBalance}</h3>
+                    <h3 className='roboto-bold'>Reference Balance:</h3>
+                    <h3>${account.refBalance.toFixed(2)}</h3>
                   </div>
 
-                  <div className='item' style={{marginRight: '5%', marginLeft: 'auto'}}>
-                    <h3>Balance Unavailable</h3>
+                  <div className='item' style={{marginRight: '2em', marginLeft: 'auto'}}>
                     <FontAwesomeIcon icon={faTrash} className='trash-icon' onClick={() => deleteAccount(account)}/>
                   </div>
                 </div>

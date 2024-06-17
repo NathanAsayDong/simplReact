@@ -81,4 +81,4 @@ export class DashboardFilterData {
     }
 }
 
-export const defaultDashboardFilterData = new DashboardFilterData(['All'], ['All'], dayjs().subtract(7, 'day').toDate(), dayjs().toDate(), 'day', ['All'], ['All'], 'netValue', 'category');
+export const defaultDashboardFilterData = new DashboardFilterData(['All'], ['All'], dayjs().subtract(14, 'day').toDate(), dayjs().toDate(), 'day', ['All'], ['All'], 'netValue', 'category');

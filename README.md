@@ -41,3 +41,5 @@ MASTER DOC: https://docs.google.com/document/d/1uAUbe3f7aD5KCwo7efaJo6VUBhHIYD74
 
 
 RUN LOCAL: npm run dev:local
+
+Build to firebase: npm run build && firebase deploy
