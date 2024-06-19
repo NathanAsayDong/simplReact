@@ -25,8 +25,4 @@ export const UserIconModal: FC<UserIconModalProps> = ({handleLogout}) => {
         </>
     )
 
-
-
-
-
 }

@@ -250,9 +250,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
 
         <div style={{margin: '5%'}}></div>
 
-        <button onClick={handleLogout}>Logout</button>
-        <button onClick={test}>TEST</button>
-
 
       {/* --------------------------------------- CONFIG ITEMS --------------------------------------- */}
 

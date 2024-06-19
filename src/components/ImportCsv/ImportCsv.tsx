@@ -37,7 +37,8 @@ const ImportCsv: FC<ImportCsvProps> = ({setLoading, setLoadingProgress}) => {
           if (text) {
             const lines = text.toString().split('\n');
             setNumTransactions(lines.length-1);
-            setBatches(Math.ceil((lines.length-1)/10));
+            const batches = Math.ceil((lines.length - 1)/20);
+            setBatches(batches);
             console.log('batches: ', batches);
           }
         } catch (error) {
@@ -55,17 +56,28 @@ const ImportCsv: FC<ImportCsvProps> = ({setLoading, setLoadingProgress}) => {
     else {
       setLoading(true);
       setLoading2(true);
+      setLoadingProgress(0);
       const account = accounts.find((account: Account) => account.name === selectedAccount);
       if (!account) {
         alert('Account not found');
         return;
       }
-      DataApiService.processTransactions(csvContent, account);
-      for (let i = 0; i <+ 100; i++) {
-        setTimeout(() => {
-          setLoadingProgress(i);
-        }, 1000);
+      const csvHeaders = csvContent.split('\n')[0].split(',');
+      const csvBody = csvContent.split('\n').slice(1);
+      for (let i = 0; i < batches; i++) {
+        let batch = csvBody.slice(i*20, (i+1)*20);
+        batch.unshift(csvHeaders.join(','));
+        batch = batch.join('\n');
+        try {
+          await DataApiService.processTransactions(batch, account);
+        }
+        catch (error) {
+          alert('Error uploading transactions');
+          i = batches;
+        }
+        setLoadingProgress((i+1)*100/batches);
       }
+      setLoadingProgress(100);
       setTimeout(() => {
         setCsvContent('');
         setSelectedAccount('None');
@@ -73,7 +85,7 @@ const ImportCsv: FC<ImportCsvProps> = ({setLoading, setLoadingProgress}) => {
         setLoading(false);
         setLoading2(false);
         setLoadingProgress(0);
-      }, 5000);
+      }, 2000);
     }
   }
 

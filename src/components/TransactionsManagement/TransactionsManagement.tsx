@@ -51,12 +51,6 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     }
   };
 
-  useEffect(() => { //somehow we are pinging the api over and over
-      setLoading(true);
-      initializeDataForContext();
-      setLoading(false);
-  }, [transactions, categories]);
-
   useEffect(() => {
     if (!dateRanges.startDate && !dateRanges.endDate && filteredCategories.includes('All') && filteredAccounts.includes('All')) {
       setFilteredTransactions(transactions);
@@ -132,7 +126,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
   return (
   <>
-    {loading ? <LinearProgress color="inherit" /> : null}
+    {loading ? <LinearProgress color="inherit" variant='determinate' value={loadingProgress} /> : null}
 
     <ImportCsv setLoading={setLoading} setLoadingProgress={setLoadingProgress} />
 
@@ -201,7 +195,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
                 <div className='item' style={{width: '24%', maxWidth: '24%',marginLeft: '2%'}}>
                   <h3 className='roboto-bold'>Description:</h3>
-                  <h3 className='description-text'>{transaction.description}</h3>
+                  <h3 className='description-text hide-scroll'>{transaction.description}</h3>
                 </div>
 
                 <div className='item' style={{width: '18%'}}>
