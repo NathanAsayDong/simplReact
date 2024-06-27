@@ -231,6 +231,10 @@ button:focus-visible {
   bottom: 0;
   width: 100%;
   padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
   background: linear-gradient(0deg, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .5) 0%, rgba(255, 255, 255, 0) 100%);
 }
 

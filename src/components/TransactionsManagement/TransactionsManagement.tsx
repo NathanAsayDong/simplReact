@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
 import { Account, Transaction } from '../../services/Classes/classes';
 import { DataApiService } from '../../services/Classes/dataApiService';
-import { InitializeDataForContext, SetTransactionData, TransactionData, UserAccountsData, UserCategoriesData } from '../../services/Classes/dataContext';
+import { SetTransactionData, TransactionData, UserAccountsData, UserCategoriesData } from '../../services/Classes/dataContext';
 import ImportCsv from '../ImportCsv/ImportCsv';
 import './TransactionsManagement.scss';
 
@@ -17,7 +17,6 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   const transactions = TransactionData() || [];
   const accounts = UserAccountsData() || [];
   const categories = UserCategoriesData() || [];
-  const initializeDataForContext = InitializeDataForContext();
   const updateTransactions = SetTransactionData();
 
   //  --------------------- VARIABLES ---------------------
@@ -107,19 +106,25 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
   const handleFilterSelect = (event: any) => {
     if (event.target.name === 'category') {
-      console.log(event.target.value);
-      if (event.target.value.includes('All')) {
+      if (event.target.value.length === 0 || event.target.value == null) {
         setFilteredCategories(['All']);
+      } else if (event.target.value.includes('All') && !filteredCategories.includes('All')) {
+        setFilteredCategories(['All']);
+      } else if (event.target.value.includes('All') && filteredCategories.includes('All')) {
+        setFilteredCategories(event.target.value.filter((category: string) => category !== 'All'));
       } else {
-      setFilteredCategories(event.target.value);
+        setFilteredCategories(event.target.value);
       }
     }
     if (event.target.name === 'account') {
-      console.log(event.target.value);
-      if (event.target.value.includes('All')) {
+      if (event.target.value.length === 0 || event.target.value == null) {
         setFilteredAccounts(['All']);
+      } else if (event.target.value.includes('All') && !filteredAccounts.includes('All')) {
+        setFilteredAccounts(['All']);
+      } else if (event.target.value.includes('All') && filteredAccounts.includes('All')) {
+        setFilteredAccounts(event.target.value.filter((account: string) => account !== 'All'));
       } else {
-      setFilteredAccounts(event.target.value);
+        setFilteredAccounts(event.target.value);
       }
     }
   }
@@ -152,6 +157,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
             {categories.map((category: string, index: any) => (
             <MenuItem key={index} value={category}>{category}</MenuItem>
             ))}
+            <MenuItem key={1001} value={'unsure'}>{"unsure"}</MenuItem>
           </Select>
           </FormControl>
           <FormControl sx={{ m: 1, minWidth: 120 }}>

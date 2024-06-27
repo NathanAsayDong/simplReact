@@ -39,33 +39,25 @@ export const DashboardConfig: FC<DashboardConfigProps> = ({filterObject, onClose
 
     const handleFilterSelect = (event: any) => {
         if (event.target.name === 'category') {
-            if (event.target.value.includes('All')) {
-                if (filter.selectedCategories.includes('All')) {
-                    setFilter({...filter, selectedCategories: filter.selectedCategories.filter((category: string) => category !== 'All')});
-                } else {
-                    setFilter({...filter, selectedCategories: [...filter.selectedCategories, 'All']});
-                }
+            if (event.target.value.length === 0 || event.target.value == null) {
+                setFilter({...filter, selectedCategories: ['All']});
+            } else if (event.target.value.includes('All') && !filter.selectedCategories.includes('All')) {
+                setFilter({...filter, selectedCategories: ['All']});
+            } else if (event.target.value.includes('All') && filter.selectedCategories.includes('All')) {
+                setFilter({...filter, selectedCategories: event.target.value.filter((category: string) => category !== 'All')});
             } else {
-                if (filter.selectedCategories.includes('All')) {
-                    setFilter({...filter, selectedCategories: [event.target.value]});
-                } else {
-                    setFilter({...filter, selectedCategories: event.target.value});
-                }
+                setFilter({...filter, selectedCategories: event.target.value});
             }
         }
         if (event.target.name === 'account') {
-            if (event.target.value.includes('All')) {
-                if (filter.selectedAccounts.includes('All')) {
-                    setFilter({...filter, selectedAccounts: filter.selectedAccounts.filter((account: string) => account !== 'All')});
-                } else {
-                    setFilter({...filter, selectedAccounts: [...filter.selectedAccounts, 'All']});
-                }
+            if (event.target.value.length === 0 || event.target.value == null) {
+                setFilter({...filter, selectedAccounts: ['All']});
+            } else if (event.target.value.includes('All') && !filter.selectedAccounts.includes('All')) {
+                setFilter({...filter, selectedAccounts: ['All']});
+            } else if (event.target.value.includes('All') && filter.selectedAccounts.includes('All')) {
+                setFilter({...filter, selectedAccounts: event.target.value.filter((account: string) => account !== 'All')});
             } else {
-                if (filter.selectedAccounts.includes('All')) {
-                    setFilter({...filter, selectedAccounts: [event.target.value]});
-                } else {
-                    setFilter({...filter, selectedAccounts: event.target.value});
-                }
+                setFilter({...filter, selectedAccounts: event.target.value});
             }
         }
     }

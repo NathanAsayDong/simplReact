@@ -15,7 +15,7 @@ interface DashboardProps {
   handleLogout: () => void;
 }
 
-const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
+const Dashboard: FC<DashboardProps> = () => {
 
   //VARIABLES:
   const transactions = TransactionData() || []; //context transactions
@@ -31,11 +31,6 @@ const Dashboard: FC<DashboardProps> = ({ handleLogout }) => {
   //FILTERS:
   const [dateScale, setDateScale] = useState<any>('day');
   const [dashboardFilterData, setDashboardFilterData] = useState<DashboardFilterData>(defaultDashboardFilterData);
-
-  const test = async () => {
-    console.log('Testing');
-    console.log('api url', __API_URL__);
-  };
 
   useEffect(() => {
     if (transactions.length > 0 && accounts.length > 0) {
