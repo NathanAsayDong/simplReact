@@ -41,7 +41,7 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
 
             <Link to="/manage-transactions"><h2 className='nav-item'>Transactions</h2></Link>
 
-            <FontAwesomeIcon icon={faUser} onClick={() => setShowUserModal(true)} className='account-icon' />
+            <Link to="/settings"><FontAwesomeIcon icon={faUser} className='account-icon' /></Link>
         </div>
         )}
 

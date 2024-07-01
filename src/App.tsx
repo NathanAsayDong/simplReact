@@ -7,6 +7,7 @@ import CategoryManagement from './components/CategoryManagement/CategoryManageme
 import Dashboard from './components/Dashboard/Dashboard'
 import Login from './components/Login/Login'
 import NavBar from './components/NavBar/NavBar'
+import Settings from './components/Settings/Settings'
 import TransactionsManagement from './components/TransactionsManagement/TransactionsManagement'
 import { InitializeDataForContext } from './services/Classes/dataContext'
 
@@ -49,6 +50,7 @@ function App() {
         <Route path="/accounts" element={<Accounts />} />
         <Route path="/manage-categories" element={<CategoryManagement />} />
         <Route path="/manage-transactions" element={<TransactionsManagement />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
         <div className='footer'>
             <p>© 2024 - Budget Tracker</p>

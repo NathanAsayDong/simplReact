@@ -6,14 +6,16 @@ export class Transaction {
     amount: number;
     description: string;
     category: string;
-    account: string
-    constructor(id: number = -1, timestamp: number, amount: number, description: string, account: string, category: string) {
+    account: string;
+    balance: number
+    constructor(id: number = -1, timestamp: number, amount: number, description: string, account: string, category: string, balance: number) {
         this.id = id;
         this.timestamp = timestamp;
         this.amount = amount;
         this.description = description;
         this.category = category;
         this.account = account;
+        this.balance = balance;
     }
 }
 
