@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { attemptCreateAccount, attemptLogin } from '../../services/Classes/userApiService';
+import Onboarding from '../Onboarding/Onboarding';
 import './Login.scss';
 
 
@@ -75,21 +76,22 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
 
    return  (
    <>
-      <div className='centerPage'>
+      {!userWantsToCreateAccount &&
+      <div className='centerPage' >
          <div className='slogan'>
-            {userWantsToCreateAccount ? <h1>WELCOME TO SIMPL.</h1> : <h1>MAKING FINANCES SIMPL.</h1>}
+            <h1>MAKING FINANCES SIMPL.</h1>
          </div>
          <div className='loginForm'>
             <h2>Email:</h2>
                <input id='username' type="email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key == 'Enter' ? login() : null)}/>
             <h2>Password:</h2>
                <input id='password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key == 'Enter' ? login() : null)}/>
-            {!userWantsToCreateAccount && <button onClick={login}>Login</button>}
-            {userWantsToCreateAccount && <button onClick={createAccount}>Create Account</button>}
+            <button onClick={login}>Login</button>
             {!userWantsToCreateAccount && <p onClick={toggleCreateAccount}> Create Account? </p>}
-            {userWantsToCreateAccount && <p onClick={toggleCreateAccount}> Already a user? </p>}
          </div>
-      </div>
+      </div>}
+
+      {userWantsToCreateAccount && <Onboarding toggleCreateAccount={toggleCreateAccount} />}
    </>
    );
    
