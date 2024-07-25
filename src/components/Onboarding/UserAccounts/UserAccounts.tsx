@@ -9,6 +9,7 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
     
     return (
         <>
+            <h1>UserAccounts</h1>
         </>
     )
 }

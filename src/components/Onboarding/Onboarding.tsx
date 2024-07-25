@@ -1,13 +1,12 @@
 import { FC, useState } from 'react';
-import { A11y, Navigation, Pagination, Scrollbar } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import './Onboarding.scss';
 import OnboardingReview from './Review/Review';
 import UserAccounts from './UserAccounts/UserAccounts';
 import UserCategories from './UserCategories/UserCategories';
 import UserInfo from './UserInfo/UserInfo';
 
-
+import 'swiper/css';
+import './Onboarding.scss';
 
 interface OnboardingProps { toggleCreateAccount: () => void; }
 
@@ -25,8 +24,8 @@ const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount }) =>  {
 
             <div className='swiper-container'>
                 <Swiper
-                    modules={[Navigation, Pagination, Scrollbar, A11y]}
-                    spaceBetween={50}
+                    modules={[]}
+                    spaceBetween={0}
                     slidesPerView={1}
                     navigation
                     pagination={{ clickable: true }}
@@ -36,12 +35,12 @@ const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount }) =>  {
                         console.log(swiper);
                     }}
                     onSlideChange={() => console.log('slide change')}
-                    onReachEnd={() => {/*...*/}}
+                    onReachEnd={() => {console.log('end')}}
                 >
-                    <SwiperSlide virtualIndex={1}><UserInfo /></SwiperSlide>
-                    <SwiperSlide virtualIndex={2}><UserAccounts /></SwiperSlide>
-                    <SwiperSlide virtualIndex={3}><UserCategories /></SwiperSlide>
-                    <SwiperSlide virtualIndex={4}><OnboardingReview /></SwiperSlide>
+                <SwiperSlide key={1}><UserInfo /></SwiperSlide>
+                <SwiperSlide key={2}><UserAccounts /></SwiperSlide>
+                <SwiperSlide key={3}><UserCategories /></SwiperSlide>
+                <SwiperSlide key={4}><OnboardingReview /></SwiperSlide>
                 </Swiper>
             </div>
 
