@@ -9,6 +9,10 @@ const OnboardingReview: FC<OnboardingReviewProps> = () =>  {
     
     return (
         <>
+            <h1>Review</h1>
+            <div className='form-container'>
+                
+            </div>
         </>
     )
 }

@@ -9,7 +9,10 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
     
     return (
         <>
-            <h1>UserAccounts</h1>
+            <h1>Connect Accounts </h1>
+            <div className='form-container'>
+                <p style={{"color":"black"}}>Plaid integration here</p>
+            </div>
         </>
     )
 }

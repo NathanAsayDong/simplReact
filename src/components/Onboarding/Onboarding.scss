@@ -25,4 +25,17 @@
     border-radius: 10px;
     padding: 10px;
     max-width: 50%;
+    min-width: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+}
+
+.form-container input {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 90%;
 }
