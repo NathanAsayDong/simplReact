@@ -101,11 +101,17 @@ button {
 button:hover {
   border-color: #9d9d9d;
   color: white;
-
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.subtle-button {
+  border: none;
+  background: none;
+  box-shadow: none;
 }
 
 @media (prefers-color-scheme: light) {

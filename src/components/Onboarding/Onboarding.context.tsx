@@ -35,12 +35,14 @@ export function OnboardingDataProvider({ children }: any) {
         setOnboardingData({...onboardingData, password: password});
     }
 
+    const setCategories = (categories: string[]) => {
+        setOnboardingData({...onboardingData, categories: categories});
+    }
+
 
     return (
-        <OnboardingDataContext.Provider value={onboardingData}>
-            <OnboardingDataContext.Provider value={[updateOnboardingData, setFirstName, setLastName, setEmail, setPhone, setPassword]}>
-                {children}
-            </OnboardingDataContext.Provider>
+        <OnboardingDataContext.Provider value={{onboardingData, updateOnboardingData, setFirstName, setLastName, setEmail, setPhone, setPassword, setCategories}}>
+            {children}
         </OnboardingDataContext.Provider>
     )
 }
@@ -52,4 +54,5 @@ export class OnboardingDataObject {
     email?: string = '';
     phone?: string = '';
     password?: string = '';
+    categories?: string[] = [];
 }

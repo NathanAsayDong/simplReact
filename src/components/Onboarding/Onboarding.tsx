@@ -20,9 +20,10 @@ const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount }) =>  {
     return (
         <OnboardingDataProvider>
             <>
-                <div className="header">
-                    <h1>Onboarding</h1>
-                </div>
+            <div className='onboarding-header'>
+                <h2 style={{"marginLeft":"10px"}}>SIMPL.</h2>
+                <button style={{"marginLeft":"auto","marginRight":"10px"}} className="subtle-button" onClick={login}>Already have an account?</button>
+            </div>
 
                 <div className='swiper-container'>
                     <Swiper
@@ -48,11 +49,9 @@ const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount }) =>  {
 
                 <div className='onboarding-footer'>
                     <div className='swiper-buttons'>
-                        <button className='swiper-button-back' onClick={() => swiperRef.slidePrev()}>Back</button>
-                        <button className='swiper-button-next' onClick={() => swiperRef.slideNext()}>Next</button>
+                        <button className='swiper-button-back swiper-button' onClick={() => swiperRef.slidePrev()}>Back</button>
+                        <button className='swiper-button-next swiper-button' onClick={() => swiperRef.slideNext()}>Next</button>
                     </div>
-
-                    <button onClick={login}>Already have an account?</button>
                 </div>
             </>
         </OnboardingDataProvider>

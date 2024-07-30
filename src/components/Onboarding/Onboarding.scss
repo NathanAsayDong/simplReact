@@ -1,6 +1,19 @@
+.section-title {
+    margin-bottom : 10px;
+}
+
 .onboarding-footer {
-    position: absolute;
-    bottom: 0;
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+}
+
+.onboarding-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    position: fixed;
+    top: 0;
     width: 100%;
 }
 
@@ -22,14 +35,14 @@
 
 .form-container {
     border: 3px solid white;
-    border-radius: 10px;
+    border-radius: 5px;
     padding: 10px;
-    max-width: 50%;
-    min-width: 20%;
+    width: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: white;
+    margin-bottom: 40px;
 }
 
 .form-container input {
@@ -38,4 +51,20 @@
     border-radius: 5px;
     border: 1px solid #ccc;
     width: 90%;
+}
+
+.swiper-button {
+    border-radius: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: none;
+    background: none;
+}
+
+.alert-text {
+    color: red;
+    font-size: 12px;
+    align-self: flex-start;
+    margin-left: 10px;
+    margin-bottom: -5px;
 }

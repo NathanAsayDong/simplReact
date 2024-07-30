@@ -1,5 +1,11 @@
 .add-category-icon {
-    color: black;
-    height: 40px;
+    color: #2c5364;
+    height: 51px;
     margin-left: 10px;
+    transition: all 0.3s;
+
+    &:hover {
+        color: #234461;
+        scale: 1.1;
+    }
 }
