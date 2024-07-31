@@ -310,6 +310,14 @@ button:focus-visible {
   color: #ffffff;
 }
 
+.hide-scrollbar {
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    background: transparent;
+  }
+}
+
 
 /* MUI */
 

@@ -49,7 +49,7 @@ const UserInfo: FC<UserInfoProps> = () =>  {
                 <input type='email' placeholder='Email' onChange={updateEmail}/>
                 <input type='tel' placeholder='Phone' onChange={updatePhone} />
                 <input type='password' placeholder='Password' onChange={updatePassword}/>
-                {passwordMatch() ? null : <p style={{"color": "red"}} className='alert-text'>**Passwords do not match</p>}
+                {passwordMatch() ? null : <p className='alert-text'>**Passwords do not match</p>}
                 <input type='password' placeholder='Confirm Password' required={true} onChange={updateConfirmPassword}/>
             </div>
         </>

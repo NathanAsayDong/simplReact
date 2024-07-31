@@ -9,3 +9,36 @@
         scale: 1.1;
     }
 }
+
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    width: 100%;
+    max-height: 100%;
+    gap: 8px;
+    overflow-y: scroll;
+}
+
+.category {
+    display: flex;
+    align-items: center;
+    width: 134px;
+    border: 1px solid #e9e3e3;
+    border-radius: 8px;
+    height: 27px;
+    padding: 5px;
+
+
+    p {
+        margin: 0 10px 0 0;
+    }
+}
+
+.remove-category-icon {
+    margin-right: 0px;
+    margin-left: auto;
+    background-color: black;
+    border-radius: 50%;
+    cursor: pointer;
+}
