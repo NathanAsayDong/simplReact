@@ -18,7 +18,12 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
         }
     }
 
+    const test = () => {
+        console.log('onboarding context: ', OnboardingContext.onboardingData);
+    }
+
     useEffect(() => {
+        console.log('new accounts detected a change, setting accounts in context', newAccounts);
         OnboardingContext?.setAccounts(newAccounts);
     }, [newAccounts]);
 
@@ -27,9 +32,11 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
             <h1 className='section-title' >Connect Accounts </h1>
             <div className='form-container' style={{height: 368}}>
                 <button onClick={openPlaid} className='add-account-button'> Add Account </button>
+                <button onClick={test} className='add-account-button'> TEST </button>
 
-                {OnboardingContext?.accounts?.map((account: any, idx: any) => (
-                    <div className='account' key={idx}>
+
+                {OnboardingContext?.onboardingData?.accounts?.map((account: any, idx: any) => (
+                    <div className='account-row-card' key={idx}>
                         <p>{account.name}</p>
                         <p>{account.source}</p>
                         <p>{account.type}</p>

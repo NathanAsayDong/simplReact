@@ -41,13 +41,15 @@ export const accountTypes = [
 ];
 
 export class Account {
+    id: string;
     name: string;
     type: string;
     source: string
-    refDate: string;
+    refDate: string | null;
     refBalance: number;
     access_token: string = '';
-    constructor(name: string, type: string, source: string, refDate: string = "NA", refBalance: number = 0, access_token: string = '') {
+    constructor(id: string, name: string, type: string, source: string, refDate: string = "NA", refBalance: number = 0, access_token: string = '') {
+        this.id = id
         this.name = name;
         this.type = type;
         this.source = source;

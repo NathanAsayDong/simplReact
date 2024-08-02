@@ -45,8 +45,9 @@ const PlaidService = () => {
 
     const handleNewAccounts = (data: any) => {
         const accounts = data.accounts.map((account: any) => {
-            return new Account(account.name, account.type, account.mask);
+            return new Account(account.id, account.accountName, account.accountType, account.accountSource, undefined, undefined, data.access_token);
         });
+        console.log('New accounts:', accounts);
         setNewAccounts([...newAccounts, ...accounts]);
     }
 
@@ -65,6 +66,7 @@ const PlaidService = () => {
                     body: JSON.stringify({
                         "public_token": public_token,
                         "accounts": metadata.accounts,
+                        "source": metadata.institution?.name
                     }),
                 });
 
@@ -72,7 +74,8 @@ const PlaidService = () => {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                const data =response.json();
+                const data = await response.json();
+                console.log('Data:', data);
                 handleNewAccounts(data);
             }
             catch (error) {

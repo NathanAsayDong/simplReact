@@ -101,7 +101,7 @@ export class DataApiService {
 
             const res = await response.json();
             const accounts = res.map((account: any) => {
-                return new Account(account.accountName, account.accountType, account.accountSource, account.refDate, account.refBalance);
+                return new Account("None", account.accountName, account.accountType, account.accountSource, account.refDate, account.refBalance);
             });
 
             return accounts;

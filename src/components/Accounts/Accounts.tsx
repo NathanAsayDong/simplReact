@@ -28,7 +28,7 @@ const Accounts: FC<AccountsProps> = () =>  {
       return;
     }
     else {
-      const account = new Account(newAccountData.name, newAccountData.type, newAccountData.source, newAccountData.refDate , Number(newAccountData.refBalance));
+      const account = new Account("Null", newAccountData.name, newAccountData.type, newAccountData.source, newAccountData.refDate , Number(newAccountData.refBalance));
       DataApiService.addAccount(account).then(() => {
         updateAccounts(accounts.concat(account));
       });
