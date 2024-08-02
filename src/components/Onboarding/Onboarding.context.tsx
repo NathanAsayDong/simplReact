@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from 'react';
+import { Account } from '../../services/Classes/classes';
 
 
 type OnboardingDataContextType = OnboardingDataObject | null;
@@ -39,9 +40,13 @@ export function OnboardingDataProvider({ children }: any) {
         setOnboardingData({...onboardingData, categories: categories});
     }
 
+    const setAccounts = (accounts: Account[]) => {
+        setOnboardingData({...onboardingData, accounts: accounts});
+    }
+
 
     return (
-        <OnboardingDataContext.Provider value={{onboardingData, updateOnboardingData, setFirstName, setLastName, setEmail, setPhone, setPassword, setCategories}}>
+        <OnboardingDataContext.Provider value={{onboardingData, updateOnboardingData, setFirstName, setLastName, setEmail, setPhone, setPassword, setCategories, setAccounts}}>
             {children}
         </OnboardingDataContext.Provider>
     )
@@ -55,4 +60,5 @@ export class OnboardingDataObject {
     phone?: string = '';
     password?: string = '';
     categories?: string[] = [];
+    accounts?: Account[] = [];
 }

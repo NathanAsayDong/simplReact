@@ -35,7 +35,6 @@ const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount }) =>  {
                         scrollbar={{ draggable: true }}
                         onSwiper={(swiper) => {
                             setSwiperRef(swiper);
-                            console.log(swiper);
                         }}
                         onSlideChange={() => console.log('slide change')}
                         onReachEnd={() => {console.log('end')}}

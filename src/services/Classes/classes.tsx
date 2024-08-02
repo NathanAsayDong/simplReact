@@ -46,12 +46,14 @@ export class Account {
     source: string
     refDate: string;
     refBalance: number;
-    constructor(name: string, type: string, source: string, refDate: string = "NA", refBalance: number = 0) {
+    access_token: string = '';
+    constructor(name: string, type: string, source: string, refDate: string = "NA", refBalance: number = 0, access_token: string = '') {
         this.name = name;
         this.type = type;
         this.source = source;
         this.refDate = refDate;
         this.refBalance = refBalance;
+        this.access_token = access_token;
     }
 
     getAccountSource(): string {

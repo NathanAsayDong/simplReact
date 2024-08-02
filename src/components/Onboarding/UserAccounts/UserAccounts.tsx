@@ -1,40 +1,42 @@
-import { FC } from 'react';
-import { PlaidService } from '../../../services/Classes/plaidApiService';
+import { FC, useEffect } from 'react';
+import PlaidService from '../../../services/Classes/plaidApiService';
 import { OnboardingData } from '../Onboarding.context';
 import './UserAccounts.scss';
-
-
 
 interface UserAccountsProps {}
 
 const UserAccounts: FC<UserAccountsProps> = () =>  {
     const OnboardingContext = OnboardingData();
-    const plaidservice = PlaidService();
-
-
-    const testContextData = () => {
-        console.log(OnboardingContext.onboardingData);
-    }
+    const { open, ready, exit, newAccounts } = PlaidService();
 
     const openPlaid = () => {
-        if (plaidservice.ready) {
-            plaidservice.open();
+        console.log('Open Plaid');
+        if (ready) {
+            open();
+        } else {
+            console.log('Plaid not ready');
         }
     }
 
-    const exitPlaid = () => {
-        plaidservice.exit();
-    }
+    useEffect(() => {
+        OnboardingContext?.setAccounts(newAccounts);
+    }, [newAccounts]);
 
-    
     return (
         <>
             <h1 className='section-title' >Connect Accounts </h1>
-            <div className='form-container'>
-                <p style={{"color":"black"}}>Plaid integration here</p>
-                <button onClick={testContextData}>TEST CONTEXT DATA</button>
-                <button onClick={openPlaid}>OPEN PLAID</button>
+            <div className='form-container' style={{height: 368}}>
+                <button onClick={openPlaid} className='add-account-button'> Add Account </button>
+
+                {OnboardingContext?.accounts?.map((account: any, idx: any) => (
+                    <div className='account' key={idx}>
+                        <p>{account.name}</p>
+                        <p>{account.source}</p>
+                        <p>{account.type}</p>
+                    </div>
+                ))}
             </div>
+
         </>
     )
 }
