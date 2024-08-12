@@ -1,0 +1,37 @@
+.review-row {
+    display: flex;
+    align-items: center;
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+    overflow: scroll;
+    
+    p {
+        color: black
+    }
+}
+
+.label {
+    margin-left: 5px;
+    margin-right: 10px;
+}
+
+.value {
+    margin-right: 5px;
+    margin-left: auto
+}
+
+.divider-vertical {
+    border: 1px solid grey;
+    height: 98%;
+    border-radius: 50%;
+    margin: 0 11px;
+}
+
+.scroll-container {
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.section-header {
+    color: black;
+}

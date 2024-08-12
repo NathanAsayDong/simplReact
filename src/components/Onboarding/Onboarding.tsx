@@ -13,8 +13,14 @@ interface OnboardingProps { toggleCreateAccount: () => void; }
 
 const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount }) =>  {
     const [swiperRef, setSwiperRef] = useState<any>(null);
+    const [lastSlide, setLastSlide] = useState<boolean>(false)
+
     const login = () => {
         toggleCreateAccount();
+    }
+
+    const save = () => {
+        console.log('attemmpting to save')
     }
 
     return (
@@ -36,8 +42,12 @@ const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount }) =>  {
                         onSwiper={(swiper) => {
                             setSwiperRef(swiper);
                         }}
-                        onSlideChange={() => console.log('slide change')}
-                        onReachEnd={() => {console.log('end')}}
+                        onSlideChange={() => {
+                            if (lastSlide) {
+                                setLastSlide(false)
+                            }
+                        }}
+                        onReachEnd={() => {setLastSlide(true)}}
                     >
                     <SwiperSlide key={1}><UserInfo /></SwiperSlide>
                     <SwiperSlide key={2}><UserAccounts /></SwiperSlide>
@@ -49,7 +59,8 @@ const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount }) =>  {
                 <div className='onboarding-footer'>
                     <div className='swiper-buttons'>
                         <button className='swiper-button-back swiper-button' onClick={() => swiperRef.slidePrev()}>Back</button>
-                        <button className='swiper-button-next swiper-button' onClick={() => swiperRef.slideNext()}>Next</button>
+                        {!lastSlide && <button className='swiper-button-next swiper-button' onClick={() => swiperRef.slideNext()}>Next</button>}
+                        {lastSlide && <button className='swiper-button-save swiper-button' onClick={save}>Save</button>}
                     </div>
                 </div>
             </>

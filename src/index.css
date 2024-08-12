@@ -319,6 +319,20 @@ button:focus-visible {
 }
 
 
+/* Display Flex Classes */
+
+.center-all {
+  justify-content: center;
+  align-items: center;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+
 /* MUI */
 
 .MuiDatePicker-root {

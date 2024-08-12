@@ -18,28 +18,45 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
         }
     }
 
-    const test = () => {
-        console.log('onboarding context: ', OnboardingContext.onboardingData);
-    }
-
     useEffect(() => {
         console.log('new accounts detected a change, setting accounts in context', newAccounts);
         OnboardingContext?.setAccounts(newAccounts);
     }, [newAccounts]);
 
+    const updateAccountName = (e: any, index: any) => {
+        const updatedAccounts = OnboardingContext?.onboardingData?.accounts;
+        updatedAccounts[index].name = e.target.value;
+        OnboardingContext?.setAccounts(updatedAccounts);
+    }
+
+    const removeAccount = (accountId: any) => {
+        console.log('Remove Account', accountId);
+        const accounts = OnboardingContext?.onboardingData?.accounts;
+        console.log('accounts: ', accounts);
+        if (accounts) {
+            const newAccounts = accounts.filter((acc: any) => acc.id !== accountId);
+            OnboardingContext?.setAccounts(newAccounts);
+        }
+    }
+
     return (
         <>
             <h1 className='section-title' >Connect Accounts </h1>
-            <div className='form-container' style={{height: 368}}>
-                <button onClick={openPlaid} className='add-account-button'> Add Account </button>
-                <button onClick={test} className='add-account-button'> TEST </button>
-
+            <div className='form-container hide-scroll' style={{height: 368}}>
+                <button onClick={openPlaid} className='add-account-button' style={{marginBottom: 10}}> Add Account </button>
 
                 {OnboardingContext?.onboardingData?.accounts?.map((account: any, idx: any) => (
                     <div className='account-row-card' key={idx}>
-                        <p>{account.name}</p>
-                        <p>{account.source}</p>
-                        <p>{account.type}</p>
+                        <input type="text" value={account.name} onChange={(e) => updateAccountName(e, idx)} className='account-name'/>
+                        <div className='row'>
+                            <p>Institution</p>
+                            <p className='highlight'>{account.source}</p>
+                        </div>
+                        <div className='row'>
+                            <p>Type</p>
+                            <p className='highlight'>{account.type}</p>
+                        </div>
+                        <button className='remove-account-button' onClick={() => removeAccount(account.id)}>Remove Account</button>
                     </div>
                 ))}
             </div>
