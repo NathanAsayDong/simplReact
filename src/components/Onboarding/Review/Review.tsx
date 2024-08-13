@@ -1,18 +1,22 @@
-import { ForwardRefRenderFunction, forwardRef, useImperativeHandle } from 'react';
+import { ForwardRefRenderFunction, forwardRef, useImperativeHandle, useState } from 'react';
 import { Account } from '../../../services/Classes/classes';
+import { DataApiService } from '../../../services/Classes/dataApiService.tsx';
+import { attemptCreateAccount } from '../../../services/Classes/userApiService';
 import { OnboardingData, OnboardingDataObject } from '../Onboarding.context';
 import './Review.scss';
 
 
 
-interface OnboardingReviewProps {}
+interface OnboardingReviewProps { handleLogin: () => void; }
 
 const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (props, ref) => {
     const onboardingData: OnboardingDataObject = OnboardingData().onboardingData;
+    const { handleLogin } = props;
+    const [loading, setLoading] = useState<boolean>(false);
 
     const test = () => {
         console.log('Review')
-        console.log(onboardingData)
+        handleLogin();
     }
 
     const getPasswordString = () => {
@@ -25,8 +29,57 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
     }
 
     useImperativeHandle(ref, () => ({
-        test
+        save
     }))
+
+    const fieldsAreValid = () => {
+        if (!onboardingData?.firstName || !onboardingData?.lastName || !onboardingData?.email || !onboardingData?.phone || !onboardingData?.password) {
+            return false;
+        }
+        else if (!onboardingData?.accounts || onboardingData?.accounts?.length == 0) {
+            return false;
+        }
+        else if (!onboardingData?.categories || onboardingData?.categories?.length == 0) {
+            return false;
+        }
+        return true;
+    }
+
+    const save = async () => {
+        setLoading(true);
+        if (!fieldsAreValid()) {
+            setLoading(false);
+            alert('Please fill out all fields');
+            return;
+        }
+        try {
+            const userCreated = await attemptCreateAccount(onboardingData.email, onboardingData.password);
+            if (!!userCreated && !!onboardingData.accounts && !!onboardingData.categories) {
+                localStorage.setItem('id', userCreated.authToken);
+                for (let account of onboardingData.accounts) {
+                    const accountCreated = await DataApiService.addAccount(account);
+                    if (!accountCreated) {
+                        throw new Error('Account Creation Failed');
+                    }
+                }
+                for (let category of onboardingData.categories) {
+                    const categoryAdded = await DataApiService.addCategory(category);
+                    if (!categoryAdded) {
+                        throw new Error('Category Creation Failed');
+                    }
+                }
+                console.log('User Created');
+                setLoading(false);
+                handleLogin();
+            } else {
+                throw new Error('Account Creation Failed');
+            }
+        }
+        catch (e) {
+            console.error(e);
+        }
+
+    }
     
     return (
         <>
@@ -85,3 +138,4 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
 }
 
 export default forwardRef(OnboardingReview);
+

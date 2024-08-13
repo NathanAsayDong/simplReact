@@ -19,7 +19,7 @@ export const attemptLogin = async (email: string, password: string) => {
     return data;
 }
 
-export const attemptCreateAccount = async (email: string, password: string) => {
+export const attemptCreateAccount = async (email: string | undefined, password: string | undefined) => {
     const response = await fetch(baseUrl + 'createAccount', {
         method: 'POST',
         headers: {

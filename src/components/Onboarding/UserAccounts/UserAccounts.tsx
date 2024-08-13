@@ -48,11 +48,11 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
                 {OnboardingContext?.onboardingData?.accounts?.map((account: any, idx: any) => (
                     <div className='account-row-card' key={idx}>
                         <input type="text" value={account.name} onChange={(e) => updateAccountName(e, idx)} className='account-name'/>
-                        <div className='row'>
+                        <div className='row' style={{height: 38}}>
                             <p>Institution</p>
                             <p className='highlight'>{account.source}</p>
                         </div>
-                        <div className='row'>
+                        <div className='row' style={{height: 38}}>
                             <p>Type</p>
                             <p className='highlight'>{account.type}</p>
                         </div>

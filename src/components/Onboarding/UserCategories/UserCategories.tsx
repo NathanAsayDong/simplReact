@@ -48,7 +48,7 @@ const UserCategories: FC<UserCategoriesProps> = () =>  {
         <>
             <h1 className='section-title'>Categories</h1>
             <div className='form-container hide-scroll' style={{height: 368}}>
-                <div className='row' style={{paddingRight: 5, paddingLeft: 5}}>
+                <div className='row' style={{paddingRight: 5, paddingLeft: 5, height: 'fit-content'}}>
                     <input type='text' id='newCategory' placeholder='Category Name' onKeyUp={handleEnterKey}/>
                     <FontAwesomeIcon icon={faSquarePlus} className='add-category-icon' onClick={addCategory}/>
                 </div>

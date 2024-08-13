@@ -91,7 +91,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
          </div>
       </div>}
 
-      {userWantsToCreateAccount && <Onboarding toggleCreateAccount={toggleCreateAccount} />}
+      {userWantsToCreateAccount && <Onboarding toggleCreateAccount={toggleCreateAccount} handleLogin={handleLogin} />}
    </>
    );
    

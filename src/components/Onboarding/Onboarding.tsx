@@ -9,9 +9,9 @@ import 'swiper/css';
 import { OnboardingDataProvider } from './Onboarding.context';
 import './Onboarding.scss';
 
-interface OnboardingProps { toggleCreateAccount: () => void; }
+interface OnboardingProps { toggleCreateAccount: () => void; handleLogin: () => void; }
 
-const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount }) =>  {
+const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount, handleLogin }) =>  {
     const [swiperRef, setSwiperRef] = useState<any>(null);
     const [lastSlide, setLastSlide] = useState<boolean>(false)
     const reviewRef = useRef<any>(null);  // Create a ref for OnboardingReview
@@ -23,7 +23,7 @@ const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount }) =>  {
 
     const save = async () => {
         console.log('Save');
-        reviewRef.current?.test();
+        reviewRef.current?.save();
         // const success = await attemptCreateAccount(onboardingData.email, onboardingData.password);
     }
 
@@ -56,7 +56,7 @@ const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount }) =>  {
                     <SwiperSlide key={1}><UserInfo /></SwiperSlide>
                     <SwiperSlide key={2}><UserAccounts /></SwiperSlide>
                     <SwiperSlide key={3}><UserCategories /></SwiperSlide>
-                    <SwiperSlide key={4}><OnboardingReview ref={reviewRef}/></SwiperSlide>
+                    <SwiperSlide key={4}><OnboardingReview ref={reviewRef} handleLogin={handleLogin}/></SwiperSlide>
                     </Swiper>
                 </div>
 
