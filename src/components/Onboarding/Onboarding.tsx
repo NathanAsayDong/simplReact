@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import OnboardingReview from './Review/Review';
 import UserAccounts from './UserAccounts/UserAccounts';
@@ -14,13 +14,17 @@ interface OnboardingProps { toggleCreateAccount: () => void; }
 const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount }) =>  {
     const [swiperRef, setSwiperRef] = useState<any>(null);
     const [lastSlide, setLastSlide] = useState<boolean>(false)
+    const reviewRef = useRef<any>(null);  // Create a ref for OnboardingReview
+
 
     const login = () => {
         toggleCreateAccount();
     }
 
-    const save = () => {
-        console.log('attemmpting to save')
+    const save = async () => {
+        console.log('Save');
+        reviewRef.current?.test();
+        // const success = await attemptCreateAccount(onboardingData.email, onboardingData.password);
     }
 
     return (
@@ -52,7 +56,7 @@ const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount }) =>  {
                     <SwiperSlide key={1}><UserInfo /></SwiperSlide>
                     <SwiperSlide key={2}><UserAccounts /></SwiperSlide>
                     <SwiperSlide key={3}><UserCategories /></SwiperSlide>
-                    <SwiperSlide key={4}><OnboardingReview /></SwiperSlide>
+                    <SwiperSlide key={4}><OnboardingReview ref={reviewRef}/></SwiperSlide>
                     </Swiper>
                 </div>
 
