@@ -47,15 +47,15 @@ export class Account {
     source: string
     refDate: string | null;
     refBalance: number;
-    access_token: string = '';
-    constructor(id: string, name: string, type: string, source: string, refDate: string = "NA", refBalance: number = 0, access_token: string = '') {
-        this.id = id
-        this.name = name;
+    accessToken: string = '';
+    constructor(id: string, name: string, type: string, source: string, refDate: string = "NA", refBalance: number = 0, accessToken: string = '') {
+        this.id = id //provided by plaid
+        this.name = name; //user defined
         this.type = type;
-        this.source = source;
+        this.source = source; //instution name
         this.refDate = refDate;
         this.refBalance = refBalance;
-        this.access_token = access_token;
+        this.accessToken = accessToken;
     }
 
     getAccountSource(): string {

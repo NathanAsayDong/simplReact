@@ -45,7 +45,7 @@ const PlaidService = () => {
 
     const handleNewAccounts = (data: any) => {
         const accounts = data.accounts.map((account: any) => {
-            return new Account(account.id, account.accountName, account.accountType, account.accountSource, undefined, undefined, data.access_token);
+            return new Account(account.id, account.accountName, account.accountType, account.accountSource, String(new Date()), undefined, data.access_token);
         });
         console.log('New accounts:', accounts);
         setNewAccounts([...newAccounts, ...accounts]);

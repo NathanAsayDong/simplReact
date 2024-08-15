@@ -121,11 +121,13 @@ export class DataApiService {
             const response = await fetch(url, {
                 method: 'POST',
                 body: JSON.stringify({
+                    accountId: account.id,
                     accountName: account.name,
                     accountType: account.type,
                     accountSource: account.source,
                     refDate: account.refDate,
-                    refBalance: account.refBalance
+                    refBalance: account.refBalance,
+                    accessToken: account.accessToken
                 }),
                 headers: {
                     'Content-Type': 'application/json'
@@ -286,6 +288,21 @@ export class DataApiService {
             console.error('Error during updating category:', error);
             throw error;
         }
+    }
+
+    public static test = async () => {
+        const userId = localStorage.getItem('id');
+        if (!userId) throw new Error('User ID is missing in local storage.');
+
+        const url = baseUrl + 'plaid/sync-transactions-all' + '?userId=' + userId;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
     }
 
 
