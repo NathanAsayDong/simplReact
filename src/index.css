@@ -172,6 +172,7 @@ button:focus-visible {
   align-items: center;
   width: 100%;
   overflow: hidden;
+  height: auto;
 }
 
 .swiper-row {

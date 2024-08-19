@@ -63,6 +63,11 @@ const Dashboard: FC<DashboardProps> = () => {
     }
   };
 
+  const getNameFromId = (id: string) => {
+    const account = accounts.find((account : Account) => account.id === id);
+    return account?.name || 'Unknown';
+  }
+
   const initializeGraphData = async () => {
     // const dates: number[] = getDatesFromTransactions(transactions, dateScale);
     const filteredTransactions = getFilteredTransactions(transactions, dashboardFilterData);
@@ -86,7 +91,7 @@ const Dashboard: FC<DashboardProps> = () => {
     const data: any[] = [];
     transactions = transactions.filter((transaction) => {
       if (!dashboardFilterData.selectedAccounts.includes('All')) {
-        return dashboardFilterData.selectedAccounts.includes(transaction.account);
+        return dashboardFilterData.selectedAccounts.includes(transaction.accountId);
       }
       if (!dashboardFilterData.selectedCategories.includes('All')) {
         return dashboardFilterData.selectedCategories.includes(transaction.category);
@@ -131,11 +136,11 @@ const Dashboard: FC<DashboardProps> = () => {
   const processTransactionsIntoAccounts = (transactions: Transaction[], accounts: Account[]) => {
     const data: any[] = []; // {name: 'Uccu', amount: 100}
     transactions.forEach((transaction: Transaction) => {
-      const accountIndex = data.findIndex((d) => d.name === transaction.account);
-      let accountType = accounts.find((account) => account.name === transaction.account)?.type;
+      const accountIndex = data.findIndex((d) => d.name === transaction.accountId);
+      let accountType = accounts.find((account) => account.name === transaction.accountId)?.type;
       const amount = accountType === 'Credit' ? transaction.amount * -1 : transaction.amount;
       if (accountIndex === -1) {
-        data.push({ name: transaction.account, amount: amount });
+        data.push({ name: transaction.accountId, amount: amount });
       } else {
         data[accountIndex].amount += transaction.amount;
       }
@@ -231,7 +236,7 @@ const Dashboard: FC<DashboardProps> = () => {
             {accountData.map((account, index) => (
               <div key={index} className='category-card'>
                 <div className='card-name archivo-font'>
-                  <h3>{account.name}</h3>
+                  <h3>{getNameFromId(account.name)}</h3>
                 </div>
                 <div className='card-amount roboto-light'>
                   <p>${account.amount.toFixed(2) * -1}</p>

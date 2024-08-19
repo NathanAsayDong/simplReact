@@ -6,7 +6,6 @@ import { FC, useEffect, useState } from 'react';
 import { Account, Transaction } from '../../services/Classes/classes';
 import { DataApiService } from '../../services/Classes/dataApiService';
 import { SetTransactionData, TransactionData, UserAccountsData, UserCategoriesData } from '../../services/Classes/dataContext';
-import ImportCsv from '../ImportCsv/ImportCsv';
 import './TransactionsManagement.scss';
 
 
@@ -35,8 +34,16 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     color: 'white',
     padding: '0px',
     width : '100%'
-}
+  }
 
+  const test = () => {
+    console.log('accounts', accounts);
+  }
+
+  const getAccountName = (id: string) => {
+    const name = accounts.find((account: Account) => account.id === id)?.name;
+    return name ? name : 'Unknown';
+  }
 
   const handleStartDateSelect = (date: any) => {
     if (date && dayjs(date).isValid()) {
@@ -59,7 +66,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
         return (!dateRanges.startDate || dayjs(transaction.timestamp).isAfter(dateRanges.startDate))
         && (!dateRanges.endDate || dayjs(transaction.timestamp).isBefore(dateRanges.endDate))
         && (filteredCategories.includes('All') || filteredCategories.includes(transaction.category)
-        && (filteredAccounts.includes('All') || filteredAccounts.includes(transaction.account)));
+        && (filteredAccounts.includes('All') || filteredAccounts.includes(transaction.accountId)));
       });
       setFilteredTransactions(trans)
     }
@@ -132,12 +139,10 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   return (
   <>
     {loading ? <LinearProgress color="inherit" variant='determinate' value={loadingProgress} /> : null}
-
-    <ImportCsv setLoading={setLoading} setLoadingProgress={setLoadingProgress} />
-
+    
     <div className='body'>
       <div className='row'>
-            <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Transactions</h3>
+            <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}} onClick={test}>Transactions</h3>
       </div>
       <div className='container-transparent'>
         <div className='row' style={{gap: '5px'}}>
@@ -227,7 +232,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
                 <div className='item'>
                   <h3 className='roboto-bold'>Account:</h3>
-                  <h3>{transaction.account}</h3>
+                  <h3>{getAccountName(transaction.accountId)}</h3>
                 </div>
 
               </div>
