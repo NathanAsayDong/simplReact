@@ -234,8 +234,8 @@ button:focus-visible {
 }
 
 .footer {
-  margin-top: auto;
   bottom: 0;
+  position: relative;
   width: 100%;
   padding: 10px;
   display: flex;

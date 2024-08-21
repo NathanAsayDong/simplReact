@@ -36,8 +36,8 @@ function App() {
   }
 
   useEffect(() => {
-    initializePage();
     initializeDataForContext();
+    initializePage();
   }, [ ])
 
   if (isLoggin) {

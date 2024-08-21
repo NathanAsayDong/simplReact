@@ -26,7 +26,6 @@ const Dashboard: FC<DashboardProps> = () => {
   const [netValueByAccount, setNetValueByAccount] = useState<any[]>([]); //graph date for accounts {date, account^n, sum}
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false); //config modal object that we use for filtering, modes, and sorting
   const [loading, setLoading] = useState<boolean>(false); //loading state
-  
 
   //FILTERS:
   const [dateScale, setDateScale] = useState<any>('day');
@@ -259,7 +258,9 @@ const Dashboard: FC<DashboardProps> = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <DashboardConfig filterObject={dashboardFilterData} onClose={handleCloseConfigModal} onApply={handleApplyConfigModal}/>
+        <div>
+          <DashboardConfig filterObject={dashboardFilterData} onClose={handleCloseConfigModal} onApply={handleApplyConfigModal}/>
+        </div>
       </Modal>
 
       <svg style={{ height: 0 }}>

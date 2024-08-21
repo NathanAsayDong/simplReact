@@ -4,7 +4,6 @@ import { Modal } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { UserIconModal } from '../../modals/UserIconModal/UserIconModal';
-import { DataApiService } from '../../services/Classes/dataApiService';
 import './NavBar.scss';
 
 interface NavBarProps {
@@ -26,15 +25,9 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
         setShowDropdown(!showDropdown);
     }
 
-    const test = async () => {
-        console.log('Test');
-        DataApiService.test();
-    }
-
-
     return (
     <div className='navbar'>
-        <h2 onClick={test}>Simpl Finance</h2>
+        <h2>Simpl Finance</h2>
         
         {isMobile ? <FontAwesomeIcon icon={faBars} className='account-icon' onClick={handleBarsClick}/>
         : (
@@ -67,7 +60,9 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
         >
-        <UserIconModal handleLogout={handleLogout}/>
+        <div>
+            <UserIconModal handleLogout={handleLogout}/>
+        </div>
     </Modal>
 
     </div>

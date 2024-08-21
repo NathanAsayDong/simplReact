@@ -62,6 +62,10 @@ export function AppDataProvider({ children }: any){
         setUserCategories(data);
     }
 
+    const syncWithPlaid = async () => {
+        await DataApiService.syncData();
+    }
+
     const initializeTransactions = async () => {
         if (!transactions) {
             DataApiService.getAllTransactions().then((transactions) => {
@@ -93,6 +97,7 @@ export function AppDataProvider({ children }: any){
     }
 
     const initializeData = async () => {
+        await syncWithPlaid();
         await initializeTransactions();
         await initializeAccounts();
         await initializeCategories();

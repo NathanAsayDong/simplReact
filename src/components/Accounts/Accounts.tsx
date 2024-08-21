@@ -74,7 +74,7 @@ const Accounts: FC<AccountsProps> = () =>  {
     if (originalName) {
       const updatedAccountNames = new Map(updatedAccountNamesMap);
       updatedAccountNames.delete(id);
-      setUpdatedAccountNamesMap(updatedAccountNames); 
+      setUpdatedAccountNamesMap(updatedAccountNames);
     }
   }
 

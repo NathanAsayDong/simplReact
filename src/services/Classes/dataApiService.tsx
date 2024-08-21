@@ -325,12 +325,13 @@ export class DataApiService {
         }
     }
 
-    public static test = async () => {
+    public static syncData = async () => {
+        //goes through all the accounts for a user and uses plaid to sync transactions
         const userId = localStorage.getItem('id');
         if (!userId) throw new Error('User ID is missing in local storage.');
-
+    
         const url = baseUrl + 'plaid/sync-transactions-all' + '?userId=' + userId;
-
+    
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -338,7 +339,10 @@ export class DataApiService {
             }
         });
 
+        if (!response.ok) {
+            const errorBody = await response.json();
+            throw new Error(`Failed to sync data: ${response.status} ${response.statusText} - ${errorBody}`);
+        }
     }
-
 
 }
