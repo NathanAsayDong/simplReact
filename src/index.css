@@ -267,6 +267,38 @@ button:focus-visible {
   }
 }
 
+.upload-icon {
+  transition: cubic-bezier(0.075, 0.82, 0.165, 1);
+  cursor: pointer;
+  font-size: 22px;
+  color: white;
+  background: #37b228;
+  padding: 3px;
+  border-radius: 5px;
+  height: 25px;
+  width: 25px;
+
+  &:hover {
+    color: green;
+  }
+}
+
+.cancel-icon {
+  transition: cubic-bezier(0.075, 0.82, 0.165, 1);
+  cursor: pointer;
+  font-size: 22px;
+  color: white;
+  background: #000000;
+  padding: 3px;
+  border-radius: 5px;
+  height: 25px;
+  width: 25px;
+
+  &:hover {
+    color: rgb(202, 1, 1);
+  }
+}
+
 .special-button {
   cursor: pointer;
   transition: all 0.3s ease;

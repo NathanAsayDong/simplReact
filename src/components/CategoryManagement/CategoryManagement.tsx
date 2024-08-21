@@ -73,7 +73,7 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
             <div className='loading'>Loading...</div>
           ) : (
             categories.map((category: string, index: any) => (
-              <div key={index} className='transaction-row'>
+              <div key={index} className='category-row'>
 
                 <div className='item' style={{width: '24%', marginLeft: '20px'}}>
                   <h3 className='roboto-bold'>Category:</h3>

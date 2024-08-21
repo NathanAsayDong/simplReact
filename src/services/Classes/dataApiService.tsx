@@ -147,6 +147,41 @@ export class DataApiService {
         }
     }
 
+    public static updateAccount = async (account: Account) => {
+        try {
+            const id = localStorage.getItem('id');
+            if (!id) throw new Error('User ID is missing in local storage.');
+
+            const url = baseUrl + 'update-account' + '?userId=' + id;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify({
+                    accountId: account.id,
+                    accountName: account.name,
+                    accountType: account.type,
+                    accountSource: account.source,
+                    refDate: account.refDate,
+                    refBalance: account.refBalance,
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(`Failed to update account: ${response.status} ${response.statusText} - ${errorBody}`);
+            }
+
+            const res = await response.json();
+            return res;
+        } catch (error) {
+            console.error('Error during updating account:', error);
+            throw error;
+        }
+    }
+
     public static deleteAccount = async (account: Account) => {
         try {
             const id = localStorage.getItem('id');
@@ -157,7 +192,7 @@ export class DataApiService {
             const response = await fetch(url, {
                 method: 'POST',
                 body: JSON.stringify({
-                    accountName: account.name,
+                    accountId: account.id,
                 }),
                 headers: {
                     'Content-Type': 'application/json'

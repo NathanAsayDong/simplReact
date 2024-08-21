@@ -7,9 +7,12 @@
     color: black;
 }
 
-.account-row {
+.category-row {
     box-shadow: inset 0px 0px 12px 1px #2c5364;;
-    border-radius: 20px;
+    background-color: white;
+    height: 66px;
+    width: 100%;
+    border-radius: 10px;
     display: flex;
     justify-content: start;
     align-items: center;

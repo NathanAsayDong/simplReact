@@ -1,9 +1,9 @@
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC, useEffect, useState } from 'react';
 import { Account } from '../../services/Classes/classes';
 import { DataApiService } from '../../services/Classes/dataApiService';
-import { InitializeDataForContext, SetUserAccountData, UserAccountsData } from '../../services/Classes/dataContext';
+import { SetUserAccountData, UserAccountsData } from '../../services/Classes/dataContext';
 import PlaidService from '../../services/Classes/plaidApiService';
 import './Accounts.scss';
 
@@ -12,14 +12,10 @@ interface AccountsProps {}
 const Accounts: FC<AccountsProps> = () =>  {
   const accounts = UserAccountsData() || [];
   const updateAccounts = SetUserAccountData();
-  const [newAccountData, setNewAccountData] = useState<any>({name: '', type: '', source: '', refDate: '', refBalance: 0});
-  const initializeData = InitializeDataForContext();
   const { open, ready, exit, newAccounts } = PlaidService();
-
-  initializeData();
+  const [updatedAccountNamesMap, setUpdatedAccountNamesMap] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
-    console.log('new accounts detected a change, setting accounts in context', newAccounts);
     newAccounts.forEach((account: Account) => {
       try {
         DataApiService.addAccount(account).then(() => {
@@ -45,6 +41,43 @@ const Accounts: FC<AccountsProps> = () =>  {
     updateAccounts(accounts.filter((acc: Account) => acc !== account));
   }
 
+  const updateAccountName = (id: string, name: string) => {
+    const updatedAccountNames = new Map(updatedAccountNamesMap);
+    updatedAccountNames.set(id, name);
+    setUpdatedAccountNamesMap(updatedAccountNames);
+  }
+
+  const canSave = (id: string) => {
+    return updatedAccountNamesMap.has(id);
+  }
+
+  const saveName = async (id: string) => {
+    const name = updatedAccountNamesMap.get(id);
+    const updatedAccounts = accounts.map((account: Account) => {
+      if (account.id === id && name) {
+        account.name = name;
+      }
+      return account;
+    });
+    updateAccounts(updatedAccounts);
+    const updatedAccount = accounts.find((account: Account) => account.id === id);
+    //TODO: loading
+    await DataApiService.updateAccount(updatedAccount);
+    const updatedAccountNames = new Map(updatedAccountNamesMap);
+    updatedAccountNames.delete(id);
+    setUpdatedAccountNamesMap(updatedAccountNames);
+  }
+
+  const resetName = (id: string) => {
+    console.log('resetting name', id);
+    const originalName = accounts.find((account: Account) => account.id === id)?.name;
+    if (originalName) {
+      const updatedAccountNames = new Map(updatedAccountNamesMap);
+      updatedAccountNames.delete(id);
+      setUpdatedAccountNamesMap(updatedAccountNames); 
+    }
+  }
+
 
   return (
     <>
@@ -65,36 +98,36 @@ const Accounts: FC<AccountsProps> = () =>  {
               <div className='loading'>Loading...</div>
             ) : (
               accounts.map((account: Account, index: any) => (
-                <div key={index} className='transaction-row'>
+                <div key={index} className='account-row'>
 
-                  <div className='item' style={{width: '15%', maxWidth: '15%',marginLeft: '2%'}}> 
+                  <div className='item' style={{marginLeft: '2%'}}> 
                     <h3 className='roboto-bold'>Account:</h3>
-                    <h3>{account.name}</h3>
+                    <input className='account-name-input' value={updatedAccountNamesMap.has(account.id) ? updatedAccountNamesMap.get(account.id) : account.name} onChange={(event) => updateAccountName(account.id, event.target.value)}/>
                   </div>
 
-                  <div className='item' style={{width: '15%'}}>
+                  <div className='item' style={{width: 'auto'}}>
                     <h3 className='roboto-bold'>Type:</h3>
                     <h3>{account.type}</h3>
                   </div>
 
-                  <div className='item' style={{width: '15%'}}>
+                  <div className='item' style={{width: 'auto'}}>
                     <h3 className='roboto-bold'>Source:</h3>
-                    <h3>{account.source}</h3>
+                    <h3 style={{whiteSpace: 'nowrap'}}>{account.source}</h3>
                   </div>
 
-                  <div className='item'>
-                    <h3 className='roboto-bold'>Reference Date:</h3>
-                    <h3>{account.refDate}</h3>
-                  </div>
+                  {!canSave(account.id) && (
+                    <div className='item' style={{marginRight: '8%'}}>
+                      <FontAwesomeIcon icon={faTrash} className='trash-icon' onClick={() => deleteAccount(account)}/>
+                    </div>
+                  )}
 
-                  <div className='item'>
-                    <h3 className='roboto-bold'>Reference Balance:</h3>
-                    <h3>${account.refBalance.toFixed(2)}</h3>
-                  </div>
+                  {canSave(account.id) && (
+                    <div className='item' style={{marginRight: '8%'}}>
+                      <FontAwesomeIcon icon={faCheck} className='upload-icon' onClick={() => saveName(account.id)}/>
+                      <FontAwesomeIcon icon={faTimes} className='cancel-icon' onClick={() => resetName(account.id)}/>
+                    </div>
+                  )}
 
-                  <div className='item' style={{marginRight: '2em', marginLeft: 'auto'}}>
-                    <FontAwesomeIcon icon={faTrash} className='trash-icon' onClick={() => deleteAccount(account)}/>
-                  </div>
                 </div>
               ))
             )}

@@ -199,7 +199,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
       </div>
       <div className='container-transparent'>
         {filteredTransactions.length == 0 ? (
-            <div className='loading'>Loading...</div>
+            <div className='loading'>No Transactions</div>
           ) : (
             filteredTransactions.slice().reverse().map((transaction: Transaction, index: any) => (
               <div key={index} className='transaction-row'>
