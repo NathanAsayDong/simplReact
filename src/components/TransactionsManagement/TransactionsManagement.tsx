@@ -146,7 +146,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
       </div>
       <div className='container-transparent'>
         <div className='row' style={{gap: '5px'}}>
-        <FormControl sx={{ minWidth: 120 }}>
+          <FormControl sx={{ minWidth: 120 }}>
           <InputLabel id="category-select">Categories</InputLabel>
           <Select
               labelId="category-select"

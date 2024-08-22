@@ -138,7 +138,6 @@ export class DataApiService {
                 const errorBody = await response.json();
                 throw new Error(`Failed to add account: ${response.status} ${response.statusText} - ${errorBody}`);
             }
-
             const res = await response.json();
             return res;
         } catch (error) {

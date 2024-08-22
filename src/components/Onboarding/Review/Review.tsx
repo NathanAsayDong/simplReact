@@ -125,7 +125,7 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
                     <h2 className='section-header'>Categories</h2>
                     {!!onboardingData?.categories &&  onboardingData?.categories?.map((category: String, index: any) => {
                             return (
-                                <div key={index} className='review-row' style={{justifyContent: 'center'}}>
+                                <div key={index} className='review-row' style={{justifyContent: 'center', overflow: 'hidden'}}>
                                     <p className='archivo-font-bold'>{category}</p>
                                 </div>
                             )

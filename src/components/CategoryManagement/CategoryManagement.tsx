@@ -1,9 +1,9 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LinearProgress from '@mui/material/LinearProgress';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { DataApiService } from '../../services/Classes/dataApiService';
-import { InitializeDataForContext, SetUserCategoryData, UserCategoriesData } from '../../services/Classes/dataContext';
+import { SetUserCategoryData, UserCategoriesData } from '../../services/Classes/dataContext';
 import './CategoryManagement.scss';
 
 
@@ -14,16 +14,6 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
   const updateCategories = SetUserCategoryData();
   const [loading, setLoading] = useState<boolean>(false);
   const [newCategory, setNewCategory] = useState<string>('');
-  const initializeDataForContext = InitializeDataForContext();
-
-
-
-  useEffect(() => {
-    if (categories.length === 0) {
-      setLoading(true);
-      initializeDataForContext()
-    }
-  });
 
   const handleCategoryChange = (e: any) => {
     setNewCategory(e.target.value);

@@ -97,7 +97,7 @@ export function AppDataProvider({ children }: any){
     }
 
     const initializeData = async () => {
-        await syncWithPlaid();
+        // await syncWithPlaid();
         await initializeTransactions();
         await initializeAccounts();
         await initializeCategories();

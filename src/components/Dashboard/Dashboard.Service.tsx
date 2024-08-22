@@ -19,9 +19,9 @@ export const getFilteredTransactions = (transactions: Transaction[], filterData:
                 return true;
             } else if (filterData.selectedAccounts.includes('All') && filterData.selectedCategories.includes(transaction.category)) {
                 return true;
-            } else if (filterData.selectedAccounts.includes(transaction.account) && filterData.selectedCategories.includes('All')) {
+            } else if (filterData.selectedAccounts.includes(transaction.accountId) && filterData.selectedCategories.includes('All')) {
                 return true;
-            } else if (filterData.selectedAccounts.includes(transaction.account) && filterData.selectedCategories.includes(transaction.category)) {
+            } else if (filterData.selectedAccounts.includes(transaction.accountId) && filterData.selectedCategories.includes(transaction.category)) {
                 return true;
             }
         }
@@ -46,22 +46,36 @@ export const filterTransactionsByCategory = (transactions: Transaction[], filter
 
 export const filterTransactionsByAccount = (transactions: Transaction[], filterData: DashboardFilterData): Transaction[] => {
     return transactions.filter((transaction) => {
-        return filterData.selectedAccounts.includes(transaction.account) || filterData.selectedAccounts.includes('All');
+        return filterData.selectedAccounts.includes(transaction.accountId) || filterData.selectedAccounts.includes('All');
     });
 }
 
 export const getFilteredAccounts = (accounts: Account[], filteredTransactions: Transaction[], filterData: DashboardFilterData): Account[] => {
     return accounts.filter((account) => {
         if (filterData.selectedAccounts.includes('All')) {
-            return filteredTransactions.some((transaction) => transaction.account === account.name);
+            return filteredTransactions.some((transaction) => transaction.accountId === account.id);
         }
-        return (filterData.selectedAccounts.includes(account.name)) && filteredTransactions.some((transaction) => transaction.account === account.name);
+        return (filterData.selectedAccounts.includes(account.name)) && filteredTransactions.some((transaction) => transaction.accountId === account.id);
     });
 }
 
 export const getFilteredCategories = (transactions: Transaction[], filterData: DashboardFilterData): string[] => {
     const categories = transactions.map((transaction) => transaction.category);
     return Array.from(new Set(categories)).filter((category) => filterData.selectedCategories.includes(category) || filterData.selectedCategories.includes('All'));
+}
+
+export const getNetValueFromAccounts = (accounts: Account[]): number => {
+    return accounts.reduce((acc, account) => {
+        if (account.type == "checking" || account.type == "savings") {
+            return acc + account.refBalance;
+        }
+        if (account.type == "credit") {
+            return acc - account.refBalance;
+        }
+        else {
+            return acc;
+        }
+    }, 0);
 }
 
 // --------------------- PROCESSING ---------------------
@@ -79,8 +93,8 @@ export const getFilteredCategories = (transactions: Transaction[], filterData: D
 // --------------------- LINE CHART ---------------------
 
 export const processTransactionsIntoNetValue = async (transactions: Transaction[], account: Account) => {
-    transactions = transactions.filter((transaction) => transaction.account === account.name);
-    const refStartDate = new Date(account.refDate).getTime();
+    transactions = transactions.filter((transaction) => transaction.accountId === account.id);
+    const refStartDate = account.refDate ? new Date(account.refDate).getTime() : new Date().getTime();
     const data: any[] = [];
     const beforeTrns = transactions.filter((transaction) => transaction.timestamp < refStartDate).sort((a, b) => b.timestamp - a.timestamp);
     const afterTrns = transactions.filter((transaction) => transaction.timestamp >= refStartDate).sort((a, b) => a.timestamp - b.timestamp);

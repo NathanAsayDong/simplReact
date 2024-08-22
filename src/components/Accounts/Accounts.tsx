@@ -16,17 +16,14 @@ const Accounts: FC<AccountsProps> = () =>  {
   const [updatedAccountNamesMap, setUpdatedAccountNamesMap] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
-    newAccounts.forEach((account: Account) => {
-      try {
-        DataApiService.addAccount(account).then(() => {
-          updateAccounts([...accounts, account]);
-        });
-      } catch (error) {
-        console.error('Error adding account:', error);
-      }
+    const newAccountsFiltered = newAccounts.filter((newAccount: Account) => !accounts.some((account: Account) => account.id === newAccount.id));
+    newAccountsFiltered.forEach(async (account: Account) => {
+      await DataApiService.addAccount(account);
+      console.log('added account', account);
     });
+    console.log('updating accounts context');
+    updateAccounts([...accounts, ...newAccountsFiltered]);
   }, [newAccounts]);
-
 
   const AddPlaidAccounts = async () => {
       if (ready) {
