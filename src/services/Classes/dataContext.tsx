@@ -49,6 +49,7 @@ export function AppDataProvider({ children }: any){
     const [transactions, setTransactions] = useState<TransactionDataContextType>(null);
     const [userAccounts, setUserAccounts] = useState<UserAccountsDataContextType>(null);
     const [userCategories, setUserCategories] = useState<UserCategoriesDataContextType>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const updateTransactions = (data: TransactionDataContextType) => {
         setTransactions(data);
@@ -63,7 +64,11 @@ export function AppDataProvider({ children }: any){
     }
 
     const syncWithPlaid = async () => {
-        await DataApiService.syncData();
+        const lastSync = localStorage.getItem('lastSync');
+        if ((lastSync && (Date.now() - parseInt(lastSync) > 3600000)) || !lastSync) {
+            await DataApiService.syncData();
+            localStorage.setItem('lastSync', Date.now().toString());
+        }
     }
 
     const initializeTransactions = async () => {
@@ -97,10 +102,12 @@ export function AppDataProvider({ children }: any){
     }
 
     const initializeData = async () => {
-        // await syncWithPlaid();
+        setLoading(true);
+        await syncWithPlaid();
         await initializeTransactions();
         await initializeAccounts();
         await initializeCategories();
+        setLoading(false);
     }
 
 
@@ -112,7 +119,7 @@ export function AppDataProvider({ children }: any){
                         <SetUserAccountDataContext.Provider value={ updateAccounts }>
                             <UserCategoriesDataContext.Provider value={ userCategories }>
                                 <SetUserCategoryDataContext.Provider value={ updateCategories }>
-                                    <InitializeDataContext.Provider value={ initializeData }>
+                                    <InitializeDataContext.Provider value={{ initializeData, loading, setLoading }}>
                                             {children}
                                     </InitializeDataContext.Provider>
                                 </SetUserCategoryDataContext.Provider>

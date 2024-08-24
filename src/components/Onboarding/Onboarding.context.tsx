@@ -45,6 +45,7 @@ export function OnboardingDataProvider({ children }: any) {
     }
 
 
+
     return (
         <OnboardingDataContext.Provider value={{onboardingData, updateOnboardingData, setFirstName, setLastName, setEmail, setPhone, setPassword, setCategories, setAccounts}}>
             {children}

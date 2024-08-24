@@ -1,10 +1,10 @@
 import { FC, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import OnboardingReview from './Review/Review';
-import UserAccounts from './UserAccounts/UserAccounts';
 import UserCategories from './UserCategories/UserCategories';
 import UserInfo from './UserInfo/UserInfo';
 
+import { LinearProgress } from '@mui/material';
 import 'swiper/css';
 import { OnboardingDataProvider } from './Onboarding.context';
 import './Onboarding.scss';
@@ -14,6 +14,7 @@ interface OnboardingProps { toggleCreateAccount: () => void; handleLogin: () => 
 const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount, handleLogin }) =>  {
     const [swiperRef, setSwiperRef] = useState<any>(null);
     const [lastSlide, setLastSlide] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false);
     const reviewRef = useRef<any>(null);  // Create a ref for OnboardingReview
 
 
@@ -22,14 +23,13 @@ const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount, handleLogin }) =
     }
 
     const save = async () => {
-        console.log('Save');
         reviewRef.current?.save();
-        // const success = await attemptCreateAccount(onboardingData.email, onboardingData.password);
     }
 
     return (
         <OnboardingDataProvider>
             <>
+            {loading && <LinearProgress style={{marginBottom: '16px'}} color="inherit" />}
             <div className='onboarding-header'>
                 <h2 style={{"marginLeft":"10px"}}>SIMPL.</h2>
                 <button style={{"marginLeft":"auto","marginRight":"10px"}} className="subtle-button" onClick={login}>Already have an account?</button>
@@ -54,9 +54,8 @@ const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount, handleLogin }) =
                         onReachEnd={() => {setLastSlide(true)}}
                     >
                     <SwiperSlide key={1}><UserInfo /></SwiperSlide>
-                    <SwiperSlide key={2}><UserAccounts /></SwiperSlide>
-                    <SwiperSlide key={3}><UserCategories /></SwiperSlide>
-                    <SwiperSlide key={4}><OnboardingReview ref={reviewRef} handleLogin={handleLogin}/></SwiperSlide>
+                    <SwiperSlide key={2}><UserCategories /></SwiperSlide>
+                    <SwiperSlide key={3}><OnboardingReview ref={reviewRef} handleLogin={handleLogin} setLoading={setLoading}/></SwiperSlide>
                     </Swiper>
                 </div>
 

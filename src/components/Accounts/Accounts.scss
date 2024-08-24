@@ -24,16 +24,23 @@
     }
 }
 
-.add-button {
+.add-button-accounts {
+    width: 30px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    border: black;
-    border-style: solid;
-    padding: .5em;
-    border-radius: 50%;
+    border: none;
+    box-shadow: none;
+    background-color: white;
+    color: #2c5364;
+    border-radius: 16%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     &:hover {
-        transform: scale(1.2);
+        text-align: center;
+        color: white;
+        background-color: transparent;
+        border: 1px solid white;
     }
 }
 

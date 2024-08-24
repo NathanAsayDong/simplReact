@@ -1,5 +1,4 @@
-import { ForwardRefRenderFunction, forwardRef, useImperativeHandle, useState } from 'react';
-import { Account } from '../../../services/Classes/classes';
+import { ForwardRefRenderFunction, forwardRef, useImperativeHandle } from 'react';
 import { DataApiService } from '../../../services/Classes/dataApiService.tsx';
 import { attemptCreateAccount } from '../../../services/Classes/userApiService';
 import { OnboardingData, OnboardingDataObject } from '../Onboarding.context';
@@ -7,17 +6,12 @@ import './Review.scss';
 
 
 
-interface OnboardingReviewProps { handleLogin: () => void; }
+interface OnboardingReviewProps { handleLogin: () => void; setLoading: (loading: boolean) => void; }
 
 const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (props, ref) => {
     const onboardingData: OnboardingDataObject = OnboardingData().onboardingData;
-    const { handleLogin } = props;
-    const [loading, setLoading] = useState<boolean>(false);
-
-    const test = () => {
-        console.log('Review')
-        handleLogin();
-    }
+    const handleLogin = props.handleLogin;
+    const setLoading = props.setLoading
 
     const getPasswordString = () => {
         if (onboardingData?.password) {
@@ -36,9 +30,6 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
         if (!onboardingData?.firstName || !onboardingData?.lastName || !onboardingData?.email || !onboardingData?.phone || !onboardingData?.password) {
             return false;
         }
-        else if (!onboardingData?.accounts || onboardingData?.accounts?.length == 0) {
-            return false;
-        }
         else if (!onboardingData?.categories || onboardingData?.categories?.length == 0) {
             return false;
         }
@@ -54,14 +45,8 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
         }
         try {
             const userCreated = await attemptCreateAccount(onboardingData.email, onboardingData.password);
-            if (!!userCreated && !!onboardingData.accounts && !!onboardingData.categories) {
+            if (!!userCreated && !!onboardingData.categories) {
                 localStorage.setItem('id', userCreated.authToken);
-                for (let account of onboardingData.accounts) {
-                    const accountCreated = await DataApiService.addAccount(account);
-                    if (!accountCreated) {
-                        throw new Error('Account Creation Failed');
-                    }
-                }
                 for (let category of onboardingData.categories) {
                     const categoryAdded = await DataApiService.addCategory(category);
                     if (!categoryAdded) {
@@ -83,7 +68,7 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
     
     return (
         <>
-            <h1 className='section-title' onClick={test} >Review</h1>
+            <h1 className='section-title' >Review</h1>
             <div className='form-container hide-scroll' style={{width:900, height: 368, flexDirection: 'row', justifyContent: 'space-evenly'}}>
                 <div className='column hide-scroll' style={{width: '33%', justifyContent: 'space-evenly'}}>
                     <div className='review-row hide-scroll'>
@@ -107,7 +92,7 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
                         <p className='value'>{getPasswordString()}</p>
                     </div>
                 </div>
-                <div className='divider-vertical'></div>
+                {/* <div className='divider-vertical'></div>
                 <div className='column hide-scroll' style={{width: '33%', justifyContent: 'flex-start',  gap: 11, overflowY: 'scroll'}}>
                     <h2 className='section-header'>Accounts</h2>
                     {!!onboardingData?.accounts &&  onboardingData?.accounts?.map((account: Account, index: any) => {
@@ -119,7 +104,7 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
                         )
                     })}
                     {!!onboardingData?.accounts && onboardingData?.accounts?.length == 0 && <p style={{color: 'red'}}>No accounts added</p>}
-                </div>
+                </div> */}
                 <div className='divider-vertical'></div>
                 <div className='column hide-scroll' style={{width: '33%', justifyContent: 'flex-start', gap: 11, overflowY: 'scroll'}}>
                     <h2 className='section-header'>Categories</h2>

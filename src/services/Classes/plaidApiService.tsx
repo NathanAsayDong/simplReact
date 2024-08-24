@@ -45,7 +45,7 @@ const PlaidService = () => {
 
     const handleNewAccounts = (data: any) => {
         const accounts = data.accounts.map((account: any) => {
-            return new Account(account.id, account.accountName, account.accountType, account.accountSource, String(new Date()), undefined, data.access_token);
+            return new Account(account.id, account.accountName, account.accountType, account.accountSource, String(new Date()), undefined);
         });
         console.log('New accounts:', accounts);
         setNewAccounts([...newAccounts, ...accounts]);
@@ -57,6 +57,7 @@ const PlaidService = () => {
             console.log('metadata', metadata);
             const extension = "plaid/exchange-public-token";
             const url = __API_URL__ + extension;
+            const userId = localStorage.getItem('id');
             try {
                 const response = await fetch(url, {
                     method: 'POST',
@@ -66,7 +67,8 @@ const PlaidService = () => {
                     body: JSON.stringify({
                         "public_token": public_token,
                         "accounts": metadata.accounts,
-                        "source": metadata.institution?.name
+                        "source": metadata.institution?.name,
+                        "userId": userId
                     }),
                 });
 

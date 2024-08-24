@@ -14,7 +14,7 @@ import { InitializeDataForContext } from './services/Classes/dataContext'
 
 function App() {
   const [isLoggin, setIsLoggin] = useState(false)
-  const initializeDataForContext = InitializeDataForContext();
+  const initContext = InitializeDataForContext().initializeData;
 
   const handleLogin = () => {
     setIsLoggin(true);
@@ -23,6 +23,7 @@ function App() {
   const handleLogout = () => {
     setIsLoggin(false);
     localStorage.removeItem('id');
+    localStorage.removeItem('lastSync');
   }
 
   const initializePage = () => {
@@ -36,7 +37,7 @@ function App() {
   }
 
   useEffect(() => {
-    initializeDataForContext();
+    initContext();
     initializePage();
   }, [ ])
 

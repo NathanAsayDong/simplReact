@@ -1,4 +1,4 @@
-import { faCheck, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faPlus, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC, useEffect, useState } from 'react';
 import { Account } from '../../services/Classes/classes';
@@ -17,11 +17,7 @@ const Accounts: FC<AccountsProps> = () =>  {
 
   useEffect(() => {
     const newAccountsFiltered = newAccounts.filter((newAccount: Account) => !accounts.some((account: Account) => account.id === newAccount.id));
-    newAccountsFiltered.forEach(async (account: Account) => {
-      await DataApiService.addAccount(account);
-      console.log('added account', account);
-    });
-    console.log('updating accounts context');
+    localStorage.removeItem('lastSync')
     updateAccounts([...accounts, ...newAccountsFiltered]);
   }, [newAccounts]);
 
@@ -79,16 +75,11 @@ const Accounts: FC<AccountsProps> = () =>  {
   return (
     <>
       <div className='body'>
-        <div className='row'>
-            <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Add Account</h3>
-        </div>
 
-        <div className='container'>
-          <button className='special-button' onClick={AddPlaidAccounts}>Add Account</button>
-        </div>
 
         <div className='row'>
-            <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Accounts</h3>
+            <h3 className='special-title' style={{ marginLeft: '3%', color: 'white'}}>Accounts</h3>
+            <button className='add-button-accounts' style={{ marginRight: '3%' }}onClick={AddPlaidAccounts}><FontAwesomeIcon icon={faPlus} /></button>
         </div>
         <div className='container-transparent'>
           {accounts.length == 0 ? (
