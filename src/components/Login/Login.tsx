@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from 'react';
+import { InitializeDataForContext } from '../../services/Classes/dataContext';
 import { attemptCreateAccount, attemptLogin } from '../../services/Classes/userApiService';
 import Onboarding from '../Onboarding/Onboarding';
 import './Login.scss';
@@ -13,6 +14,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [userWantsToCreateAccount, setUserWantsToCreateAccount] = useState(false);
+   const setLoading = InitializeDataForContext().setLoading;
 
    useEffect(() => {
       const slogan = document.querySelector('.slogan');
@@ -34,6 +36,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       const success = await attemptLogin(email, password);
       if (success) {
          localStorage.setItem('id', success.authToken);
+         setLoading(false);
          handleLogin();
       } else {
          alert('Failed to login');
@@ -87,7 +90,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
             <h2>Password:</h2>
                <input id='password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key == 'Enter' ? login() : null)}/>
             <button onClick={login}>Login</button>
-            {!userWantsToCreateAccount && <p onClick={toggleCreateAccount}> Create Account? </p>}
+            {/* {!userWantsToCreateAccount && <p onClick={toggleCreateAccount}> Create Account? </p>} */}
          </div>
       </div>}
 

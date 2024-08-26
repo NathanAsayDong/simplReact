@@ -293,18 +293,18 @@ export class DataApiService {
         }
     }
 
-    public static updateCategoryForTransaction = async (transactionId: number, newCategory: string) => {
+    public static updateCategoryForTransaction = async (transactionId: number, newCategory: string, accountId: string) => {
         try {
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
 
             const url = baseUrl + 'update-category-transaction' + '?userId=' + id;
-
             const response = await fetch(url, {
                 method: 'POST',
                 body: JSON.stringify({
                     transactionId: transactionId,
-                    newCategory: newCategory
+                    newCategory: newCategory,
+                    accountId: accountId
                 }),
                 headers: {
                     'Content-Type': 'application/json'

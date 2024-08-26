@@ -58,6 +58,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   };
 
   useEffect(() => {
+    console.log('transactions', transactions);
     if (!dateRanges.startDate && !dateRanges.endDate && filteredCategories.includes('All') && filteredAccounts.includes('All')) {
       setFilteredTransactions(transactions);
     }
@@ -72,14 +73,14 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     }
   }, [dateRanges, transactions, filteredCategories, filteredAccounts]);
 
-  const updateCategory = async (id: number, event: any) => {
+  const updateCategory = async (id: number, event: any, accountId: string) => {
     const category = event.target.value;
     if (!category) {
       alert('There was an issue');
       return;
     }
     setLoading(true);
-    await DataApiService.updateCategoryForTransaction(id, category).then(
+    await DataApiService.updateCategoryForTransaction(id, category, accountId).then(
       (res: any) => {
         if (res) {
           updateTransactions(transactions.map((transaction: Transaction) => {
@@ -216,7 +217,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
                 <div className='item' style={{width: '18%', marginRight: '2%'}}>
                   <h3 className='roboto-bold'>Category:</h3>
-                  <select className='select-category' onChange={(event) => updateCategory(transaction.id, event)}>
+                  <select className='select-category' onChange={(event) => updateCategory(transaction.id, event, transaction.accountId)}>
                       <option value="none">{transaction.category}</option>
                       {categories.map((category: any, index: any) => (
                         <option key={index} value={category}>{category}</option>
