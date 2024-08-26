@@ -91,6 +91,7 @@ const PlaidService = () => {
         (error: PlaidLinkError | null, metadata: PlaidLinkOnExitMetadata) => {
             if (error && error.error_code === 'INVALID_LINK_TOKEN') {
                 // Handle invalid link token
+                console.log('metadata', metadata);
             }
         },
         []

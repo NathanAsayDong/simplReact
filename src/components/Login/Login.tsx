@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { InitializeDataForContext } from '../../services/Classes/dataContext';
-import { attemptCreateAccount, attemptLogin } from '../../services/Classes/userApiService';
+import { attemptLogin } from '../../services/Classes/userApiService';
 import Onboarding from '../Onboarding/Onboarding';
 import './Login.scss';
 
@@ -43,35 +43,35 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       }
    }
 
-   const createAccount = async () => {
-      if (email === '' || password === '') {
-         return;
-      }
-      if (!email.includes('@') || !email.includes('.')) {
-         alert('Invalid email');
-         return;
-      }
-      if (password.length < 8) {
-         alert('Password must be at least 8 characters long');
-         return;
-      }
-      if (!password.match(/[0-9]/)) {
-         alert('Password must contain at least one number');
-         return;
-      }
-      if (!password.match(/[A-Z]/)) {
-         alert('Password must contain at least one capital letter');
-         return;
-      }
-      const success = await attemptCreateAccount(email, password);
-      if (success) {
-         localStorage.setItem('id', success.authToken);
-         handleLogin();
-      }
-      else {
-         alert('Failed to create an account');
-      }
-   }
+   // const createAccount = async () => {
+   //    if (email === '' || password === '') {
+   //       return;
+   //    }
+   //    if (!email.includes('@') || !email.includes('.')) {
+   //       alert('Invalid email');
+   //       return;
+   //    }
+   //    if (password.length < 8) {
+   //       alert('Password must be at least 8 characters long');
+   //       return;
+   //    }
+   //    if (!password.match(/[0-9]/)) {
+   //       alert('Password must contain at least one number');
+   //       return;
+   //    }
+   //    if (!password.match(/[A-Z]/)) {
+   //       alert('Password must contain at least one capital letter');
+   //       return;
+   //    }
+   //    const success = await attemptCreateAccount(email, password);
+   //    if (success) {
+   //       localStorage.setItem('id', success.authToken);
+   //       handleLogin();
+   //    }
+   //    else {
+   //       alert('Failed to create an account');
+   //    }
+   // }
 
    const toggleCreateAccount = () => {
       setUserWantsToCreateAccount(!userWantsToCreateAccount);

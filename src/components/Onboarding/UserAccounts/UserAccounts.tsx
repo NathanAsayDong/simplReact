@@ -15,6 +15,7 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
             open();
         } else {
             console.log('Plaid not ready');
+            exit();
         }
     }
 

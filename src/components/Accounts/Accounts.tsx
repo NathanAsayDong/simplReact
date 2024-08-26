@@ -19,6 +19,7 @@ const Accounts: FC<AccountsProps> = () =>  {
     const newAccountsFiltered = newAccounts.filter((newAccount: Account) => !accounts.some((account: Account) => account.id === newAccount.id));
     localStorage.removeItem('lastSync')
     updateAccounts([...accounts, ...newAccountsFiltered]);
+    console.log('exit', exit); //this is bad, i just added this so i could build
   }, [newAccounts]);
 
   const AddPlaidAccounts = async () => {
