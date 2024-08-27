@@ -47,11 +47,9 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
       <div className='row'>
         <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Add Category</h3>
       </div>
-      <div className='container'>
-        <div className='row' style={{padding: '10px'}}>
-          <input type='text' placeholder='Category' style={{marginLeft: '10px', width: '50%'}} onChange={handleCategoryChange} value={newCategory}/>
-          <button className='special-button' style={{marginRight: '10px'}} onClick={addCategory}>Add Category</button>
-        </div>
+      <div className='add-category-row' style={{padding: '10px'}}>
+        <input type='text' placeholder='Category' style={{marginLeft: '10px', width: '50%'}} onChange={handleCategoryChange} value={newCategory}/>
+        <button className='special-button' style={{marginRight: '10px'}} onClick={addCategory}>Add Category</button>
       </div>
 
       <div className='row'>

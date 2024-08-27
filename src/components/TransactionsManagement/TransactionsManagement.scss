@@ -16,6 +16,15 @@
     }
 }
 
+.filters-row-transaction-managment {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    width: 100%;
+    margin-bottom: 1em;
+    transition: all 1 ease;
+}
+
 .description-text {
     display: flex;
     white-space: nowrap;
@@ -38,4 +47,9 @@
 
 .loading {
     color: white
+}
+
+.css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
+    height: 31px !important;
+    overflow: hidden;
 }

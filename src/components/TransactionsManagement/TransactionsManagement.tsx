@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, MenuItem, Select } from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
@@ -33,11 +33,16 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     borderRadius: '5px',
     color: 'white',
     padding: '0px',
-    width : '100%'
+    width : '100%',
+    height: '31px'
   }
 
   const test = () => {
     console.log('accounts', accounts);
+  }
+
+  const allUnsureSelected = () => {
+    return filteredCategories.includes('All Unsure');
   }
 
   const getAccountName = (id: string) => {
@@ -58,9 +63,14 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   };
 
   useEffect(() => {
-    console.log('transactions', transactions);
     if (!dateRanges.startDate && !dateRanges.endDate && filteredCategories.includes('All') && filteredAccounts.includes('All')) {
       setFilteredTransactions(transactions);
+    }
+    else if (filteredCategories.includes('All Unsure')) {
+      let trans = transactions.filter((transaction: Transaction) => {
+        return transaction.category == "unsure";
+      });
+      setFilteredTransactions(trans)
     }
     else {
       let trans = transactions.filter((transaction: Transaction) => {
@@ -120,6 +130,9 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
         setFilteredCategories(['All']);
       } else if (event.target.value.includes('All') && filteredCategories.includes('All')) {
         setFilteredCategories(event.target.value.filter((category: string) => category !== 'All'));
+      } else if (event.target.value.includes('All Unsure') && !filteredCategories.includes('All Unsure')) {
+          setFilteredCategories(['All Unsure']);
+          setFilteredAccounts(['All']);
       } else {
         setFilteredCategories(event.target.value);
       }
@@ -142,13 +155,12 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     {loading ? <LinearProgress color="inherit" variant='determinate' value={loadingProgress} /> : null}
     
     <div className='body'>
-      <div className='row'>
-            <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}} onClick={test}>Transactions</h3>
-      </div>
       <div className='container-transparent'>
-        <div className='row' style={{gap: '5px'}}>
+        <div className='filters-row-transaction-managment' style={{gap: '5px', marginTop: '2em'}}>
+          <h3 className='special-title' style={{ marginLeft: '3%', marginBottom: '10px', color: 'white', marginRight: 'auto'}} onClick={test}>Transactions</h3>
+
           <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel id="category-select">Categories</InputLabel>
+          <p className='label' style={{textAlign: 'start', color: 'white', margin: 0}}>Categories</p>
           <Select
               labelId="category-select"
               id="category-select"
@@ -164,10 +176,11 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
             <MenuItem key={index} value={category}>{category}</MenuItem>
             ))}
             <MenuItem key={1001} value={'unsure'}>{"unsure"}</MenuItem>
+            <MenuItem key={1002} value={"All Unsure"}>{"All Unsure"}</MenuItem>
           </Select>
           </FormControl>
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
-          <InputLabel id="account-select">Accounts</InputLabel>
+          { !allUnsureSelected() && <FormControl sx={{ minWidth: 120 }}>
+          <p className='label' style={{textAlign: 'start', color: 'white', margin: 0}}>Accounts</p>
           <Select
             labelId="account-select"
             id="account-select"
@@ -183,19 +196,23 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
             <MenuItem key={index} value={account.name}>{account.name}</MenuItem>
             ))}
           </Select>
-          </FormControl>
-          <DatePicker
-            label="Start Date"
-            value={dateRanges.startDate}
-            onChange={handleStartDateSelect}
-            sx={filterStyling}
-          />
-          <DatePicker
-            label="End Date"
-            value={dateRanges.endDate}
-            onChange={handleEndDateSelect}
-            sx={filterStyling}
-          />
+          </FormControl> }
+          { !allUnsureSelected() && <div>
+            <p className='label' style={{textAlign: 'start', color: 'white', margin: 0}}>Start Date:</p>
+            <DatePicker
+              value={dateRanges.startDate}
+              onChange={handleStartDateSelect}
+              sx={filterStyling}
+            />
+          </div> }
+          { !allUnsureSelected() && <div>
+            <p className='label' style={{textAlign: 'start', color: 'white', margin: 0}}>Start Date:</p>
+            <DatePicker
+              value={dateRanges.endDate}
+              onChange={handleEndDateSelect}
+              sx={filterStyling}
+            />
+          </div> }
         </div>
       </div>
       <div className='container-transparent'>
@@ -212,7 +229,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
                 <div className='item' style={{width: '18%'}}>
                   <h3 className='roboto-bold'>Amount:</h3>
-                  <h3>${transaction.amount.toFixed(2)}</h3>
+                  <h3>${(transaction.amount * -1).toFixed(2)}</h3>
                 </div>
 
                 <div className='item' style={{width: '18%', marginRight: '2%'}}>

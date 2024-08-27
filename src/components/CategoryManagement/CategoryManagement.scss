@@ -7,6 +7,19 @@
     color: black;
 }
 
+.add-category-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    width: 90%;
+    margin-bottom: 1em;
+    transition: all 1 ease;
+    box-shadow: 0px 0px 12px 1px #434343;
+    border-radius: 10px;
+    opacity: .8;
+}
+
 .category-row {
     box-shadow: 0px 0px 12px 1px #434343;
     background-color: white;
