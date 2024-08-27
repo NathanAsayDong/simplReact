@@ -400,7 +400,7 @@ button:focus-visible {
   color: #203a43;
 }
 
-.css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
+.MuiInputBase-root {
   height: 31px !important;
   overflow: hidden;
 }
