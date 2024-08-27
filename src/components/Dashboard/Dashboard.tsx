@@ -1,4 +1,4 @@
-import { faEllipsis, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinearProgress, Modal } from '@mui/material';
 import dayjs from 'dayjs';
@@ -168,7 +168,7 @@ const Dashboard: FC<DashboardProps> = () => {
             <h3 className='special-title'>Net Value: ${netValue.toFixed(2)}</h3>
 
             <div className='filters'>
-              <FontAwesomeIcon icon={faGear} className='icon' onClick={handleOpenConfigModal}/>
+              <FontAwesomeIcon icon={faFilter} className='icon' onClick={handleOpenConfigModal}/>
             </div>
 
           </div>
