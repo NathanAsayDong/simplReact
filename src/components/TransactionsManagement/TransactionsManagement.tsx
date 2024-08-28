@@ -37,10 +37,6 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     height: '31px'
   }
 
-  const test = () => {
-    console.log('accounts', accounts);
-  }
-
   const allUnsureSelected = () => {
     return filteredCategories.includes('All Unsure');
   }
@@ -74,10 +70,10 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     }
     else {
       let trans = transactions.filter((transaction: Transaction) => {
-        return (!dateRanges.startDate || dayjs(transaction.timestamp).isAfter(dateRanges.startDate))
+        return ((!dateRanges.startDate || dayjs(transaction.timestamp).isAfter(dateRanges.startDate)))
         && (!dateRanges.endDate || dayjs(transaction.timestamp).isBefore(dateRanges.endDate))
-        && (filteredCategories.includes('All') || filteredCategories.includes(transaction.category)
-        && (filteredAccounts.includes('All') || filteredAccounts.includes(transaction.accountId)));
+        && (filteredCategories.includes('All') || filteredCategories.includes(transaction.category))
+        && ((filteredAccounts.includes('All') || filteredAccounts.includes(getAccountName(transaction.accountId))));
       });
       setFilteredTransactions(trans)
     }
@@ -148,6 +144,10 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
         setFilteredAccounts(event.target.value);
       }
     }
+  }
+
+  const test = () => {
+    console.log('filters', filteredCategories, filteredAccounts, dateRanges);
   }
 
   return (
@@ -234,7 +234,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
                 <div className='item' style={{width: '18%', marginRight: '2%'}}>
                   <h3 className='roboto-bold'>Category:</h3>
-                  <select className='select-category' onChange={(event) => updateCategory(transaction.id, event, transaction.accountId)}>
+                  <select className='select-category' value={transaction.category} onChange={(event) => updateCategory(transaction.id, event, transaction.accountId)}>
                       <option value="none">{transaction.category}</option>
                       {categories.map((category: any, index: any) => (
                         <option key={index} value={category}>{category}</option>
