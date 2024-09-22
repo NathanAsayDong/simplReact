@@ -121,7 +121,6 @@ export const processTransactionsIntoNetValue = async (transactions: Transaction[
         const originalValue = filteredData[i].netValue;
         filteredData[i].netValue = parseFloat(filteredData[i].netValue);
         if (isNaN(filteredData[i].netValue)) {
-        console.log(`Invalid netValue at index ${i}: ${originalValue}`);
         }
     }
     return { account: account.name, amount: filteredData };
@@ -165,10 +164,13 @@ export const getGraphDataAccount = async (transactions: Transaction[], accounts:
     for (let i = 0; i < graphData.length; i++) { //for each day, sum all the accounts
         let sum = 0;
         for (const account of accounts) {
-            sum += graphData[i][account.name];
+            if (graphData[i][account.name]) {
+                sum += graphData[i][account.name];
+            }
         }
         graphData[i].sum = sum;
     }
+    console.log(graphData);
     return graphData;
 }
 

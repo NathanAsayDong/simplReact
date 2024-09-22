@@ -29,7 +29,6 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
 
     return (
     <>
-        {isLoading && <LinearProgress className='navbar-loading-bar' color="inherit" />}
         <div className='navbar'>
 
             <h2>Simpl Finance</h2>
@@ -59,18 +58,20 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
             )}
 
 
-        <Modal
-            open={showUserModal}
-            onClose={() => setShowUserModal(false)}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-            >
-            <div>
-                <UserIconModal handleLogout={handleLogout}/>
-            </div>
-        </Modal>
+            <Modal
+                open={showUserModal}
+                onClose={() => setShowUserModal(false)}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                >
+                <div>
+                    <UserIconModal handleLogout={handleLogout}/>
+                </div>
+            </Modal>
 
         </div>
+        {isLoading && <LinearProgress className='navbar-loading-bar' color="inherit" />}
+
     </>
 
     );

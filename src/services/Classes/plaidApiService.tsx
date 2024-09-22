@@ -47,14 +47,11 @@ const PlaidService = () => {
         const accounts = data.accounts.map((account: any) => {
             return new Account(account.id, account.accountName, account.accountType, account.accountSource, String(new Date()), undefined);
         });
-        console.log('New accounts:', accounts);
         setNewAccounts([...newAccounts, ...accounts]);
     }
 
     const onSuccess = useCallback<PlaidLinkOnSuccess>(
         async (public_token: string, metadata: PlaidLinkOnSuccessMetadata) => {
-            console.log('public_token', public_token);
-            console.log('metadata', metadata);
             const extension = "plaid/exchange-public-token";
             const url = __API_URL__ + extension;
             const userId = localStorage.getItem('id');
@@ -77,7 +74,6 @@ const PlaidService = () => {
                 }
 
                 const data = await response.json();
-                console.log('Data:', data);
                 handleNewAccounts(data);
             }
             catch (error) {

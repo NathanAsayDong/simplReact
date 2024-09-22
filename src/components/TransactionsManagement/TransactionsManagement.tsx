@@ -113,7 +113,6 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
         setLoadingProgress(0);
       }, 1000);
       alert('There was an issue');
-      console.log(loadingProgress)
     }
     );
   }

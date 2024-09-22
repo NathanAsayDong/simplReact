@@ -1,22 +1,19 @@
 import { MenuItem, Select } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import { FC, useEffect, useState } from "react";
-import { DashboardFilterData } from "../../services/Classes/classes";
+import { FC, useState } from "react";
+import { Account, DashboardFilterData } from "../../services/Classes/classes";
 import './DashboardConfig.scss';
 
 interface DashboardConfigProps {
     filterObject: DashboardFilterData;
+    accounts: Account[]
     onClose: () => void;
     onApply: (filter: DashboardFilterData) => void;
 }
 
-export const DashboardConfig: FC<DashboardConfigProps> = ({filterObject, onClose, onApply}) => {
+export const DashboardConfig: FC<DashboardConfigProps> = ({filterObject, accounts, onClose, onApply}) => {
     const [filter, setFilter] = useState<DashboardFilterData>({ ...filterObject });
-
-    useEffect(() => { 
-        console.log(filter);
-    }, [filter]);
 
     const filterStyling = {
         border: '1px solid white',
@@ -35,6 +32,11 @@ export const DashboardConfig: FC<DashboardConfigProps> = ({filterObject, onClose
 
     const handleEndDateSelect = (date: Dayjs | null) => {
         filter.endDate = date?.toDate() || null;
+    }
+
+    const getAccountNameFromId = (id: string) => {
+        let account = accounts.find((account: Account) => account.id === id);
+        return account?.name || '';
     }
 
     const handleFilterSelect = (event: any) => {
@@ -69,7 +71,6 @@ export const DashboardConfig: FC<DashboardConfigProps> = ({filterObject, onClose
         if (event.target.name === 'pieChartMode') {
             setFilter({...filter, pieChartMode: event.target.value});
         }
-        console.log(event);
     }
 
     const handleCancel = () => {
@@ -135,9 +136,10 @@ export const DashboardConfig: FC<DashboardConfigProps> = ({filterObject, onClose
                         sx={filterStyling}
                         multiple
                     >
-                    {filter.accountOptions.map((account: string, index: any) => (
-                    <MenuItem key={index} value={account}>{account}</MenuItem>
+                    {filter.accountOptions.map((accountId: string, index: any) => (
+                    <MenuItem key={index} value={accountId}>{getAccountNameFromId(accountId)}</MenuItem>
                     ))}
+                    <MenuItem key={10000} value={'All'}>All</MenuItem>
                     </Select>
                 </div>
 

@@ -1,6 +1,6 @@
 import { faEllipsis, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { LinearProgress, Modal } from '@mui/material';
+import { Modal } from '@mui/material';
 import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
 import { Area, AreaChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
@@ -25,7 +25,6 @@ const Dashboard: FC<DashboardProps> = () => {
   const [netValue, setNetValue] = useState<number>(0); //some number we use for net value when processing transactions to accounts
   const [netValueByAccount, setNetValueByAccount] = useState<any[]>([]); //graph date for accounts {date, account^n, sum}
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false); //config modal object that we use for filtering, modes, and sorting
-  const [loading, setLoading] = useState<boolean>(false); //loading state
 
   //FILTERS:
   const [dateScale, setDateScale] = useState<any>('day');
@@ -33,7 +32,6 @@ const Dashboard: FC<DashboardProps> = () => {
 
   useEffect(() => {
     if (transactions.length > 0 && accounts.length > 0) {
-      setLoading(true);
       const filteredTransactions = getFilteredTransactions(transactions, dashboardFilterData);
       const filteredAccounts = getFilteredAccounts(accounts, filteredTransactions, dashboardFilterData);
       // const filteredCategories = getFilteredCategories(filteredTransactions, dashboardFilterData);
@@ -41,7 +39,6 @@ const Dashboard: FC<DashboardProps> = () => {
       processTransactionsIntoCategories(filteredTransactions);
       processTransactionsIntoAccounts(filteredTransactions, filteredAccounts);
       initializeGraphData();
-      setLoading(false);
     }
   }, [transactions, accounts, dateScale, dashboardFilterData])
 
@@ -62,7 +59,7 @@ const Dashboard: FC<DashboardProps> = () => {
     }
   };
 
-  const getNameFromId = (id: string) => {
+  const getAccountNameFromId = (id: string) => {
     const account = accounts.find((account : Account) => account.id === id);
     return account?.name || 'Unknown';
   }
@@ -82,8 +79,6 @@ const Dashboard: FC<DashboardProps> = () => {
     }
     setNetValueByAccount(organizedData);
     setNetValue(getNetValueFromAccounts(filteredAccounts));
-    // old method we could maybe use for auditing
-    // setNetValue(organizedData[organizedData.length - 1]?.sum || 0);
   }
 
   const processTransactionsIntoCategories = (transactions: Transaction[]) => {
@@ -105,7 +100,6 @@ const Dashboard: FC<DashboardProps> = () => {
         data[categoryIndex].amount += transaction.amount;
       }
     });
-    console.log('data category', data);
     data.forEach((category) => {
       category.amount = convertNumberToCurrency(category.amount);
     });
@@ -133,21 +127,21 @@ const Dashboard: FC<DashboardProps> = () => {
   }
 
   const processTransactionsIntoAccounts = (transactions: Transaction[], accounts: Account[]) => {
-    const data: any[] = []; // {name: 'Uccu', amount: 100}
+    const data: any[] = [];
     transactions.forEach((transaction: Transaction) => {
-      const accountIndex = data.findIndex((d) => d.name === transaction.accountId);
+      const accountIndex = data.findIndex((d) => d.id === transaction.accountId);
       let accountType = accounts.find((account) => account.name === transaction.accountId)?.type;
       const amount = accountType === 'Credit' ? transaction.amount * -1 : transaction.amount;
       if (accountIndex === -1) {
-        data.push({ name: transaction.accountId, amount: amount });
+        data.push({ id: transaction.accountId, amount: amount });
       } else {
         data[accountIndex].amount += transaction.amount;
       }
     });
     setAccountData(data);
     data.forEach((account) => {
-      if (!dashboardFilterData.accountOptions.includes(account.name)) {
-        dashboardFilterData.accountOptions.push(account.name);
+      if (!dashboardFilterData.accountOptions.includes(account.id)) {
+        dashboardFilterData.accountOptions.push(account.id);
       }
     });
   }
@@ -161,9 +155,8 @@ const Dashboard: FC<DashboardProps> = () => {
 
   return (
     <>
-      {loading === true ? <LinearProgress style={{marginBottom: '16px'}} color="inherit" /> : null}
-
       <div className='dashboard'>
+
           <div className='row'>
             <h3 className='special-title'>Net Value: ${netValue.toFixed(2)}</h3>
 
@@ -235,7 +228,7 @@ const Dashboard: FC<DashboardProps> = () => {
             {accountData.map((account, index) => (
               <div key={index} className='category-card'>
                 <div className='card-name archivo-font'>
-                  <h3>{getNameFromId(account.name)}</h3>
+                  <h3>{getAccountNameFromId(account.id)}</h3>
                 </div>
                 <div className='card-amount roboto-light'>
                   <p>${account.amount.toFixed(2) * -1}</p>
@@ -259,7 +252,7 @@ const Dashboard: FC<DashboardProps> = () => {
         aria-describedby="modal-modal-description"
       >
         <div>
-          <DashboardConfig filterObject={dashboardFilterData} onClose={handleCloseConfigModal} onApply={handleApplyConfigModal}/>
+          <DashboardConfig filterObject={dashboardFilterData} accounts={accounts} onClose={handleCloseConfigModal} onApply={handleApplyConfigModal}/>
         </div>
       </Modal>
 

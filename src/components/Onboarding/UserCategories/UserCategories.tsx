@@ -18,7 +18,6 @@ const UserCategories: FC<UserCategoriesProps> = () =>  {
     }
 
     const addCategory = () => {
-        console.log('Add Category');
         const categories = OnboardingContext.onboardingData?.categories;
         const newCategory = document.getElementById('newCategory') as HTMLInputElement;
         if (!newCategory.value) { return }
@@ -36,7 +35,6 @@ const UserCategories: FC<UserCategoriesProps> = () =>  {
     }
 
     const removeCategory = (category : string) => {
-        console.log('Remove Category');
         const categories = OnboardingContext.onboardingData?.categories;
         if (categories) {
             const newCategories = categories.filter((cat: any) => cat !== category);

@@ -63,7 +63,6 @@ const Accounts: FC<AccountsProps> = () =>  {
   }
 
   const resetName = (id: string) => {
-    console.log('resetting name', id);
     const originalName = accounts.find((account: Account) => account.id === id)?.name;
     if (originalName) {
       const updatedAccountNames = new Map(updatedAccountNamesMap);

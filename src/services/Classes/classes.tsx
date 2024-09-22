@@ -64,7 +64,7 @@ export class Account {
 }
 
 export class DashboardFilterData {
-    selectedAccounts: string[];
+    selectedAccounts: string[];;
     selectedCategories: string[];
     startDate: Date | null | undefined;
     endDate: Date | null | undefined;
@@ -87,4 +87,4 @@ export class DashboardFilterData {
     }
 }
 
-export const defaultDashboardFilterData = new DashboardFilterData(['All'], ['All'], dayjs().subtract(14, 'day').toDate(), dayjs().toDate(), 'day', ['All'], ['All'], 'netValue', 'category');
+export const defaultDashboardFilterData = new DashboardFilterData(['All'], ['All'], dayjs().subtract(14, 'day').toDate(), dayjs().toDate(), 'day', [], ['All'], 'netValue', 'category');

@@ -20,7 +20,6 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
     }
 
     useEffect(() => {
-        console.log('new accounts detected a change, setting accounts in context', newAccounts);
         OnboardingContext?.setAccounts(newAccounts);
     }, [newAccounts]);
 
@@ -31,9 +30,7 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
     }
 
     const removeAccount = (accountId: any) => {
-        console.log('Remove Account', accountId);
         const accounts = OnboardingContext?.onboardingData?.accounts;
-        console.log('accounts: ', accounts);
         if (accounts) {
             const newAccounts = accounts.filter((acc: any) => acc.id !== accountId);
             OnboardingContext?.setAccounts(newAccounts);

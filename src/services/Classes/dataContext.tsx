@@ -65,7 +65,7 @@ export function AppDataProvider({ children }: any){
 
     const syncWithPlaid = async () => {
         const lastSync = localStorage.getItem('lastSync');
-        if ((lastSync && (Date.now() - parseInt(lastSync) > 3600000)) || !lastSync) {
+        if ((lastSync && (Date.now() - parseInt(lastSync) > 86400000)) || !lastSync) {
             await DataApiService.syncData();
             localStorage.setItem('lastSync', Date.now().toString());
         }
