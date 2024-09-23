@@ -118,7 +118,6 @@ export const processTransactionsIntoNetValue = async (transactions: Transaction[
         }
     }
     for (let i = 0; i < filteredData.length; i++) {
-        const originalValue = filteredData[i].netValue;
         filteredData[i].netValue = parseFloat(filteredData[i].netValue);
         if (isNaN(filteredData[i].netValue)) {
         }
