@@ -10,6 +10,41 @@ export const getDatesFromTransactions = (transactions: Transaction[], dateScale:
     return Array.from(new Set(dates));
 }
 
+export const getDates = (startDate: Date | null | undefined, dateScale: string): number[] => {
+    const dates: number[] = [];
+    if (!startDate) {
+        return dates;
+    }
+
+    let current = new Date(startDate.getTime());
+    let currentDate = new Date();
+
+    current.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
+
+    while (current <= currentDate) {
+        dates.push(current.getTime());
+        switch (dateScale) {
+            case 'day':
+                current.setDate(current.getDate() + 1);
+                break;
+            case 'week':
+                current.setDate(current.getDate() + 7);
+                break;
+            case 'month':
+                current.setMonth(current.getMonth() + 1);
+                break;
+            case 'year':
+                current.setFullYear(current.getFullYear() + 1);
+                break;
+            default:
+                break;
+        }
+    }
+    return dates;
+};
+
+
 export const getFilteredTransactions = (transactions: Transaction[], filterData: DashboardFilterData): Transaction[] => {
     const startDateNum = filterData.startDate?.getTime() || null;
     const endDateNum = filterData.endDate?.getTime() || null;
@@ -50,12 +85,12 @@ export const filterTransactionsByAccount = (transactions: Transaction[], filterD
     });
 }
 
-export const getFilteredAccounts = (accounts: Account[], filteredTransactions: Transaction[], filterData: DashboardFilterData): Account[] => {
+export const getFilteredAccounts = (accounts: Account[], filterData: DashboardFilterData): Account[] => {
     return accounts.filter((account) => {
         if (filterData.selectedAccounts.includes('All')) {
-            return filteredTransactions.some((transaction) => transaction.accountId === account.id);
+            return true;
         }
-        return (filterData.selectedAccounts.includes(account.name)) && filteredTransactions.some((transaction) => transaction.accountId === account.id);
+        return (filterData.selectedAccounts.includes(account.name));
     });
 }
 
@@ -78,35 +113,15 @@ export const getNetValueFromAccounts = (accounts: Account[]): number => {
     }, 0);
 }
 
-// --------------------- PROCESSING ---------------------
-
-
-
-
-
-
-
-
-
-
-
 // --------------------- LINE CHART ---------------------
 
-export const processTransactionsIntoNetValue = async (transactions: Transaction[], account: Account) => {
-    transactions = transactions.filter((transaction) => transaction.accountId === account.id);
-    const refStartDate = account.refDate ? new Date(account.refDate).getTime() : new Date().getTime();
+export const getRunningBalanceForAccount = async (transactions: Transaction[], account: Account) => {
+    transactions = transactions.filter((transaction) => transaction.accountId === account.id).sort((a, b) => b.timestamp - a.timestamp); //most recent to least recent
     const data: any[] = [];
-    const beforeTrns = transactions.filter((transaction) => transaction.timestamp < refStartDate).sort((a, b) => b.timestamp - a.timestamp);
-    const afterTrns = transactions.filter((transaction) => transaction.timestamp >= refStartDate).sort((a, b) => a.timestamp - b.timestamp);
-    let netValue = account.refBalance;
-    for (let i = 0; i < beforeTrns.length; i++) {
-        netValue += beforeTrns[i].amount;
-        data.push({ date: beforeTrns[i].timestamp, netValue });
-    }
-    netValue = account.refBalance;
-    for (let j = 0; j < afterTrns.length; j++) {
-        netValue -= afterTrns[j].amount;
-        data.push({ date: afterTrns[j].timestamp, netValue });
+    let accountBalance = account.refBalance;
+    for (let i = 0; i < transactions.length; i++) {
+        accountBalance -= transactions[i].amount;
+        data.push({ date: transactions[i].timestamp, accountBalance });
     }
     const filteredData: any[] = [];
     for (let i = 0; i < data.length; i++) {
@@ -117,60 +132,100 @@ export const processTransactionsIntoNetValue = async (transactions: Transaction[
         filteredData[dateIndex] = data[i];
         }
     }
-    for (let i = 0; i < filteredData.length; i++) {
-        filteredData[i].netValue = parseFloat(filteredData[i].netValue);
-        if (isNaN(filteredData[i].netValue)) {
-        }
-    }
-    return { account: account.name, amount: filteredData };
+    return { account: account.name, running_log: filteredData }; //filteredData is type { date: number, accountBalance: number }[]
 }
 
-export const getGraphDataAccount = async (transactions: Transaction[], accounts: Account[], dateScale: string): Promise<any[]> => {
-    const dates = getDatesFromTransactions(transactions, dateScale); //get dates
-    const data: any[] = [];
-    for (let i = 0; i < accounts.length; i++) { //for all the accounts get an attribute thats an array of their net values
-        const accountData = await processTransactionsIntoNetValue(transactions, accounts[i]);
-        data.push(accountData);
+export const getMapOfDatesToAccountBalances = async (transactions: Transaction[], accounts: Account[], dateScale: string, filterData: DashboardFilterData): Promise<{ [date : number] : { [account: string] : number}}> => {
+    //1) Get all the dates, scaled and in range
+    const dates = getDates(filterData.startDate, dateScale); //Gets a scaled date array from now to the end date
+    console.log(dates);
+    //2) For each account, process a changing accoung balance as time goes on in an array
+    const account_running_logs: { [key: string]: any[] } = {};
+    for (const account of accounts) {
+        const accountData = await getRunningBalanceForAccount(transactions, account);
+        account_running_logs[account.name] = accountData.running_log;
     }
-    const graphData: any[] = [];
-    for (const date of dates) { //for everyday, for each account check if it has a value, if it doenst add 0's
-        let obj: any = { date };
-        for (const account of data) {
-            const accountValue = account.amount.find((entry: any) => scaleDate(entry.date, dateScale) === date);
-            if (date == dates[0]) {
-                obj[account.account] = accountValue ? accountValue?.netValue : account.amount[0]?.netValue;
+    //3) For each account, create a map of date to running account balance
+    let account_to_day_value_map :{ [accountName: string]: { [date: number]: number } } = {};
+    for (const accountName of Object.keys(account_running_logs)) {
+        const account = accounts.find((account) => account.name === accountName);
+        if (!account) {
+            continue;
+        }
+        let date_to_netValue: { [date: number]: number } = {};
+        let running_balance = account?.refBalance;
+        for (const date of dates) {
+            const accountValue = account_running_logs[accountName].find((entry: any) => entry.date === date);
+            if (accountValue) {
+                running_balance = accountValue.accountBalance;
             }
-            else if (date == dates[dates.length - 1]) {
-                obj[account.account] = accountValue ? accountValue?.netValue : account.amount[account.amount.length - 1]?.netValue;
+            date_to_netValue[date] = running_balance;
+        }
+        account_to_day_value_map[accountName] = date_to_netValue;
+    }
+    //4) For each date, calculate the total net value
+    account_to_day_value_map['total'] = {};
+    for (const date of dates) {
+        let net = computeNetForDate(account_to_day_value_map, accounts, filterData, date);
+        account_to_day_value_map['total'][date] = net;
+    }
+    //5) convert the map from account to day to day to account
+    let return_map : { [date: number] : { [account: string] : number} } = {};
+    for (const date of dates) {
+        let account_to_value_map : { [account: string] : number } = {};
+        for (const accountName of Object.keys(account_to_day_value_map)) {
+            account_to_value_map[accountName] = account_to_day_value_map[accountName][date];
+        }
+        return_map[date] = account_to_value_map;
+    }
+    return return_map;
+}
+
+export const computeNetForDate = (account_to_running_balance_map : { [account: string] : { [date : number]: number }}, accounts: Account[], filterData : DashboardFilterData, date: number): any => {
+    let total = 0;
+    for (const account of accounts) {
+        if (filterData.selectedAccounts.includes(account.name) || filterData.selectedAccounts.includes('All')) {
+            if (account.name in account_to_running_balance_map && date in account_to_running_balance_map[account.name]) {
+                if (account.type === 'checking' || account.type === 'savings') {
+                    total += account_to_running_balance_map[account.name][date];
+                }
+                if (account.type === 'credit') {
+                    total -= account_to_running_balance_map[account.name][date];
+                }
+            }
+        }
+    }
+    return total;
+}
+
+export const convertMapToRunningBalanceArray = (account_to_running_balance_map : { [ date : number ] : { [ account : string] : number }} ): any[] => {
+    let return_array : any[] = [];
+    for (const date of Object.keys(account_to_running_balance_map)) {
+        return_array.push({ date: Number(date), running_balance: account_to_running_balance_map[Number(date)]['total'] });
+    }
+    return return_array;
+}
+
+export const account_balance_for_dates = (dates: number[], account: Account, transactions: Transaction[]): { [date : number] : number} => {
+    transactions = transactions.sort((a, b) => a.timestamp - b.timestamp);
+    let account_balance = account.refBalance;
+    let res: { [date : number] : number} = [];
+    
+    for (let i = dates.length - 1; i >= 0; i--) {
+        const date = dates[i];
+        let transactions_for_date = transactions.filter((transaction) => transaction.timestamp === date && transaction.accountId === account.id);
+        for (const transaction of transactions_for_date) {
+            if (account.type == "checking" || account.type == "savings") {
+                account_balance += transaction.amount;
             }
             else {
-                if (!accountValue) {
-                let i = graphData.length - 1;
-                while (i >= 0) {
-                    if (graphData[i][account.account]) {
-                    obj[account.account] = graphData[i][account.account];
-                    break;
-                    }
-                    i--;
-                }
-                } else {
-                obj[account.account] = accountValue?.netValue;
-                }
+                account_balance -= transaction.amount;
             }
         }
-        graphData.push(obj);
+        account_balance = Math.round(account_balance * 100) / 100;
+        res[date] = account_balance;
     }
-    for (let i = 0; i < graphData.length; i++) { //for each day, sum all the accounts
-        let sum = 0;
-        for (const account of accounts) {
-            if (graphData[i][account.name]) {
-                sum += graphData[i][account.name];
-            }
-        }
-        graphData[i].sum = sum;
-    }
-    console.log(graphData);
-    return graphData;
+    return res;
 }
 
 

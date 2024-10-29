@@ -36,10 +36,6 @@ export const accountSources = [
     'Uccu', 'Chase', 'Discover', 'CapitalOne', 'Venmo', 'CashApp', 'Paypal', 'Cash', 'Other'
 ];
 
-export const accountTypes = [
-    'Checking', 'Savings', 'Credit'
-];
-
 export class Account {
     id: string;
     name: string;

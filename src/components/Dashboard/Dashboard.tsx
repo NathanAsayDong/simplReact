@@ -1,14 +1,13 @@
 import { faEllipsis, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Modal } from '@mui/material';
-import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
 import { Area, AreaChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { DashboardConfig } from '../../modals/DashboardConfig/DasboardConfig';
 import { Account, DashboardFilterData, Transaction, defaultDashboardFilterData } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import { convertNumberToCurrency, dateFormatPretty } from '../../services/Classes/formatService';
-import { getFilteredAccounts, getFilteredTransactions, getGraphDataAccount, getNetValueFromAccounts } from './Dashboard.Service';
+import { account_balance_for_dates, getDates, getFilteredAccounts, getFilteredTransactions, getNetValueFromAccounts } from './Dashboard.Service';
 import './Dashboard.scss';
 
 interface DashboardProps {
@@ -23,7 +22,7 @@ const Dashboard: FC<DashboardProps> = () => {
   const [categoryData, setCategoryData] = useState<any[]>([]); //processed transactions into categories
   const [accountData, setAccountData] = useState<any[]>([]); //processed transactions into accounts
   const [netValue, setNetValue] = useState<number>(0); //some number we use for net value when processing transactions to accounts
-  const [netValueByAccount, setNetValueByAccount] = useState<any[]>([]); //graph date for accounts {date, account^n, sum}
+  const [lineChartData, setLineChartData] = useState<any[]>([]); //graph date for accounts {date, balance}
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false); //config modal object that we use for filtering, modes, and sorting
 
   //FILTERS:
@@ -33,12 +32,12 @@ const Dashboard: FC<DashboardProps> = () => {
   useEffect(() => {
     if (transactions.length > 0 && accounts.length > 0) {
       const filteredTransactions = getFilteredTransactions(transactions, dashboardFilterData);
-      const filteredAccounts = getFilteredAccounts(accounts, filteredTransactions, dashboardFilterData);
-      // const filteredCategories = getFilteredCategories(filteredTransactions, dashboardFilterData);
+      const filteredAccounts = getFilteredAccounts(accounts, dashboardFilterData);
 
       processTransactionsIntoCategories(filteredTransactions);
       processTransactionsIntoAccounts(filteredTransactions, filteredAccounts);
-      initializeGraphData();
+      calculateLineChartData();
+      calculateNetValue(filteredAccounts);
     }
   }, [transactions, accounts, dateScale, dashboardFilterData])
 
@@ -64,21 +63,37 @@ const Dashboard: FC<DashboardProps> = () => {
     return account?.name || 'Unknown';
   }
 
-  const initializeGraphData = async () => {
-    const filteredTransactions = getFilteredTransactions(transactions, dashboardFilterData);
-    const filteredAccounts = getFilteredAccounts(accounts, filteredTransactions, dashboardFilterData);
+  const calculateLineChartData = async () => {
+    const dates = getDates(dashboardFilterData.startDate, dateScale);
+    const net_value_per_day: { [date: number] : number} = {};
+    for (const date of dates) {
+      net_value_per_day[Number(date)] = 0;
+    }
+    for (const account of accounts) {
+      let balance_log = account_balance_for_dates(dates, account, transactions.filter((transaction: Transaction) => transaction.accountId === account.id));
+      if (account.type == 'checking' || account.type == 'savings') {
+        for (const date of Object.keys(balance_log)) {
+          net_value_per_day[Number(date)] = Number((net_value_per_day[Number(date)] + balance_log[Number(date)]).toFixed(2));
+        }
+      } else {
+        for (const date of Object.keys(balance_log)) {
+          net_value_per_day[Number(date)] = Number((net_value_per_day[Number(date)] - balance_log[Number(date)]).toFixed(2));
+        }
+      }
+      console.log('day first', new Date(1729490400000), net_value_per_day[1729490400000], 'after account', account.name);
+    }
+    console.log(net_value_per_day);
+    const lineChartData = [];
+    for (const date of Object.keys(net_value_per_day)) {
+      lineChartData.push({ date: Number(date), balance: net_value_per_day[Number(date)] });
+    }
+    lineChartData.sort((a, b) => a.date - b.date);
+    console.log('completed data', lineChartData);
+    setLineChartData(lineChartData);
+  }
 
-    let organizedData = await getGraphDataAccount(filteredTransactions, filteredAccounts, dateScale);
-    if (dashboardFilterData.startDate !== null && dashboardFilterData.startDate !== undefined) {
-      organizedData = organizedData.filter((entry) => {
-        return dayjs(entry.date).unix() >= dayjs(dashboardFilterData.startDate).unix()!
-      });
-    }
-    if (dashboardFilterData.endDate !== null && dashboardFilterData.endDate !== undefined) {
-      organizedData = organizedData.filter((entry) => { return dayjs(entry.date).unix() <= dayjs(dashboardFilterData.endDate!).unix() });
-    }
-    setNetValueByAccount(organizedData);
-    setNetValue(getNetValueFromAccounts(filteredAccounts));
+  const calculateNetValue = (accounts: Account[]) => {
+    setNetValue(getNetValueFromAccounts(accounts));
   }
 
   const processTransactionsIntoCategories = (transactions: Transaction[]) => {
@@ -169,9 +184,9 @@ const Dashboard: FC<DashboardProps> = () => {
         <div className='row' style={{gap: '10px', padding: '10px'}}>
           <div className='graph-container'>
             <ResponsiveContainer width="100%" height={500} style={{scale: '1.01'}}>
-              <AreaChart data={netValueByAccount}>
+              <AreaChart data={lineChartData}>
                 <Tooltip content={<CustomTooltipArea dateFormat={getDateFormat()}/>} />
-                <Area dataKey='sum' stroke='white' strokeWidth={2} fill='url(#graphGradient)'  type="monotone" />
+                <Area dataKey='balance' stroke='white' strokeWidth={2} fill='url(#graphGradient)'  type="monotone" />
                 <XAxis dataKey="date" tickFormatter={(value) => dateFormatPretty(value, getDateFormat())}
                 tick={{ fill: 'white' }} tickLine={{ stroke: 'none' }} mirror={true} stroke='none'
                 ></XAxis>
@@ -193,14 +208,14 @@ const Dashboard: FC<DashboardProps> = () => {
           </div>
         </div>
 
-        <div className='row'>
+        {/* <div className='row'>
           <div className='date-scale-options'>
             <button className='scale-option' value='day' onClick={changeDateScale}>Day</button>
             <button className='scale-option' value='week' onClick={changeDateScale}>Week</button>
             <button className='scale-option' value='month' onClick={changeDateScale}>Month</button>
             <button className='scale-option' value='year' onClick={changeDateScale}>Year</button>
           </div>
-        </div>
+        </div> */}
 
           <div className='row'>
             <h3 className='special-title'>Categories</h3>
@@ -283,7 +298,7 @@ const CustomTooltipArea = ({ active, payload, label, dateFormat }: any) => {
         </div>
         <div className='content'>
           <p className='archivo-font-bold'>Value: </p>
-          <p>${payload[0].value.toFixed(2)}</p>
+          <p>${payload[0]?.value?.toFixed(2)}</p>
         </div>
       </div>
     );
@@ -291,19 +306,17 @@ const CustomTooltipArea = ({ active, payload, label, dateFormat }: any) => {
   return null;
 };
 
-const CustomTooltipPie = ({ active, payload, label }: any) => {
+const CustomTooltipPie = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
-    console.log('payload', payload);
-    console.log('label', label);
     return (
       <div className="box">
         <div className='content'>
           <p className='archivo-font-bold'>Label: </p>
-          <p>{payload[0].name}</p>
+          <p>{payload[0]?.name}</p>
         </div>
         <div className='content'>
           <p className='archivo-font-bold'>Value: </p>
-          <p>${payload[0].value.toFixed(2)}</p>
+          <p>${payload[0]?.value?.toFixed(2)}</p>
         </div>
       </div>
     );
