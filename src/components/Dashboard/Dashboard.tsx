@@ -41,9 +41,9 @@ const Dashboard: FC<DashboardProps> = () => {
     }
   }, [transactions, accounts, dateScale, dashboardFilterData])
 
-  const changeDateScale = (event: any) => {
-    setDateScale(event.target.value);
-  }
+  // const changeDateScale = (event: any) => {
+  //   setDateScale(event.target.value);
+  // }
 
   const getDateFormat = () => {
     switch (dateScale) {
