@@ -31,6 +31,8 @@ const Dashboard: FC<DashboardProps> = () => {
 
   useEffect(() => {
     if (transactions.length > 0 && accounts.length > 0) {
+      //just for build
+      setDateScale('day');
       const filteredTransactions = getFilteredTransactions(transactions, dashboardFilterData);
       const filteredAccounts = getFilteredAccounts(accounts, dashboardFilterData);
 
@@ -80,15 +82,12 @@ const Dashboard: FC<DashboardProps> = () => {
           net_value_per_day[Number(date)] = Number((net_value_per_day[Number(date)] - balance_log[Number(date)]).toFixed(2));
         }
       }
-      console.log('day first', new Date(1729490400000), net_value_per_day[1729490400000], 'after account', account.name);
     }
-    console.log(net_value_per_day);
     const lineChartData = [];
     for (const date of Object.keys(net_value_per_day)) {
       lineChartData.push({ date: Number(date), balance: net_value_per_day[Number(date)] });
     }
     lineChartData.sort((a, b) => a.date - b.date);
-    console.log('completed data', lineChartData);
     setLineChartData(lineChartData);
   }
 
