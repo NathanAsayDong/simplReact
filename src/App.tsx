@@ -22,8 +22,7 @@ function App() {
 
   const handleLogout = () => {
     setIsLoggin(false);
-    localStorage.removeItem('id');
-    localStorage.removeItem('lastSync');
+    localStorage.clear();
   }
 
   const initializePage = () => {
