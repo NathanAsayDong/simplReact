@@ -9,6 +9,12 @@ type TransactionDataContextType = Transaction[] | null;
 type UserAccountsDataContextType = Account[] | null;
 type UserCategoriesDataContextType = string[] | null;
 
+const CACHE_KEYS = {
+    TRANSACTIONS: 'cached_transactions',
+    ACCOUNTS: 'cached_accounts',
+    CATEGORIES: 'cached_categories'
+};
+
 const TransactionsDataContext = createContext<any>(null);
 const SetTransactionDataContext = createContext<any>(null);
 const UserAccountsDataContext = createContext<any>(null);
@@ -51,16 +57,33 @@ export function AppDataProvider({ children }: any){
     const [userCategories, setUserCategories] = useState<UserCategoriesDataContextType>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
+    const loadCachedData = () => {
+        try {
+            const cachedTransactions = localStorage.getItem(CACHE_KEYS.TRANSACTIONS);
+            const cachedAccounts = localStorage.getItem(CACHE_KEYS.ACCOUNTS);
+            const cachedCategories = localStorage.getItem(CACHE_KEYS.CATEGORIES);
+
+            if (cachedTransactions) setTransactions(JSON.parse(cachedTransactions));
+            if (cachedAccounts) setUserAccounts(JSON.parse(cachedAccounts));
+            if (cachedCategories) setUserCategories(JSON.parse(cachedCategories));
+        } catch (error) {
+            console.error('Error loading cached data:', error);
+        }
+    }
+
     const updateTransactions = (data: TransactionDataContextType) => {
         setTransactions(data);
+        if (data) localStorage.setItem(CACHE_KEYS.TRANSACTIONS, JSON.stringify(data));
     }
 
     const updateAccounts = (data: UserAccountsDataContextType) => {
         setUserAccounts(data);
+        if (data) localStorage.setItem(CACHE_KEYS.ACCOUNTS, JSON.stringify(data));
     }
 
     const updateCategories = (data: UserCategoriesDataContextType) => {
         setUserCategories(data);
+        if (data) localStorage.setItem(CACHE_KEYS.CATEGORIES, JSON.stringify(data));
     }
 
     const syncWithPlaid = async () => {
@@ -73,36 +96,34 @@ export function AppDataProvider({ children }: any){
 
     const initializeTransactions = async () => {
         if (!transactions) {
-            DataApiService.getAllTransactions().then((transactions) => {
-                if (transactions) {
-                    setTransactions(transactions);
-                }
-            });
-        }
+            const response = await DataApiService.getAllTransactions();
+            if (response) {
+                updateTransactions(response);
+            }
+        };
     }
 
     const initializeAccounts = async () => {
         if (!userAccounts) {
-            DataApiService.getAllAccounts().then((accounts) => {
-                if (accounts) {
-                    setUserAccounts(accounts);
-                }
-            });
+            const response = await DataApiService.getAllAccounts();
+            if (response) {
+                updateAccounts(response);
+            }
         }
     }
 
     const initializeCategories = async () => {
         if (!userCategories) {
-            DataApiService.getAllCategories().then((categories) => {
-                if (categories) {
-                    setUserCategories(categories);
-                }
-            });
+            const response = await DataApiService.getAllCategories();
+            if (response) {
+                updateCategories(response);
+            }
         }
     }
 
     const initializeData = async () => {
         setLoading(true);
+        loadCachedData();
         await syncWithPlaid();
         await initializeTransactions();
         await initializeAccounts();
