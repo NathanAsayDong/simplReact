@@ -15,7 +15,7 @@ const Onboarding: FC<OnboardingProps> = ({ toggleCreateAccount, handleLogin }) =
     const [swiperRef, setSwiperRef] = useState<any>(null);
     const [lastSlide, setLastSlide] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false);
-    const reviewRef = useRef<any>(null);  // Create a ref for OnboardingReview
+    const reviewRef = useRef<any>(null);
 
 
     const login = () => {

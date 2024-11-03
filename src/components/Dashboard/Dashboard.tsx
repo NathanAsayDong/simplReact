@@ -7,6 +7,7 @@ import { DashboardConfig } from '../../modals/DashboardConfig/DasboardConfig';
 import { Account, DashboardFilterData, Transaction, defaultDashboardFilterData } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import { convertNumberToCurrency, dateFormatPretty } from '../../services/Classes/formatService';
+import StripePayments from '../StripePayments/StripePayments';
 import { account_balance_for_dates, getDates, getFilteredAccounts, getFilteredTransactions, getNetValueFromAccounts } from './Dashboard.Service';
 import './Dashboard.scss';
 
@@ -170,6 +171,8 @@ const Dashboard: FC<DashboardProps> = () => {
   return (
     <>
       <div className='dashboard'>
+
+        <StripePayments />
 
           <div className='row'>
             <h3 className='special-title'>Net Value: ${netValue.toFixed(2)}</h3>
