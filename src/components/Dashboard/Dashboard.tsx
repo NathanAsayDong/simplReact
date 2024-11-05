@@ -7,6 +7,7 @@ import { DashboardConfig } from '../../modals/DashboardConfig/DasboardConfig';
 import { Account, DashboardFilterData, Transaction, defaultDashboardFilterData } from '../../services/Classes/classes';
 import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
 import { convertNumberToCurrency, dateFormatPretty } from '../../services/Classes/formatService';
+import StripeService from '../../services/Classes/stripeApiService';
 import StripePayments from '../StripePayments/StripePayments';
 import { account_balance_for_dates, getDates, getFilteredAccounts, getFilteredTransactions, getNetValueFromAccounts } from './Dashboard.Service';
 import './Dashboard.scss';
@@ -25,6 +26,8 @@ const Dashboard: FC<DashboardProps> = () => {
   const [netValue, setNetValue] = useState<number>(0); //some number we use for net value when processing transactions to accounts
   const [lineChartData, setLineChartData] = useState<any[]>([]); //graph date for accounts {date, balance}
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false); //config modal object that we use for filtering, modes, and sorting
+  const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false); //payment modal object that we use for stripe payments
+  const stripeService = StripeService();
 
   //FILTERS:
   const [dateScale, setDateScale] = useState<any>('day');
@@ -43,6 +46,12 @@ const Dashboard: FC<DashboardProps> = () => {
       calculateNetValue(filteredAccounts);
     }
   }, [transactions, accounts, dateScale, dashboardFilterData])
+
+  useEffect(() => {
+    if (stripeService.needsSubscription) {
+      setShowPaymentModal(true);
+    }
+  }, [stripeService.needsSubscription]);
 
   // const changeDateScale = (event: any) => {
   //   setDateScale(event.target.value);
@@ -171,12 +180,8 @@ const Dashboard: FC<DashboardProps> = () => {
   return (
     <>
       <div className='dashboard'>
-
-        <StripePayments />
-
           <div className='row'>
             <h3 className='special-title'>Net Value: ${netValue.toFixed(2)}</h3>
-
             <div className='filters'>
               <FontAwesomeIcon icon={faFilter} className='icon' onClick={handleOpenConfigModal}/>
             </div>
@@ -262,7 +267,6 @@ const Dashboard: FC<DashboardProps> = () => {
 
       {/* --------------------------------------- CONFIG ITEMS --------------------------------------- */}
 
-
       <Modal
         open={showConfigModal}
         aria-labelledby="modal-modal-title"
@@ -272,6 +276,19 @@ const Dashboard: FC<DashboardProps> = () => {
           <DashboardConfig filterObject={dashboardFilterData} accounts={accounts} onClose={handleCloseConfigModal} onApply={handleApplyConfigModal}/>
         </div>
       </Modal>
+
+      <Modal
+        open={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+      >
+        <div>
+          <StripePayments />
+        </div>
+      </Modal>
+      {/*onClose={stripeService.needsSubscription ? undefined : () => setShowPaymentModal(false)} */}
+
+
+
 
       <svg style={{ height: 0 }}>
         <defs>

@@ -1,94 +1,64 @@
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-}
 
-.planGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin: 2rem 0;
-}
+.stripe-payments-popup-container {
+    width: 55%;
+    max-width: 725px;
+    min-width: 400px;
+    height: 60%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(45deg, #0f2027, #203a43, #2c5364);
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
 
-.planCard {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1.5rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    &.selected {
-    border-color: #007bff;
-    background-color: #f8f9ff;
+    .Label {
+        font-size: 1.5rem;
+        color: white;
     }
 }
 
-.price {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin: 1rem 0;
-}
+.info-container {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
 
-.features {
-    list-style: none;
-    padding: 0;
-    margin: 1rem 0;
+    p {
+        margin: 0;
+        padding-left: 20px;
+        color: white;
+    }
 
-    li {
-    margin: 0.5rem 0;
+    h1 {
+        color: white;
+        padding-left: 20px;
+    }
+
+    h2 {
+        color: white;
+        padding-left: 20px;
     }
 }
 
-.selectButton {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-    background-color: #0056b3;
-    }
+.payment-container {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-left: 20px;
 }
 
-.checkoutContainer {
-    max-width: 500px;
-    margin: 2rem auto;
-    padding: 2rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
-
-.checkoutForm {
-    margin-top: 1rem;
-}
-
-.submitButton {
-    width: 100%;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 1rem;
-    border-radius: 4px;
-    margin-top: 1rem;
-    cursor: pointer;
-
-    &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-    }
-}
-
-.error {
-    color: #dc3545;
-    margin-top: 1rem;
+.pay-button {
+    border-radius: 5px;
+    color: #ffffff;
+    padding: 5px 10px 5px 10px
 }

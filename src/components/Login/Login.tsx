@@ -90,11 +90,13 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
             <h2>Password:</h2>
                <input id='password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key == 'Enter' ? login() : null)}/>
             <button onClick={login}>Login</button>
-            {!userWantsToCreateAccount && <p onClick={toggleCreateAccount}> Create Account? </p>}
+            {!userWantsToCreateAccount && <p onClick={toggleCreateAccount} style={{display: 'none'}}> Create Account? </p>}
          </div>
       </div>}
 
-      {userWantsToCreateAccount && <Onboarding toggleCreateAccount={toggleCreateAccount} handleLogin={handleLogin} />}
+      <div style={{display: 'none'}}>
+         {userWantsToCreateAccount && <Onboarding toggleCreateAccount={toggleCreateAccount} handleLogin={handleLogin}/>}
+      </div>
    </>
    );
    

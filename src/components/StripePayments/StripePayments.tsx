@@ -1,3 +1,4 @@
+import CircularProgress from '@mui/material/CircularProgress';
 import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import React from 'react';
@@ -16,18 +17,39 @@ const StripePayments: React.FC = () => {
     const stripeService = StripeService();
     const options = {
         clientSecret: stripeService.clientSecret,
+        appearance: {
+            variables: {
+                colorText: '#ffffff',
+                colorPrimary: 'white',
+                colorBackground: '#2c5364',
+                fontFamily: 'Archivo, sans-serif',
+            },
+        },
     }
     return (
         stripeService.clientSecret != "" ? (
-            <Elements stripe={stripePromise} options={options}>
-                <form>
-                    <PaymentElement />
-                    <button>Submit</button>
-                </form>
-            </Elements>
+            <div className="stripe-payments-popup-container">
+                <div className="info-container">
+                    <h2 className='archivo-font-bold'>Simpl Plan.</h2>
+                    <h1 className='archivo-font'>$5.99 / month</h1>
+                    <p>Unlimited access to all features.</p>
+                    <p>Cancel anytime.</p>
+                </div>
+                <div className='payment-container'>
+                    <Elements stripe={stripePromise} options={options}>
+                        <form>
+                        <PaymentElement />
+                        <div className='row' style={{justifyContent: 'center', height: '50px', alignItems: 'flex-end'}}>
+                            <button className='pay-button archivo-font-bold'>Submit</button>
+                        </div>
+                        </form>
+                    </Elements>
+                </div>
+            </div>
+
         ) : (
-            <div>
-                <button onClick={stripeService.startPayment}>Create Payment</button>
+            <div className='stripe-payments-popup-container' style={{justifyContent: 'center', alignItems: 'center'}}>
+                <CircularProgress color='inherit' />
             </div>
         )
     );

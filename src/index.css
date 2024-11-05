@@ -307,8 +307,8 @@ button:focus-visible {
   color: white;
 
   &:hover {
-      transform: scale(1.2);
-      text-shadow: 0 0 5px rgb(255, 255, 255);
+      transform: scale(1.1);
+      text-shadow: 0 0 1px rgb(255, 255, 255, .5);
   }
 }
 

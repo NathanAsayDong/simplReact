@@ -100,6 +100,7 @@ const StripeService = () => {
             setSubscriptions(subscriptions);
             console.log("subscriptions", subscriptions);
             setNeedsSubscription(subscriptions.length > 0);
+            startPayment();
         } catch (error) {
             console.error("Error initializing Stripe service", error);
         }
