@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import { Link, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import './App.css'
 import Accounts from './components/Accounts/Accounts'
 import Budgets from './components/Budgets/Budgets'
@@ -7,6 +7,7 @@ import CategoryManagement from './components/CategoryManagement/CategoryManageme
 import Dashboard from './components/Dashboard/Dashboard'
 import Login from './components/Login/Login'
 import NavBar from './components/NavBar/NavBar'
+import PrivacyPolicy from './components/PrivacyPolicy/PrivacyPolicy'
 import Settings from './components/Settings/Settings'
 import TransactionsManagement from './components/TransactionsManagement/TransactionsManagement'
 import { InitializeDataForContext } from './services/Classes/dataContext'
@@ -54,9 +55,12 @@ function App() {
         <Route path="/manage-categories" element={<CategoryManagement />} />
         <Route path="/manage-transactions" element={<TransactionsManagement />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
         <div className='footer'>
             <p>© 2024 - Budget Tracker</p>
+            <p style={{padding: '0 5px'}}> - </p>
+            <Link to="/privacy-policy" style={{color: 'white', textDecoration: 'underline'}}>Privacy Policy</Link>
         </div>
     </Router>
     )
