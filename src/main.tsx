@@ -7,7 +7,7 @@ import { AppDataProvider } from './services/Classes/dataContext';
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <AppDataProvider>
-      <App />
+        <App />
     </AppDataProvider>
   </React.StrictMode>,
 );

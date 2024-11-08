@@ -76,7 +76,16 @@ export const createPaymentIntent = async (): Promise<any> => {
     }
 };
 
-
+export const attemptPayment = async (paymentIntentId: string): Promise<any> => {
+    const extension = "stripe/confirm-payment-intent";
+    const url = __API_URL__ + extension + "?paymentIntentId=" + paymentIntentId;
+    try {
+        const response = await fetch(url);
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+}
 
 const StripeService = () => {
     const [product, setProduct] = useState<any>();
@@ -132,6 +141,11 @@ const StripeService = () => {
         }
     }
 
+    const handleSubmit = async (element: any) => {
+        const res = await element.submit();
+        console.log("res", res);
+    }
+
     return {
         init,
         handleCreateSubscription,
@@ -140,6 +154,7 @@ const StripeService = () => {
         subscriptions,
         needsSubscription,
         clientSecret,
+        handleSubmit,
     };
 };
 

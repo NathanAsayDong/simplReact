@@ -3,14 +3,14 @@
     width: 55%;
     max-width: 725px;
     min-width: 400px;
-    height: 60%;
+    height: auto;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: linear-gradient(45deg, #0f2027, #203a43, #2c5364);
     border-radius: 10px;
-    padding: 10px;
+    padding: 30px;
     display: flex;
     flex-direction: row;
     align-items: center;
