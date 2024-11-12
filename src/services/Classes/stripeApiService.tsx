@@ -141,9 +141,16 @@ const StripeService = () => {
         }
     }
 
-    const handleSubmit = async (element: any) => {
+    const handleSubmit = async (element: any, stripeInstance: any) => {
         const res = await element.submit();
         console.log("res", res);
+        const {error} = await stripeInstance.confirmPayment({
+            elements: element,
+            confirmParams: {
+                return_url: "https://example.com/order/123/complete",
+            }
+        });
+        console.log("error", error);
     }
 
     return {

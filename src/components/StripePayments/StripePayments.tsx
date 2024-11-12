@@ -5,11 +5,7 @@ import React, { useState } from 'react';
 import StripeService from '../../services/Classes/stripeApiService';
 import './StripePayments.scss';
 
-const stripePromise = loadStripe('pk_live_51PsAXyP4UbZPdfFxBUdeL2099WwLUS2eP7gbhgsy3qzwt9l9y7EdJtWP4x5lsP7gZzbpBJs8SLzDjzdgJsJcXk4w0030VaWKAt').then(
-    (stripe) => {
-        return stripe;
-    }
-);
+let stripePromise = loadStripe('pk_live_51PsAXyP4UbZPdfFxBUdeL2099WwLUS2eP7gbhgsy3qzwt9l9y7EdJtWP4x5lsP7gZzbpBJs8SLzDjzdgJsJcXk4w0030VaWKAt')
 
 const CheckoutForm = () => {
     const [loading, setLoading] = useState(false);
@@ -17,10 +13,30 @@ const CheckoutForm = () => {
     
     const attemptPayment = async (e: React.FormEvent) => {
         e.preventDefault();
+        const stripe = await stripePromise
+        if (!elements || !stripe) {
+            return;
+        }
         setLoading(true);
         try {
-            const res = await elements?.submit();
-            console.log("res", res);
+            // First submit the form elements
+            const { error: submitError } = await elements.submit();
+            if (submitError) {
+                console.error("Submit error:", submitError);
+                return;
+            }
+    
+            // Then confirm the payment
+            const { error } = await stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                    return_url: "https://simplfinances.com/dashboard",
+                }
+            });
+    
+            if (error) {
+                console.error("Payment error:", error);
+            }
         } catch (error) {
             console.error("Payment error:", error);
         } finally {
