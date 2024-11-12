@@ -208,7 +208,7 @@ const Dashboard: FC<DashboardProps> = () => {
           <div className='pie-container'>
             <ResponsiveContainer width="100%" height={500} >
               <PieChart >
-                <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="url(#graphGradient2)" label={(entry) => entry.name}/>
+                <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="url(#graphGradient2)" label={(entry) => entry.name} className='pie-label' labelLine={false}/>
                 <Tooltip content={<CustomTooltipPie />} />
               </PieChart>
             </ResponsiveContainer>

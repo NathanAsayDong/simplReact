@@ -23,14 +23,13 @@ h2 {
 
 .navbar-loading-bar {
     width: 100%;
-    position: fixed;
-    margin-bottom: 5px;
     opacity: 1;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.5s ease;
+    margin-bottom: 5px;
 }
 
-.navbar-loading-placeholder {
-    height: 9px;
+.navbar-loading-bar.hide {
+    opacity: 0;
 }
 
 .nav-items {
