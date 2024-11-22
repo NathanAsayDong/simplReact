@@ -153,7 +153,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   <>
     {loading ? <LinearProgress color="inherit" variant='determinate' value={loadingProgress} /> : null}
     
-    <div className='body'>
+    <div className='page'>
       <div className='container-transparent'>
         <div className='filters-row-transaction-managment' style={{gap: '5px', marginTop: '2em'}}>
           <h3 className='special-title' style={{ marginLeft: '3%', marginBottom: '10px', color: 'white', marginRight: 'auto'}} onClick={test}>Transactions</h3>
@@ -256,7 +256,6 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
             ))
           )}
       </div>
-
     </div>
   </>
   )

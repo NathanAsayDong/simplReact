@@ -74,7 +74,7 @@ const Accounts: FC<AccountsProps> = () =>  {
 
   return (
     <>
-      <div className='body'>
+      <div className='page'>
 
 
         <div className='row'>

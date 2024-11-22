@@ -13,7 +13,7 @@ const Settings: FC<SettingsProps> = () =>  {
 
     return (
         <>
-            <div style={{height: '81vh'}}>
+            <div className="settings-page" >
                 <button onClick={logout}>Logout</button>
             </div>
         </>

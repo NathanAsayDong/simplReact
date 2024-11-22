@@ -60,7 +60,7 @@ export class Account {
 }
 
 export class DashboardFilterData {
-    selectedAccounts: string[];;
+    selectedAccounts: string[];
     selectedCategories: string[];
     startDate: Date | null | undefined;
     endDate: Date | null | undefined;
@@ -84,3 +84,19 @@ export class DashboardFilterData {
 }
 
 export const defaultDashboardFilterData = new DashboardFilterData(['All'], ['All'], dayjs().subtract(7, 'day').toDate(), dayjs().toDate(), 'day', [], ['All'], 'netValue', 'category');
+
+export class StripeSubscriptionObject {
+    id: string;
+    clientSecret: string;
+    customerId: string;
+    status: string;
+    priceId: string;
+
+    constructor(id: string, clientSecret: string, customerId: string, status: string, priceId: string) {
+        this.id = id;
+        this.clientSecret = clientSecret;
+        this.customerId = customerId;
+        this.status = status;
+        this.priceId = priceId;
+    }
+}

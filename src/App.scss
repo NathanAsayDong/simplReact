@@ -1,0 +1,29 @@
+#root {
+  text-align: center;
+}
+
+
+.special-background {
+  background: linear-gradient(19deg, #0c2e3c, #226c8b, #045368);
+  background-size: 600% 600%;
+
+  -webkit-animation: GradientAnimation 10s ease infinite;
+  -moz-animation: GradientAnimation 10s ease infinite;
+  animation: GradientAnimation 10s ease infinite;
+}
+
+@-webkit-keyframes GradientAnimation {
+  0%{background-position:92% 0%}
+  50%{background-position:9% 100%}
+  100%{background-position:92% 0%}
+}
+@-moz-keyframes GradientAnimation {
+  0%{background-position:92% 0%}
+  50%{background-position:9% 100%}
+  100%{background-position:92% 0%}
+}
+@keyframes GradientAnimation {
+  0%{background-position:92% 0%}
+  50%{background-position:9% 100%}
+  100%{background-position:92% 0%}
+}

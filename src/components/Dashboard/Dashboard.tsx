@@ -9,6 +9,7 @@ import { TransactionData, UserAccountsData } from '../../services/Classes/dataCo
 import { convertNumberToCurrency, dateFormatPretty } from '../../services/Classes/formatService';
 import StripeService from '../../services/Classes/stripeApiService';
 import StripePayments from '../StripePayments/StripePayments';
+import Welcome from '../Welcome/Welcome';
 import { account_balance_for_dates, getDates, getFilteredAccounts, getFilteredTransactions, getNetValueFromAccounts } from './Dashboard.Service';
 import './Dashboard.scss';
 
@@ -261,8 +262,6 @@ const Dashboard: FC<DashboardProps> = () => {
           </div>
 
       </div>
-
-        <div style={{margin: '5%'}}></div>
 
 
       {/* --------------------------------------- CONFIG ITEMS --------------------------------------- */}

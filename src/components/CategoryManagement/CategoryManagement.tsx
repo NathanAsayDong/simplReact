@@ -43,7 +43,7 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
     <>
     {loading ? <LinearProgress color="inherit" /> : null}
 
-    <div className='body'>
+    <div className='page'>
       <div className='row'>
         <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Add Category</h3>
       </div>

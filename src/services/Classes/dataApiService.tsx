@@ -6,6 +6,7 @@ console.log('API URL:', baseUrl);
 export class DataApiService {
     public static processTransactions = async (csvData: any, account: Account) => {
         try {
+            
             const id = localStorage.getItem('id');
             if (!id) throw new Error('User ID is missing in local storage.');
             
