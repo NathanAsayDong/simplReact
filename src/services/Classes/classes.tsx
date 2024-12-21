@@ -100,3 +100,8 @@ export class StripeSubscriptionObject {
         this.priceId = priceId;
     }
 }
+
+export enum OnboardingStatus {
+    INCOMPLETE = 'INCOMPLETE',
+    COMPLETED = 'COMPLETED'
+}

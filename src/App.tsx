@@ -7,19 +7,24 @@ import CategoryManagement from './components/CategoryManagement/CategoryManageme
 import Dashboard from './components/Dashboard/Dashboard'
 import Login from './components/Login/Login'
 import NavBar from './components/NavBar/NavBar'
+import Onboarding from './components/Onboarding/Onboarding'
 import PrivacyPolicy from './components/PrivacyPolicy/PrivacyPolicy'
 import Settings from './components/Settings/Settings'
 import TransactionsManagement from './components/TransactionsManagement/TransactionsManagement'
 import Welcome from './components/Welcome/Welcome'
 import { InitializeDataForContext } from './services/Classes/dataContext'
+import { getUserOnboardStatus } from './services/Classes/userApiService'
+import { OnboardingStatus } from './services/Classes/classes'
 
 
 function App() {
   const [isLoggin, setIsLoggin] = useState(false)
+  const [onboardingCompleted, setOnboardingCompleted] = useState(true)
   const initContext = InitializeDataForContext().initializeData;
 
   const handleLogin = () => {
     setIsLoggin(true);
+    checkOnboarding();
   };
 
   const handleLogout = () => {
@@ -35,6 +40,23 @@ function App() {
     else {
       setIsLoggin(false);
     }
+    checkOnboarding();
+  }
+
+  const checkOnboarding = async() => {
+    console.log('checking onboarding')
+    const userId = localStorage.getItem('id');
+    console.log(userId)
+    if (userId) {
+      const status = await getUserOnboardStatus(userId);
+      if (status == OnboardingStatus.COMPLETED) {
+        setOnboardingCompleted(true);
+      } else {
+        setOnboardingCompleted(false);
+      }
+    } else {
+      setOnboardingCompleted(false);
+    }
   }
 
   useEffect(() => {
@@ -48,7 +70,12 @@ function App() {
   
   return (
     <Router>
-      {isLoggin ? (
+      {!onboardingCompleted && isLoggin ? (
+        <Routes>
+          <Route path="/onboarding" element={<Onboarding handleLogin={handleLogin} />} />
+          <Route path="*" element={<Navigate to="/onboarding" />} />
+        </Routes>
+      ) : isLoggin ? (
         <>
           <NavBar handleLogout={handleLogout} />
           <Routes>
@@ -62,20 +89,16 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>
-          <div className='footer'>
-            <p>© 2024 - Budget Tracker</p>
-            <p style={{ padding: '0 5px' }}> - </p>
-            <Link to="/privacy-policy" style={{ color: 'white', textDecoration: 'underline' }}>Privacy Policy</Link>
-          </div>
         </>
       ) : (
         <Routes>
           <Route path="/login" element={<Login handleLogin={handleLogin} />} />
+          <Route path="/create-account" element={<Onboarding handleLogin={handleLogin} />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       )}
     </Router>
-  );
+  )
 }
 
 export default App

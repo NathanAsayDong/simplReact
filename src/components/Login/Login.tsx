@@ -1,21 +1,21 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { InitializeDataForContext } from '../../services/Classes/dataContext';
 import { attemptCreateAccount, attemptLogin } from '../../services/Classes/userApiService';
-import Onboarding from '../Onboarding/Onboarding';
 import './Login.scss';
 
 
 interface LoginProps {
    handleLogin: () => void;
 }
-   
 
 const Login: FC<LoginProps> = ({ handleLogin }) => {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
-   const [userWantsToCreateAccount, setUserWantsToCreateAccount] = useState(false);
-   const setLoading = InitializeDataForContext().setLoading;
+   const [confirmPassword, setConfirmPassword] = useState('')
+   const [viewLogin, setViewLogin] = useState(true)
+   const [loading, setLoading] = useState(false)
+   const loginRef = useRef<HTMLDivElement>(null);
+   const createAccountRef = useRef<HTMLDivElement>(null);
    const navigate = useNavigate();
 
    useEffect(() => {
@@ -25,6 +25,14 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       }
    }, []);
 
+   const toggleView = () => {
+      setViewLogin(!viewLogin);
+      setTimeout(() => {
+         setEmail('');
+         setPassword('');
+         setConfirmPassword('');
+      }, 500);
+   };
    
    const login = async () => {
       if (email === '' || password === '') {
@@ -38,9 +46,8 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       const success = await attemptLogin(email, password);
       if (success) {
          localStorage.setItem('id', success.authToken);
-         setLoading(false);
          handleLogin();
-         navigate('/welcome');
+         navigate('/onboarding');
       } else {
          alert('Failed to login');
       }
@@ -48,58 +55,53 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
 
    const createAccount = async () => {
       if (email === '' || password === '') {
+         alert('Email and password cannot be empty');
          return;
       }
       if (!email.includes('@') || !email.includes('.')) {
          alert('Invalid email');
          return;
       }
-      if (password.length < 8) {
-         alert('Password must be at least 8 characters long');
-         return;
-      }
-      if (!password.match(/[0-9]/)) {
-         alert('Password must contain at least one number');
-         return;
-      }
-      if (!password.match(/[A-Z]/)) {
-         alert('Password must contain at least one capital letter');
-         return;
+      if (password !== confirmPassword) {
+         alert("passwords must match")
       }
       const success = await attemptCreateAccount(email, password);
       if (success) {
          localStorage.setItem('id', success.authToken);
          handleLogin();
+         navigate('/onboarding');
+      } else {
+         alert('Failed to create account.');
       }
-      else {
-         alert('Failed to create an account');
-      }
-   }
-
-   const toggleCreateAccount = () => {
-      setUserWantsToCreateAccount(!userWantsToCreateAccount);
    }
 
    return  (
-   <>
-      {!userWantsToCreateAccount &&
-      <div className='centerPage special-background' >
-         <div className='slogan'>
-            <h1>MAKING FINANCES SIMPL.</h1>
+      <>
+         <div className='center-page'>
+            <div className='slogan'>
+               <h1>MAKING FINANCES SIMPL.</h1>
+            </div>
+            <div className='form-column'>
+               <div className={`formContainer login ${viewLogin ? 'show' : 'hidden'}`} ref={loginRef}>
+                  <h2 className='roboto-bold'>LOGIN</h2>
+                  <input id='email-login' type="email" placeholder='email' value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
+                  <input id='password-login' type="password" placeholder='password' value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
+                  {!loading && <button onClick={login}> Login </button>}
+                  {loading && <button className='loading-button'> Loading </button>}
+                  <p onClick={toggleView} className='create-account-toggle'> Create Account? </p>
+               </div>
+               <div className={`formContainer createAccount ${!viewLogin ? 'show' : 'hidden'}`} ref={createAccountRef}>
+                  <h2 className='roboto-bold'>CREATE ACCOUNT</h2>
+                  <input id='email-create-account' type="email" placeholder='email' value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? createAccount() : null)} />
+                  <input id='password-create-account' type="password" placeholder='password' value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? createAccount() : null)} />
+                  <input id='confirm-password-create-account' type="password" placeholder='confirm password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? createAccount() : null)} />
+                  {!loading && <button onClick={createAccount}>Create Account</button>}
+                  {loading && <button className='loading-button'> Loading </button>}
+                  <p onClick={toggleView} className='create-account-toggle'> Already have an account? </p>
+               </div>
+            </div>
          </div>
-         <div className='loginForm'>
-            <h2 className='roboto-bold'>LOGIN</h2>
-            <input id='username' type="email" placeHolder='email' value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key == 'Enter' ? login() : null)}/>
-            <input id='password' type="password" placeHolder='password' value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key == 'Enter' ? login() : null)}/>
-            <button onClick={login}>Login</button>
-            {!userWantsToCreateAccount && <p onClick={toggleCreateAccount} className='create-account-toggle'> Create Account? </p>}
-         </div>
-      </div>}
-
-      <div>
-         {userWantsToCreateAccount && <Onboarding toggleCreateAccount={toggleCreateAccount} handleLogin={handleLogin}/>}
-      </div>
-   </>
+      </>
    );
    
 };

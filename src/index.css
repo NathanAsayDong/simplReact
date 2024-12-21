@@ -8,7 +8,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  background: linear-gradient(19deg, #0c2e3c, #226c8b, #045368);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -98,11 +98,11 @@ button {
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.25s;
-  border-radius: 25px;
+  border-radius: 15px;
   border: 1px solid #2c5364;
-  background: #2c5364;
+  background: #f8f8f8;
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
-  color: rgb(205 205 205);
+  color: #2c5364;
 }
 
 button:hover {
@@ -115,10 +115,11 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-.subtle-button {
+.subtle-button, .subtle-button:focus {
   border: none;
   background: none;
   box-shadow: none;
+  outline: none;
 }
 
 @media (prefers-color-scheme: light) {
@@ -255,13 +256,15 @@ button:focus-visible {
   opacity: .7;
 }
 
-.centerPage {
+.center-page {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   transition: all 0.5s ease;
   transition: width 0.5s ease;
+  overflow: hidden;
+  gap: 10px;
 }
 
 .trash-icon {

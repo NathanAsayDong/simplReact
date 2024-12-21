@@ -42,7 +42,7 @@ const UserInfo: FC<UserInfoProps> = () =>  {
     
     return (
         <>
-            <h1 className='section-title' >User Info</h1>
+            <h1 className='section-title roboto-bold' >USER INFO</h1>
             <div className='form-container hide-scroll'>
                 <input type='text' placeholder='First Name' onChange={updateFirstName}/>
                 <input type='text' placeholder='Last Name' onChange={updateLastName} />

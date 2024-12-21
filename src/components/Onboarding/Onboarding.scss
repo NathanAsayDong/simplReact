@@ -1,5 +1,6 @@
 .section-title {
     margin-bottom : 10px;
+    font-size: 30px;
 }
 
 .onboarding-footer {
@@ -35,8 +36,8 @@
 
 .form-container {
     border: 3px solid white;
-    border-radius: 5px;
-    padding: 10px;
+    border-radius: 20px;
+    padding: 20px;
     width: 300px;
     display: flex;
     flex-direction: column;
@@ -46,13 +47,13 @@
     overflow-y: scroll;
 }
 
-.form-container input {
+.form-container input, .form-container input:focus, .form-container input:active {
     margin: 10px 0;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 15px;
     border: 1px solid #ccc;
     width: 90%;
-    color: black
+    color: #2c5364;
 }
 
 .swiper-button {

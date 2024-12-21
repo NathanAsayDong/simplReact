@@ -122,6 +122,8 @@ export function AppDataProvider({ children }: any){
     }
 
     const initializeData = async () => {
+        const userId = localStorage.getItem('id');
+        if (!userId) return;
         setLoading(true);
         loadCachedData();
         await syncWithPlaid();
