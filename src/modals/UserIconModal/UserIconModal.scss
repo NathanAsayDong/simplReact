@@ -1,14 +1,14 @@
 .options-box {
     width: 35%;
     min-width: 295px;
-    height: 60%;
+    height: 550px;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: var(--border-radius);
+    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -29,7 +29,7 @@
 
 .icon {
     transition: all 0.3s ease;
-    color: white;
+    color: var(--primary-color);
     min-width: 24px;
     min-height: 24px;
 

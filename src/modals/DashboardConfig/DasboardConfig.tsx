@@ -182,8 +182,8 @@ export const DashboardConfig: FC<DashboardConfigProps> = ({filterObject, account
                 </div>
 
                 <div className="options-row" style={{marginBottom: '0', marginTop: 'auto', gap: '10px'}}>
-                    <button className="cancel-button archivo-font" style={{width: '50%', borderRadius: '2px'}} onClick={handleCancel}>Cancel</button>
-                    <button className="confirm-button apply-button archivo-font" style={{width: '50%', borderRadius: '2px'}} onClick={handleApply}>Apply</button>
+                    <button className="cancel-button archivo-font" style={{width: '50%'}} onClick={handleCancel}>Cancel</button>
+                    <button className="confirm-button apply-button archivo-font" style={{width: '50%'}} onClick={handleApply}>Apply</button>
                 </div>
 
 

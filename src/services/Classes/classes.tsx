@@ -103,5 +103,5 @@ export class StripeSubscriptionObject {
 
 export enum OnboardingStatus {
     INCOMPLETE = 'INCOMPLETE',
-    COMPLETED = 'COMPLETED'
+    COMPLETE = 'COMPLETE'
 }

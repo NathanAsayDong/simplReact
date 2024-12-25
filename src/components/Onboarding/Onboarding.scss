@@ -57,11 +57,11 @@
 }
 
 .swiper-button {
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     margin-left: 10px;
     margin-right: 10px;
-    background-color: none;
-    background: none;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
 }
 
 .swiper-button-save {

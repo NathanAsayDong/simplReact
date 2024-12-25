@@ -24,6 +24,7 @@ const Onboarding: FC<OnboardingProps> = ({ handleLogin }) =>  {
 
 
     const navigateToLogin = () => {
+        localStorage.removeItem('id');
         navigate('/login')
     }
 
@@ -67,7 +68,7 @@ const Onboarding: FC<OnboardingProps> = ({ handleLogin }) =>  {
                 {loading && <LinearProgress style={{marginBottom: '16px'}} color="inherit" />}
                 <div className='onboarding-header'>
                     <h2 style={{"marginLeft":"10px"}}>SIMPL.</h2>
-                    <button style={{"marginLeft":"auto","marginRight":"10px"}} className="subtle-button" onClick={navigateToLogin}>Already have an account?</button>
+                    <button style={{"marginLeft":"auto","marginRight":"10px", "color":"var(--secondary-color"}} className="subtle-button" onClick={navigateToLogin}>Sign in with other account?</button>
                 </div>
 
                 <div className='swiper-container'>

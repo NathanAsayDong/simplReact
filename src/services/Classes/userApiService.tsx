@@ -49,7 +49,7 @@ export const getUserOnboardStatus = async (id: string): Promise<OnboardingStatus
         throw new Error('Failed to fetch onboarding status');
     }
     const data = await response.json();
-    const status = data.status;
+    const status: OnboardingStatus = data.status as OnboardingStatus;
     return status;
 }
 

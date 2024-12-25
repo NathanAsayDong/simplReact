@@ -189,19 +189,19 @@ const Dashboard: FC<DashboardProps> = () => {
 
           </div>
 
-        <div className='row' style={{gap: '10px', padding: '10px'}}>
+        <div className='row' style={{gap: '30px', padding: '10px'}}>
           <div className='graph-container'>
             <ResponsiveContainer width="100%" height={500} style={{scale: '1.01'}}>
               <AreaChart data={lineChartData}>
                 <Tooltip content={<CustomTooltipArea dateFormat={getDateFormat()}/>} />
-                <Area dataKey='balance' stroke='white' strokeWidth={2} fill='url(#graphGradient)'  type="monotone" />
+                <Area dataKey='balance' stroke='var(--primary-color)' strokeWidth={2} fill='none'  type="monotone" />
                 <XAxis dataKey="date" tickFormatter={(value) => dateFormatPretty(value, getDateFormat())}
-                tick={{ fill: 'white' }} tickLine={{ stroke: 'none' }} mirror={true} stroke='none'
+                tick={{ fill: 'var(--primary-color)' }} tickLine={{ stroke: 'none' }} mirror={true} stroke='none'
                 ></XAxis>
                 <YAxis
-                tick={{ fill: 'white', fontSize: 12, width: 300 }} tickLine={{ stroke: 'none' }}
+                tick={{ fill: 'var(--primary-color)', fontSize: 12, width: 300 }} tickLine={{ stroke: 'none' }}
                 tickFormatter={(value) => `$${value.toFixed(2)}`} mirror={true} stroke='none'
-                orientation='right'
+                orientation='left'
                 ></YAxis>
               </AreaChart>
             </ResponsiveContainer>
@@ -209,7 +209,7 @@ const Dashboard: FC<DashboardProps> = () => {
           <div className='pie-container'>
             <ResponsiveContainer width="100%" height={500} >
               <PieChart >
-                <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="url(#graphGradient2)" label={(entry) => entry.name} className='pie-label' labelLine={false}/>
+                <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="var(--primary-color)" label={(entry) => entry.name} className='pie-label' labelLine={false}/>
                 <Tooltip content={<CustomTooltipPie />} />
               </PieChart>
             </ResponsiveContainer>
@@ -292,12 +292,12 @@ const Dashboard: FC<DashboardProps> = () => {
       <svg style={{ height: 0 }}>
         <defs>
         <linearGradient id="graphGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" style={{ stopColor: 'white', stopOpacity: 0 }} />
-          <stop offset="100%" style={{ stopColor: 'white', stopOpacity: 1 }} />
+          <stop offset="0%" style={{ stopColor: '#2c5364', stopOpacity: 0 }} />
+          <stop offset="100%" style={{ stopColor: '#2c5364', stopOpacity: 1 }} />
         </linearGradient>
         <linearGradient id="graphGradient2" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" style={{ stopColor: 'white', stopOpacity: 0 }} />
-          <stop offset="100%" style={{ stopColor: 'white', stopOpacity: .7 }} />
+          <stop offset="0%" style={{ stopColor: '#2c5364', stopOpacity: 0 }} />
+          <stop offset="100%" style={{ stopColor: '#2c5364', stopOpacity: .7 }} />
         </linearGradient>
         </defs>
       </svg>

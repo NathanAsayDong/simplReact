@@ -18,64 +18,75 @@ import { OnboardingStatus } from './services/Classes/classes'
 
 
 function App() {
-  const [isLoggin, setIsLoggin] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [onboardingCompleted, setOnboardingCompleted] = useState(true)
+  const [userId, setUserId] = useState('')
   const initContext = InitializeDataForContext().initializeData;
 
   const handleLogin = () => {
-    setIsLoggin(true);
+    setIsLoggedIn(true);
+    checkLoggedIn();
     checkOnboarding();
   };
 
   const handleLogout = () => {
-    setIsLoggin(false);
+    setIsLoggedIn(false);
     localStorage.clear();
   }
 
-  const initializePage = () => {
-    const id = localStorage.getItem('id');
-    if (id !== 'undefined' && id !== null && id !== '' && id !== undefined && !isLoggin) {
-      setIsLoggin(true);
-    }
-    else {
-      setIsLoggin(false);
-    }
-    checkOnboarding();
-  }
-
   const checkOnboarding = async() => {
-    console.log('checking onboarding')
-    const userId = localStorage.getItem('id');
-    console.log(userId)
-    if (userId) {
+    if (isLoggedIn) {
       const status = await getUserOnboardStatus(userId);
-      if (status == OnboardingStatus.COMPLETED) {
+      if (status == OnboardingStatus.COMPLETE) {
         setOnboardingCompleted(true);
       } else {
         setOnboardingCompleted(false);
       }
     } else {
-      setOnboardingCompleted(false);
+      setOnboardingCompleted(true);
+    }
+  }
+
+  const checkLoggedIn = () => {
+    const id = localStorage.getItem('id');
+    if (id !== 'undefined' && id !== null && id !== '' && id !== undefined) {
+      setIsLoggedIn(true);
+      setUserId(id);
+    }
+    else {
+      setIsLoggedIn(false);
+      setOnboardingCompleted(true);
+    }
+  }
+
+  const checkStatus = async () => {
+    await checkLoggedIn();
+    await checkOnboarding();
+    console.log('isLoggedIn', isLoggedIn, 'onboardingCompleted', onboardingCompleted)
+    if (isLoggedIn && onboardingCompleted) {
+      initContext();
     }
   }
 
   useEffect(() => {
-    initializePage();
-  }, [ ])
+    checkStatus();
+  }, []);
 
   useEffect(() => {
-    initContext();
-  }, [ ])
+    if (isLoggedIn && onboardingCompleted) {
+      initContext();
+    }
+  }, [isLoggedIn, onboardingCompleted]);
 
   
   return (
     <Router>
-      {!onboardingCompleted && isLoggin ? (
+      {!onboardingCompleted && isLoggedIn ? (
         <Routes>
           <Route path="/onboarding" element={<Onboarding handleLogin={handleLogin} />} />
           <Route path="*" element={<Navigate to="/onboarding" />} />
         </Routes>
-      ) : isLoggin ? (
+      ) : isLoggedIn ? (
         <>
           <NavBar handleLogout={handleLogout} />
           <Routes>
