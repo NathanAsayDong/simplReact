@@ -14,26 +14,24 @@
 }
 
 .graph-container {
-    width: 60%;
-    border: 1px solid white;
+    width: 70%;
     border-radius: var(--border-radius);
     overflow: hidden;
-    border: 1px solid var(--primary-color);
     color: var(--primary-color);
-    box-shadow: var(--box-shadow);
-
     &:hover {
         cursor: pointer;
     }
 }
 
 .pie-container {
-    width: 40%;
+    width: 30%;
     border: 1px solid white;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--primary-color);
     color: var(--primary-color);
-    box-shadow: var(--box-shadow);
+    overflow: visible;
+
+    .recharts-surface {
+        overflow: visible !important;
+    }
 }
 
 .pie-label {
@@ -86,6 +84,7 @@
     align-self: start;
     margin-left: 20px;
     margin-top: 10px;
+    text-align: start;
 }
 
 .card-amount {

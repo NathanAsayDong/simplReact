@@ -10,18 +10,25 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
     const { open, ready, exit, newAccounts } = PlaidService();
 
     const openPlaid = () => {
-        console.log('Open Plaid');
         if (ready) {
             open();
         } else {
-            console.log('Plaid not ready');
+            alert('Plaid not ready');
             exit();
         }
     }
 
     useEffect(() => {
-        OnboardingContext?.setAccounts(newAccounts);
+        localStorage.removeItem('lastSync')
+        OnboardingContext?.setAccounts([
+            ...(OnboardingContext?.onboardingData?.accounts ?? []),
+            ...(newAccounts ?? []),
+        ]);
     }, [newAccounts]);
+
+    useEffect(() => {
+        OnboardingContext.fetchAccounts();
+    }, [open, ready]);
 
     const updateAccountName = (e: any, index: any) => {
         const updatedAccounts = OnboardingContext?.onboardingData?.accounts;
@@ -37,10 +44,24 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
         }
     }
 
+    const addTestAccount = () => {
+        OnboardingContext?.setAccounts([
+            ...(OnboardingContext?.onboardingData?.accounts ?? []),
+            {
+                id: 'test',
+                name: 'Test Account',
+                source: 'Test Source',
+                type: 'Test Type',
+            }
+        ]);
+    }
+
     return (
         <>
             <h1 className='section-title' >Connect Accounts </h1>
-            <div className='form-container hide-scroll' style={{height: 368}}>
+            <button onClick={addTestAccount} >Test</button>
+            <p>Connect to all your financial insitutions so Simpl can access your financial data.</p>
+            <div className='form-container hide-scroll' style={{height: 450}}>
                 <button onClick={openPlaid} className='add-account-button' style={{marginBottom: 10}}> Add Account </button>
 
                 {OnboardingContext?.onboardingData?.accounts?.map((account: any, idx: any) => (

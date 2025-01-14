@@ -89,7 +89,8 @@ input:active {
     animation: panUp 1s ease-out;
 }
 .slogan {
-    color: white;
+    color: var(--primary-color);
+    padding-right: 100px;
 }
 .slogan h1 {
     width: auto;

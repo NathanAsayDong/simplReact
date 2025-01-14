@@ -70,7 +70,7 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
             </Modal>
 
         </div>
-        <LinearProgress className={`navbar-loading-bar ${isLoading ? '' : 'hide'}`} color="inherit" />
+        <LinearProgress className={`navbar-loading-bar ${isLoading ? '' : 'hide'}`} color="primary" />
 
     </>
 

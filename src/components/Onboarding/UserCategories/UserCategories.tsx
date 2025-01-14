@@ -10,7 +10,7 @@ interface UserCategoriesProps {}
 const UserCategories: FC<UserCategoriesProps> = () =>  {
     const OnboardingContext = OnboardingData();
 
-    const recommendedCategories = ['Music', 'Sports', 'Technology', 'Art', 'Science'];
+    const recommendedCategories = ['Bills', 'Entertainment', 'Shopping', 'Food', 'Travel'];
 
     const handleEnterKey = (e: any) => {
         if (e.key === 'Enter') {
@@ -40,7 +40,7 @@ const UserCategories: FC<UserCategoriesProps> = () =>  {
     
     return (
         <>
-            <h1 className='section-title roboto-bold'>Welcome!</h1>
+            <h1 className='section-title roboto-bold'>Spending Categories</h1>
             <p>Please select from the recommended categories or add your own.</p>
             <div className='recommended-categories'>
                 {recommendedCategories.map((category, idx) => (
@@ -49,8 +49,7 @@ const UserCategories: FC<UserCategoriesProps> = () =>  {
                     </button>
                 ))}
             </div>
-            <h2 className='section-title roboto-bold'>Categories</h2>
-            <div className='form-container hide-scroll' style={{height: 368}}>
+            <div className='form-container hide-scroll' style={{height: 450}}>
                 <div className='row' style={{paddingRight: 5, paddingLeft: 5, height: 'fit-content'}}>
                     <input type='text' id='newCategory' placeholder='Category Name' onKeyUp={handleEnterKey}/>
                     <FontAwesomeIcon icon={faSquarePlus} className='add-category-icon' onClick={() => addCategory()}/>

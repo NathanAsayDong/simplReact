@@ -32,6 +32,8 @@ export const attemptCreateAccount = async (email: string | undefined, password: 
         })
     });
     if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.message);
         return false;
     }
     const data = await response.json();
@@ -60,7 +62,7 @@ export const updateUserOnboardStatus = async (id: string, status: OnboardingStat
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            id: id,
+            userId: id,
             status: status
         })
     });

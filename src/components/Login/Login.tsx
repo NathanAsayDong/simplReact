@@ -70,14 +70,12 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
          localStorage.setItem('id', success.authToken);
          handleLogin();
          navigate('/onboarding');
-      } else {
-         alert('Failed to create account.');
       }
    }
 
    return  (
       <>
-         <div className='center-page'>
+         <div className='center-page special-background-light'>
             <div className='slogan'>
                <h1>MAKING FINANCES SIMPL.</h1>
             </div>

@@ -23,7 +23,6 @@
 .category {
     display: flex;
     align-items: center;
-    width: 134px;
     border: 1px solid #e9e3e3;
     border-radius: 8px;
     height: 27px;
@@ -38,7 +37,21 @@
 .remove-category-icon {
     margin-right: 0px;
     margin-left: auto;
-    background-color: black;
+    color: rgb(230, 35, 35);
     border-radius: 50%;
     cursor: pointer;
+}
+
+.recommended-categories {
+    gap: 5px;
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.recommended-category-button {
+    border: 1px solid var(--primary-color);
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    border-radius: var(--border-radius);
+    padding: 8px;
 }

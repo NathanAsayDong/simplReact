@@ -1,8 +1,10 @@
-import { ForwardRefRenderFunction, forwardRef, useImperativeHandle } from 'react';
+import { ForwardRefRenderFunction, Key, forwardRef, useImperativeHandle, useState } from 'react';
 import { DataApiService } from '../../../services/Classes/dataApiService.tsx';
-import { attemptCreateAccount } from '../../../services/Classes/userApiService';
+import { attemptCreateAccount, updateUserOnboardStatus } from '../../../services/Classes/userApiService';
 import { OnboardingData, OnboardingDataObject } from '../Onboarding.context';
 import './Review.scss';
+import GeneratingAccount from '../GeneratingAccount/GeneratingAccount.tsx';
+import { OnboardingStatus } from '../../../services/Classes/classes.tsx';
 
 
 
@@ -10,27 +12,20 @@ interface OnboardingReviewProps { handleLogin: () => void; setLoading: (loading:
 
 const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (props, ref) => {
     const onboardingData: OnboardingDataObject = OnboardingData().onboardingData;
+    const [settingUpAccount, setSettingUpAccount] = useState<boolean>(false);
+    const [progress, setProgress] = useState<number>(0);
     const handleLogin = props.handleLogin;
-    const setLoading = props.setLoading
-
-    const getPasswordString = () => {
-        if (onboardingData?.password) {
-            const length = onboardingData.password.length;
-            return length + ' Characters'
-        } else {
-            return "No Password"
-        }
-    }
+    const setLoading = props.setLoading;
 
     useImperativeHandle(ref, () => ({
         save
     }))
 
     const fieldsAreValid = () => {
-        if (!onboardingData?.firstName || !onboardingData?.lastName || !onboardingData?.email || !onboardingData?.phone || !onboardingData?.password) {
+        if (!onboardingData?.categories || onboardingData?.categories?.length == 0) {
             return false;
         }
-        else if (!onboardingData?.categories || onboardingData?.categories?.length == 0) {
+        if (!onboardingData?.accounts || onboardingData?.accounts?.length == 0) {
             return false;
         }
         return true;
@@ -43,81 +38,80 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
             alert('Please fill out all fields');
             return;
         }
+        setSettingUpAccount(true);
+        setProgress(10);
         try {
-            const userCreated = await attemptCreateAccount(onboardingData.email, onboardingData.password);
-            if (!!userCreated && !!onboardingData.categories) {
-                localStorage.setItem('id', userCreated.authToken);
-                for (let category of onboardingData.categories) {
-                    const categoryAdded = await DataApiService.addCategory(category);
-                    if (!categoryAdded) {
-                        throw new Error('Category Creation Failed');
-                    }
-                }
-                console.log('User Created');
-                setLoading(false);
-                handleLogin();
-            } else {
-                throw new Error('Account Creation Failed');
+            if (!onboardingData) {
+                throw new Error('User Data Missing');
             }
+            for (let category of (onboardingData?.categories ?? [])) {
+                const categoryAdded = await DataApiService.addCategory(category);
+                if (!categoryAdded) {
+                    throw new Error('Category Creation Failed');
+                }
+            }
+            setProgress(50);
+            await updateUserOnboardStatus(localStorage.getItem('id') as string,  OnboardingStatus.COMPLETE);
+            setProgress(75);
+            await DataApiService.syncData();
+            setProgress(100);
+            setLoading(false);
+            setSettingUpAccount(false);
+            setProgress(0);
+            handleLogin();
         }
         catch (e) {
             console.error(e);
+            setLoading(false);
+            setSettingUpAccount(false);
+            setProgress(0);
         }
 
     }
     
     return (
         <>
-            <h1 className='section-title' >Review</h1>
-            <div className='form-container hide-scroll' style={{width:900, height: 368, flexDirection: 'row', justifyContent: 'space-evenly'}}>
-                <div className='column hide-scroll' style={{width: '33%', justifyContent: 'space-evenly'}}>
-                    <div className='review-row hide-scroll'>
-                        <p className='label archivo-font-bold'>First Name:</p>
-                        <p className='value'>{onboardingData?.firstName}</p>
-                    </div>
-                    <div className='review-row hide-scroll'>
-                        <p className='label archivo-font-bold'>Last Name:</p>
-                        <p className='value'>{onboardingData?.lastName}</p>
-                    </div>
-                    <div className='review-row hide-scroll'>
-                        <p className='label archivo-font-bold'>Email:</p>
-                        <p className='value'>{onboardingData?.email}</p>
-                    </div>
-                    <div className='review-row hide-scroll'>
-                        <p className='label archivo-font-bold'>Phone:</p>
-                        <p className='value'>{onboardingData?.phone}</p>
-                    </div>
-                    <div className='review-row hide-scroll'>
-                        <p className='label archivo-font-bold'>Password:</p>
-                        <p className='value'>{getPasswordString()}</p>
-                    </div>
-                </div>
-                {/* <div className='divider-vertical'></div>
-                <div className='column hide-scroll' style={{width: '33%', justifyContent: 'flex-start',  gap: 11, overflowY: 'scroll'}}>
-                    <h2 className='section-header'>Accounts</h2>
-                    {!!onboardingData?.accounts &&  onboardingData?.accounts?.map((account: Account, index: any) => {
-                        return (
-                            <div key={index} className='review-row'>
-                                <p className='label'>Account Name:</p>
-                                <p>{account.name}</p>
+            {!settingUpAccount && (
+                <>
+                    <h1 className='section-title'>Review</h1>
+                    <p>Take one last look before we create your account!</p>
+                    <div className='review-container'>
+                        <div className='form-container hide-scroll' style={{height: 450}}>
+                            <h2>Spending Categories</h2>
+                            <div className='categories hide-scrollbar'>
+                                {onboardingData?.categories?.map((category: string, idx: Key | null | undefined) => (
+                                    <div className='category' key={idx} >
+                                        <p style={{color: 'black', margin: 0}}>{category}</p>
+                                    </div>
+                                ))}
                             </div>
-                        )
-                    })}
-                    {!!onboardingData?.accounts && onboardingData?.accounts?.length == 0 && <p style={{color: 'red'}}>No accounts added</p>}
-                </div> */}
-                <div className='divider-vertical'></div>
-                <div className='column hide-scroll' style={{width: '33%', justifyContent: 'flex-start', gap: 11, overflowY: 'scroll'}}>
-                    <h2 className='section-header'>Categories</h2>
-                    {!!onboardingData?.categories &&  onboardingData?.categories?.map((category: String, index: any) => {
-                            return (
-                                <div key={index} className='review-row' style={{justifyContent: 'center', overflow: 'hidden'}}>
-                                    <p className='archivo-font-bold'>{category}</p>
+                        </div>
+                        <div className='form-container hide-scroll' style={{height: 450}}>
+                            <h2>Financial Accounts</h2>
+                            {onboardingData?.accounts?.map((account: any, idx: any) => (
+                                <div className='account-row-card' key={idx}>
+                                    <input type="text" value={account.name} className='account-name'/>
+                                    <div className='row' style={{height: 38}}>
+                                        <p>Institution</p>
+                                        <p className='highlight'>{account.source}</p>
+                                    </div>
+                                    <div className='row' style={{height: 38}}>
+                                        <p>Type</p>
+                                        <p className='highlight'>{account.type}</p>
+                                    </div>
                                 </div>
-                            )
-                        })}
-                    {(!onboardingData?.categories || onboardingData?.categories?.length == 0) && <p style={{color: 'red'}}>No categories added</p>}
-                </div>
-            </div>
+                            ))}
+                        </div>
+                    </div>
+                </>
+            )}
+
+
+            {settingUpAccount && (
+                <>
+                    <GeneratingAccount progress={progress} />
+                </>
+            )}
         </>
     )
 }

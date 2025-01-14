@@ -15,6 +15,7 @@ import Welcome from './components/Welcome/Welcome'
 import { InitializeDataForContext } from './services/Classes/dataContext'
 import { getUserOnboardStatus } from './services/Classes/userApiService'
 import { OnboardingStatus } from './services/Classes/classes'
+import { ThemeProvider, createTheme } from '@mui/material'
 
 
 function App() {
@@ -23,10 +24,35 @@ function App() {
   const [userId, setUserId] = useState('')
   const initContext = InitializeDataForContext().initializeData;
 
-  const handleLogin = () => {
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        light: '#2c5364',
+        main: '#2c5364',
+        dark: '#2c5364',
+        contrastText: '#fff',
+      },
+      secondary: {
+        light: '#ffffff',
+        main: '#ffffff',
+        dark: '#ffffff',
+        contrastText: '#000',
+      },
+    },
+  });
+
+  const handleLogin = async () => {
+    const id = localStorage.getItem('id');
+    if (id) {
+      const status = await getUserOnboardStatus(id);
+      if (status === OnboardingStatus.COMPLETE) {
+        setOnboardingCompleted(true);
+      } else {
+        setOnboardingCompleted(false);
+      }
+    }
     setIsLoggedIn(true);
-    checkLoggedIn();
-    checkOnboarding();
   };
 
   const handleLogout = () => {
@@ -43,7 +69,7 @@ function App() {
         setOnboardingCompleted(false);
       }
     } else {
-      setOnboardingCompleted(true);
+      setOnboardingCompleted(false);
     }
   }
 
@@ -55,22 +81,16 @@ function App() {
     }
     else {
       setIsLoggedIn(false);
-      setOnboardingCompleted(true);
-    }
-  }
-
-  const checkStatus = async () => {
-    await checkLoggedIn();
-    await checkOnboarding();
-    console.log('isLoggedIn', isLoggedIn, 'onboardingCompleted', onboardingCompleted)
-    if (isLoggedIn && onboardingCompleted) {
-      initContext();
     }
   }
 
   useEffect(() => {
-    checkStatus();
-  }, []);
+    checkLoggedIn()
+  }, [onboardingCompleted]);
+
+  useEffect(() => {
+    checkOnboarding()
+  }, [isLoggedIn])
 
   useEffect(() => {
     if (isLoggedIn && onboardingCompleted) {
@@ -80,7 +100,8 @@ function App() {
 
   
   return (
-    <Router>
+  <ThemeProvider theme={theme}>
+  <Router>
       {!onboardingCompleted && isLoggedIn ? (
         <Routes>
           <Route path="/onboarding" element={<Onboarding handleLogin={handleLogin} />} />
@@ -109,6 +130,7 @@ function App() {
         </Routes>
       )}
     </Router>
+    </ThemeProvider>
   )
 }
 

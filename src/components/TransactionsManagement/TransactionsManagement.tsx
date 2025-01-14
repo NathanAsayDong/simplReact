@@ -153,13 +153,13 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   <>
     {loading ? <LinearProgress color="inherit" variant='determinate' value={loadingProgress} /> : null}
     
-    <div className='page'>
+    <div className='page hide-scroll'>
       <div className='container-transparent'>
-        <div className='filters-row-transaction-managment' style={{gap: '5px', marginTop: '2em'}}>
-          <h3 className='special-title' style={{ marginLeft: '3%', marginBottom: '10px', color: 'white', marginRight: 'auto'}} onClick={test}>Transactions</h3>
+        <div className='filters-row-transaction-managment' style={{gap: '5px', marginTop: '1em'}}>
+          <h3 className='special-title' style={{marginRight: 'auto'}} onClick={test}>Transactions</h3>
 
           <FormControl sx={{ minWidth: 120 }}>
-          <p className='label' style={{textAlign: 'start', color: 'white', margin: 0}}>Categories</p>
+          <p className='label' style={{textAlign: 'start', margin: 0}}>Categories</p>
           <Select
               labelId="category-select"
               id="category-select"
@@ -179,7 +179,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
           </Select>
           </FormControl>
           { !allUnsureSelected() && <FormControl sx={{ minWidth: 120 }}>
-          <p className='label' style={{textAlign: 'start', color: 'white', margin: 0}}>Accounts</p>
+          <p className='label' style={{textAlign: 'start', margin: 0}}>Accounts</p>
           <Select
             labelId="account-select"
             id="account-select"
@@ -197,7 +197,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
           </Select>
           </FormControl> }
           { !allUnsureSelected() && <div>
-            <p className='label' style={{textAlign: 'start', color: 'white', margin: 0}}>Start Date:</p>
+            <p className='label' style={{textAlign: 'start', margin: 0}}>Start Date:</p>
             <DatePicker
               value={dateRanges.startDate}
               onChange={handleStartDateSelect}
@@ -205,7 +205,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
             />
           </div> }
           { !allUnsureSelected() && <div>
-            <p className='label' style={{textAlign: 'start', color: 'white', margin: 0}}>Start Date:</p>
+            <p className='label' style={{textAlign: 'start', margin: 0}}>Start Date:</p>
             <DatePicker
               value={dateRanges.endDate}
               onChange={handleEndDateSelect}

@@ -74,12 +74,10 @@ const Accounts: FC<AccountsProps> = () =>  {
 
   return (
     <>
-      <div className='page'>
-
-
-        <div className='row'>
-            <h3 className='special-title' style={{ marginLeft: '3%', color: 'white'}}>Accounts</h3>
-            <button className='add-button-accounts' style={{ marginRight: '3%' }}onClick={AddPlaidAccounts}><FontAwesomeIcon icon={faPlus} /></button>
+      <div className='page hide-scroll'>
+        <div className='row' style={{paddingTop: '1em'}}>
+            <h3 className='special-title'>Accounts</h3>
+            <button className='add-button-accounts' onClick={AddPlaidAccounts}><FontAwesomeIcon icon={faPlus} size='lg' /></button>
         </div>
         <div className='container-transparent'>
           {accounts.length == 0 ? (

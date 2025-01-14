@@ -41,19 +41,21 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
 
   return (
     <>
-    {loading ? <LinearProgress color="inherit" /> : null}
+    {loading ? <LinearProgress color="primary" /> : null}
 
-    <div className='page'>
-      <div className='row'>
-        <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Add Category</h3>
+    <div className='page hide-scroll'>
+
+      <div className='row'  style={{paddingTop: '1em'}}>
+        <h3 className='special-title'>Add Category</h3>
       </div>
-      <div className='add-category-row' style={{padding: '10px'}}>
+
+      <div className='add-category-row'>
         <input type='text' placeholder='Category' style={{marginLeft: '10px', width: '50%'}} onChange={handleCategoryChange} value={newCategory}/>
-        <button className='special-button' style={{marginRight: '10px'}} onClick={addCategory}>Add Category</button>
+        <button className='special-button app-button' style={{marginRight: '10px'}} onClick={addCategory}>Add Category</button>
       </div>
 
       <div className='row'>
-        <h3 className='special-title' style={{ marginLeft: '3%', marginTop: '10px', color: 'white'}}>Categories</h3>
+        <h3 className='special-title' style={{paddingTop: '1em'}}>Categories</h3>
       </div>
 
       <div className='container-transparent'>
@@ -63,7 +65,7 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
             categories.map((category: string, index: any) => (
               <div key={index} className='category-row'>
 
-                <div className='item' style={{width: '24%', marginLeft: '20px'}}>
+                <div className='item' style={{width: '24%', marginLeft: '60px'}}>
                   <h3 className='roboto-bold'>Category:</h3>
                   <h3>{category}</h3>
                 </div>

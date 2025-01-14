@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 import { Account } from '../../services/Classes/classes';
+import { DataApiService } from '../../services/Classes/dataApiService';
 
 
 type OnboardingDataContextType = OnboardingDataObject | null;
@@ -16,26 +17,6 @@ export function OnboardingDataProvider({ children }: any) {
         setOnboardingData(data);
     }
 
-    const setFirstName = (firstName: string) => {
-        setOnboardingData({...onboardingData, firstName: firstName});
-    }
-
-    const setLastName = (lastName: string) => {
-        setOnboardingData({...onboardingData, lastName: lastName});
-    }
-
-    const setEmail = (email: string) => {
-        setOnboardingData({...onboardingData, email: email});
-    }
-
-    const setPhone = (phone: string) => {
-        setOnboardingData({...onboardingData, phone: phone});
-    }
-
-    const setPassword = (password: string) => {
-        setOnboardingData({...onboardingData, password: password});
-    }
-
     const setCategories = (categories: string[]) => {
         setOnboardingData({...onboardingData, categories: categories});
     }
@@ -44,10 +25,15 @@ export function OnboardingDataProvider({ children }: any) {
         setOnboardingData({...onboardingData, accounts: accounts});
     }
 
+    const fetchAccounts = async () => {
+        DataApiService.getAllAccounts().then((accounts: Account[]) => {
+            setAccounts(accounts);
+        });
+    }
 
 
     return (
-        <OnboardingDataContext.Provider value={{onboardingData, updateOnboardingData, setFirstName, setLastName, setEmail, setPhone, setPassword, setCategories, setAccounts}}>
+        <OnboardingDataContext.Provider value={{onboardingData, updateOnboardingData, setCategories, setAccounts, fetchAccounts}}>
             {children}
         </OnboardingDataContext.Provider>
     )
@@ -55,11 +41,6 @@ export function OnboardingDataProvider({ children }: any) {
 
 
 export class OnboardingDataObject {
-    firstName?: string = '';
-    lastName?: string = '';
-    email?: string = '';
-    phone?: string = '';
-    password?: string = '';
     categories?: string[] = [];
     accounts?: Account[] = [];
 }

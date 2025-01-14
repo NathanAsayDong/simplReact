@@ -191,16 +191,16 @@ const Dashboard: FC<DashboardProps> = () => {
 
         <div className='row' style={{gap: '30px', padding: '10px'}}>
           <div className='graph-container'>
-            <ResponsiveContainer width="100%" height={500} style={{scale: '1.01'}}>
+            <ResponsiveContainer width="100%" height={500} style={{scale: '1.00'}}>
               <AreaChart data={lineChartData}>
                 <Tooltip content={<CustomTooltipArea dateFormat={getDateFormat()}/>} />
-                <Area dataKey='balance' stroke='var(--primary-color)' strokeWidth={2} fill='none'  type="monotone" />
+                <Area dataKey='balance' stroke='var(--primary-color)' strokeWidth={2} fill='url(#graphGradient)'  type="monotone" />
                 <XAxis dataKey="date" tickFormatter={(value) => dateFormatPretty(value, getDateFormat())}
                 tick={{ fill: 'var(--primary-color)' }} tickLine={{ stroke: 'none' }} mirror={true} stroke='none'
                 ></XAxis>
                 <YAxis
-                tick={{ fill: 'var(--primary-color)', fontSize: 12, width: 300 }} tickLine={{ stroke: 'none' }}
-                tickFormatter={(value) => `$${value.toFixed(2)}`} mirror={true} stroke='none'
+                tick={{ fill: 'var(--primary-color)', fontSize: 14, width: 300 }} tickLine={{ stroke: 'none' }}
+                tickFormatter={(value) => `$${value.toFixed(2)}`} mirror={false} stroke='none'
                 orientation='left'
                 ></YAxis>
               </AreaChart>
@@ -292,7 +292,7 @@ const Dashboard: FC<DashboardProps> = () => {
       <svg style={{ height: 0 }}>
         <defs>
         <linearGradient id="graphGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" style={{ stopColor: '#2c5364', stopOpacity: 0 }} />
+          <stop offset="0%" style={{ stopColor: '#194254', stopOpacity: 0 }} />
           <stop offset="100%" style={{ stopColor: '#2c5364', stopOpacity: 1 }} />
         </linearGradient>
         <linearGradient id="graphGradient2" x1="0%" y1="100%" x2="0%" y2="0%">
