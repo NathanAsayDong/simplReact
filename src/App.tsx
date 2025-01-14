@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import './App.scss'
 import Accounts from './components/Accounts/Accounts'
 import Budgets from './components/Budgets/Budgets'
