@@ -1,10 +1,8 @@
-.formContainer {
-    max-width: 400px;
-    min-width: 330px;
+.form-container {
+    max-width: 250px;
+    min-width: 250px;
     padding: 20px;
-    border: 1px solid #ffffff;
     border-radius: 20px;
-    margin: 0 5%;
     background: white;
     box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.55);
     color: #2c5364;
@@ -12,7 +10,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 400px;
+    height: 300px;
     transition: transform 1.5s ease;
 }
 
@@ -32,17 +30,30 @@
     transform: translateY(-50%);
 }
 
-.formContainer h2 {
+.form-container h2 {
     color: #2c5364;
     margin: 10px;
+}
+
+.login-button {
+    width: 70%;
+    margin-top: 20px;
+    cursor: pointer;
+    color: white;
+    background-color: var(--primary-color);
+    padding: 10px;
+    border-radius: 15px;
+    transition: all .2s ease-in-out;
+    border: none !important;
+    &:hover {
+        scale: 1.02;
+    }
 }
 
 input,
 input:focus,
 input:active {
-    padding: 8px;
     margin: 10px;
-    border: 1px solid #ccc;
     border-radius: 8px;
     color: #2c5364;
     font-family: 'Poppins';
@@ -51,7 +62,7 @@ input:active {
     height: auto;
 }
 
-.formContainer button {
+.form-container button {
     width: 70%;
     padding: 10px;
     margin-top: 20px;
@@ -62,12 +73,13 @@ input:active {
     border-radius: 15px;
 }
 
-.formContainer button:hover {
+.form-container button:hover {
     scale: 1.02;
 }
 
 .create-account-toggle {
     cursor: pointer;
+    font-size: 12px;
 }
 
 .form-column {
@@ -89,7 +101,7 @@ input:active {
     animation: panUp 1s ease-out;
 }
 .slogan {
-    color: var(--primary-color);
+    color: var(--secondary-color);
     padding-right: 100px;
 }
 .slogan h1 {
