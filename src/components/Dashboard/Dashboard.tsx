@@ -1,4 +1,4 @@
-import { faChevronUp, faEllipsis, faFilter, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Modal } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
