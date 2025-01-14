@@ -83,7 +83,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
                <h1>MAKING FINANCES SIMPL.</h1>
             </div>
             <div className='form-column'>
-               <div className={`form-container login ${viewLogin ? 'show' : 'hidden'}`} ref={loginRef}>
+               <div className={`form-container-login login ${viewLogin ? 'show' : 'hidden'}`} ref={loginRef}>
                   <h2 className='roboto-bold'>Login</h2>
                   <input id='email-login' type="email" placeholder='  email' value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
                   <input id='password-login' type="password" placeholder='  password' value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
@@ -91,7 +91,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
                   {loading && <button className='loading-button'> Loading </button>}
                   <p onClick={toggleView} className='create-account-toggle'> Create Account? </p>
                </div>
-               <div className={`form-container createAccount ${!viewLogin ? 'show' : 'hidden'}`} ref={createAccountRef}>
+               <div className={`form-container-login createAccount ${!viewLogin ? 'show' : 'hidden'}`} ref={createAccountRef}>
                   <h2 className='roboto-bold'>Create Account</h2>
                   <input id='email-create-account' type="email" placeholder='email' value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? createAccount() : null)} />
                   <input id='password-create-account' type="password" placeholder='password' value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? createAccount() : null)} />

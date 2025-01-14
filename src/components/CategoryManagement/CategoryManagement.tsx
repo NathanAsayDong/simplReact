@@ -43,10 +43,10 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
     <>
     {loading ? <LinearProgress color="primary" /> : null}
 
-    <div className='page hide-scroll'>
+    <div className='page hide-scroll category-management'>
 
       <div className='row'  style={{paddingTop: '1em'}}>
-        <h3 className='special-title'>Add Category</h3>
+        <h3 className='section-title'>Add Category</h3>
       </div>
 
       <div className='add-category-row'>
@@ -55,7 +55,7 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
       </div>
 
       <div className='row'>
-        <h3 className='special-title' style={{paddingTop: '1em'}}>Categories</h3>
+        <h3 className='section-title' style={{paddingTop: '1em'}}>Categories</h3>
       </div>
 
       <div className='container-transparent'>

@@ -1,3 +1,8 @@
+.net-value {
+    color: var(--primary-color);
+    font-size: 24px;
+}
+
 .demo {
     padding:50px;
 }
@@ -7,16 +12,56 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    padding: 1rem 4rem;
-    height: auto;
-    min-height: 85vh;
     gap: 13px;
+
+    .section-title {
+        color: var(--primary-color);
+        margin: 0;
+        font-size: 18px;
+    }
+
+    .row {
+        width: 95%;
+    }
+
+    .swiper-row {
+        width: 95%;
+        display: flex;
+        justify-content: start;
+        align-items: flex-start;
+        gap: 1em;
+        overflow-x: scroll;
+        scrollbar-color: white;
+        padding: 10px;
+        
+        &::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+        background: transparent;
+        }
+    }
+
+    .card-net-change {
+        display: flex;
+        gap: 3px;
+    }
+
+    .green-arrow-up {
+        transform: rotate(270deg);
+        color: green;
+        margin-left: 5px;
+    }
+
+    .red-arrow-down {
+        transform: rotate(90deg);
+        color: red;
+        margin-left: 5px;
+    }
 }
 
 .graph-container {
-    width: 70%;
+    width: 65%;
     border-radius: var(--border-radius);
-    overflow: hidden;
     color: var(--primary-color);
     &:hover {
         cursor: pointer;
@@ -24,11 +69,11 @@
 }
 
 .pie-container {
-    width: 30%;
+    width: 25%;
     border: 1px solid white;
     color: var(--primary-color);
     overflow: visible;
-
+    padding-right: 70px;
     .recharts-surface {
         overflow: visible !important;
     }
@@ -45,20 +90,8 @@
     gap: 1rem;
 }
 
-.date-scale-options {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-    justify-content: flex-end;
-    width: 58%;
-}
-
-.scale-option {
-    border-radius: 2px;
-    padding: 4px;
-}
-
 .category-card {
+    flex-shrink: 0;
     box-shadow: var(--box-shadow);
     border: 1px solid var(--primary-color);
     border-radius: var(--border-radius);
@@ -66,13 +99,12 @@
     flex-direction: column;
     justify-content: start;
     transition: all 0.3s ease;
-    width: 12rem;
-    min-width: 12rem;
-    height: 8rem;
-    min-height: 150px;
+    width: 160px;
+    height: 120px;
     background: var(--secondary-color);
     color: var(--primary-color);
     overflow: hidden;
+    gap: 10px;
 
     &:hover {
         transform: scale(1.04);
@@ -82,7 +114,7 @@
 .card-name {
     display: flex;
     align-self: start;
-    margin-left: 20px;
+    margin-left: 10px;
     margin-top: 10px;
     text-align: start;
 }
@@ -90,7 +122,8 @@
 .card-amount {
     display: flex;
     align-self: start;
-    margin-left: 20px;
+    margin-left: 10px;
+    font-size: 14px;
     align-items: center;
 }
 

@@ -58,6 +58,18 @@ html, body, #root {
   font-style: normal;
 }
 
+.poppins-light {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.poppins-bold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
 a {
   font-weight: 500;
   color: #a7a7a7;
@@ -85,6 +97,16 @@ h1, h2, h3, h4, h5, h6 {
 
 input {
   background-color: white;
+}
+
+.page-title {
+  color: var(--primary-color);
+  font-size: 20px;
+}
+
+.section-title {
+  color: var(--primary-color);
+  font-size: 18px;
 }
 
 .app-button {
@@ -169,23 +191,6 @@ button:focus-visible {
   align-items: center;
   width: 100%;
   height: auto;
-}
-
-.swiper-row {
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  gap: 1em;
-  width: 100%;
-  overflow-x: scroll;
-  scrollbar-color: white;
-  padding: 10px;
-
-  &::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
-    background: transparent;
-  }
 }
 
 .hide-scroll {
@@ -335,11 +340,6 @@ button:focus-visible {
       transform: scale(1.02);
       text-shadow: 0 0 5px rgb(255, 255, 255);
   }
-}
-
-.special-title {
-  font-size: 2em;
-  color: var(--primary-color);
 }
 
 .hide-scrollbar {

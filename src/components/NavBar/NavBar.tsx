@@ -31,18 +31,18 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
     <>
         <div className='navbar'>
 
-            <h2>Simpl Finance</h2>
+            <h3>Simpl Finance</h3>
             
             {isMobile ? <FontAwesomeIcon icon={faBars} className='account-icon' onClick={handleBarsClick}/>
             : (
             <div className='nav-items'>
-                <Link to="/"><h2 className='nav-item'>Dashboard</h2></Link>
+                <Link to="/"><h3 className='nav-item'>Dashboard</h3></Link>
 
-                <Link to="/accounts"><h2 className='nav-item'>Accounts</h2></Link>
+                <Link to="/accounts"><h3 className='nav-item'>Accounts</h3></Link>
 
-                <Link to="/manage-categories"><h2 className='nav-item'>Categories</h2></Link>
+                <Link to="/manage-categories"><h3 className='nav-item'>Categories</h3></Link>
 
-                <Link to="/manage-transactions"><h2 className='nav-item'>Transactions</h2></Link>
+                <Link to="/manage-transactions"><h3 className='nav-item'>Transactions</h3></Link>
 
                 <Link to="/settings"><FontAwesomeIcon icon={faUser} className='account-icon' /></Link>
             </div>

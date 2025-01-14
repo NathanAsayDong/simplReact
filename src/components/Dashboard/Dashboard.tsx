@@ -1,4 +1,4 @@
-import { faEllipsis, faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faChevronUp, faEllipsis, faFilter, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Modal } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
@@ -157,11 +157,16 @@ const Dashboard: FC<DashboardProps> = () => {
       let accountType = accounts.find((account) => account.name === transaction.accountId)?.type;
       const amount = accountType === 'Credit' ? transaction.amount * -1 : transaction.amount;
       if (accountIndex === -1) {
-        data.push({ id: transaction.accountId, amount: amount });
+        data.push({ id: transaction.accountId, netChange: amount });
       } else {
         data[accountIndex].amount += transaction.amount;
       }
     });
+    data.forEach((account) => {
+      const matchingAccount = accounts.find((acc) => acc.id === account.id);
+      account.balance = convertNumberToCurrency(matchingAccount?.refBalance || 0);
+    });
+
     setAccountData(data);
     data.forEach((account) => {
       if (!dashboardFilterData.accountOptions.includes(account.id)) {
@@ -180,25 +185,24 @@ const Dashboard: FC<DashboardProps> = () => {
   return (
     <>
       <div className='dashboard'>
-          <div className='row'>
-            <h3 className='special-title'>Net Value: ${netValue.toFixed(2)}</h3>
+          <div className='row' style={{paddingTop: '10px'}}>
+            <h3 className='net-value'>Net Value: ${netValue.toFixed(2)}</h3>
             <div className='filters'>
               <FontAwesomeIcon icon={faFilter} className='icon' onClick={handleOpenConfigModal}/>
             </div>
-
           </div>
 
-        <div className='row' style={{gap: '30px', padding: '10px'}}>
+        <div className='row' style={{gap: '10px', paddingTop: '0 !important'}}>
           <div className='graph-container'>
-            <ResponsiveContainer width="100%" height={500} style={{scale: '1.00'}}>
-              <AreaChart data={lineChartData}>
+            <ResponsiveContainer width="100%" height={350}>
+              <AreaChart data={lineChartData} margin={{ left: 10, right: 10 }}>
                 <Tooltip content={<CustomTooltipArea dateFormat={getDateFormat()}/>} />
                 <Area dataKey='balance' stroke='var(--primary-color)' strokeWidth={2} fill='url(#graphGradient)'  type="monotone" />
                 <XAxis dataKey="date" tickFormatter={(value) => dateFormatPretty(value, getDateFormat())}
-                tick={{ fill: 'var(--primary-color)' }} tickLine={{ stroke: 'none' }} mirror={true} stroke='none'
+                tick={{ fill: 'var(--primary-color)', fontSize: 12 }} tickLine={{ stroke: 'none' }} mirror={true} stroke='none'
                 ></XAxis>
                 <YAxis
-                tick={{ fill: 'var(--primary-color)', fontSize: 14, width: 300 }} tickLine={{ stroke: 'none' }}
+                tick={{ fill: 'var(--primary-color)', fontSize: 12, width: 100 }} tickLine={{ stroke: 'none' }}
                 tickFormatter={(value) => `$${value.toFixed(2)}`} mirror={false} stroke='none'
                 orientation='left'
                 ></YAxis>
@@ -206,7 +210,7 @@ const Dashboard: FC<DashboardProps> = () => {
             </ResponsiveContainer>
           </div>
           <div className='pie-container'>
-            <ResponsiveContainer width="100%" height={500} >
+            <ResponsiveContainer width="100%" height={250} >
               <PieChart >
                 <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="var(--primary-color)" label={(entry) => entry.name} className='pie-label' labelLine={false}/>
                 <Tooltip content={<CustomTooltipPie />} />
@@ -215,47 +219,47 @@ const Dashboard: FC<DashboardProps> = () => {
           </div>
         </div>
 
-        {/* <div className='row'>
-          <div className='date-scale-options'>
-            <button className='scale-option' value='day' onClick={changeDateScale}>Day</button>
-            <button className='scale-option' value='week' onClick={changeDateScale}>Week</button>
-            <button className='scale-option' value='month' onClick={changeDateScale}>Month</button>
-            <button className='scale-option' value='year' onClick={changeDateScale}>Year</button>
-          </div>
-        </div> */}
-
           <div className='row'>
-            <h3 className='special-title'>Categories</h3>
+            <p className='section-title poppins-bold'>Categories</p>
           </div>
 
           <div className='swiper-row'>
             {categoryData.map((category, index) => (
               <div key={index} className='category-card'>
                 <div className='card-name archivo-font'>
-                  <h3>{category.category}</h3>
+                  <h4>{category.category}</h4>
                 </div>
                 <div className='card-amount roboto-light'>
-                  <p>${category.amount.toFixed(2) * -1}</p>
+                  <p>Spend: ${category.amount.toFixed(2) * -1}</p>
                 </div>
-                <FontAwesomeIcon icon={faEllipsis} className='card-more-dots'/>
+                {/* <FontAwesomeIcon icon={faEllipsis} className='card-more-dots'/> */}
               </div>
             ))}
           </div>
 
           <div className='row'>
-            <h3 className='special-title'>Accounts</h3>
+            <p className='section-title poppins-bold'>Accounts</p>
           </div>
 
           <div className='swiper-row'>
             {accountData.map((account, index) => (
               <div key={index} className='category-card'>
                 <div className='card-name archivo-font'>
-                  <h3>{getAccountNameFromId(account.id)}</h3>
+                  <h4>{getAccountNameFromId(account.id)}</h4>
                 </div>
                 <div className='card-amount roboto-light'>
-                  <p>${account.amount.toFixed(2) * -1}</p>
+                  <p>Balance: ${account.balance}</p>
                 </div>
-                <FontAwesomeIcon icon={faEllipsis} className='card-more-dots'/>
+                <div className='card-amount roboto-light'>
+                    <div className='card-net-change'>
+                    <p>Change: ${account.netChange.toFixed(2) * -1}</p>
+                    <FontAwesomeIcon 
+                      icon={faPlay} 
+                      className={account.netChange < 0 ? 'green-arrow-up' : 'red-arrow-down'} 
+                    />
+                    </div>
+                </div>
+                {/* <FontAwesomeIcon icon={faEllipsis} className='card-more-dots'/> */}
               </div>
             ))}
           </div>
