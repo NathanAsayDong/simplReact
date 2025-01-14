@@ -1,6 +1,6 @@
 import { ForwardRefRenderFunction, Key, forwardRef, useImperativeHandle, useState } from 'react';
 import { DataApiService } from '../../../services/Classes/dataApiService.tsx';
-import { attemptCreateAccount, updateUserOnboardStatus } from '../../../services/Classes/userApiService';
+import { updateUserOnboardStatus } from '../../../services/Classes/userApiService';
 import { OnboardingData, OnboardingDataObject } from '../Onboarding.context';
 import './Review.scss';
 import GeneratingAccount from '../GeneratingAccount/GeneratingAccount.tsx';

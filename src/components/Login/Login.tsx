@@ -35,6 +35,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
    };
    
    const login = async () => {
+      setLoading(true);
       if (email === '' || password === '') {
          alert('Email and password cannot be empty');
          return;
@@ -46,9 +47,11 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       const success = await attemptLogin(email, password);
       if (success) {
          localStorage.setItem('id', success.authToken);
+         setLoading(false);
          handleLogin();
          navigate('/onboarding');
       } else {
+         setLoading(false);
          alert('Failed to login');
       }
    }

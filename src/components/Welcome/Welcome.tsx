@@ -14,12 +14,12 @@ const Welcome: FC<WelcomeProps> = () => {
         const loadData = async () => {
             await initializeData();
             setLoading(false);
-            // setTimeout(() => {
-            //     navigate('/dashboard');
-            // }, 1000);
+            setTimeout(() => {
+                navigate('/dashboard');
+            }, 1000);
         };
 
-        // loadData();
+        loadData();
     }, [initializeData, navigate]);
 
     return (

@@ -51,9 +51,8 @@ const CheckoutForm = () => {
     const processPayment = async () => {
         // Retrieve the PaymentIntent client secret from the URL query parameters
         const clientSecret = new URLSearchParams(window.location.search).get('payment_intent_client_secret');
-        const status = new URLSearchParams(window.location.search).get('redirect_status');
+        // const status = new URLSearchParams(window.location.search).get('redirect_status');
         const stripe = await stripePromise;
-        console.log('clientSecret', clientSecret, 'stripe', stripe);
         if (!stripe || !clientSecret) {
             return;
         }
@@ -69,7 +68,7 @@ const CheckoutForm = () => {
             switch (paymentIntent?.status) {
             case 'succeeded':
                 console.log('Payment succeeded!');
-                setNeedsSubscription(false);
+                // setNeedsSubscription(false);
                 break;
             case 'processing':
                 console.log('Payment processing. Please wait a moment.');
@@ -143,12 +142,4 @@ const StripePayments: React.FC = () => {
 };
 
 export default StripePayments;
-
-function updatePayedStatus(arg0: boolean) {
-    throw new Error('Function not implemented.');
-}
-
-function setNeedsSubscription(arg0: boolean) {
-    throw new Error('Function not implemented.');
-}
 
