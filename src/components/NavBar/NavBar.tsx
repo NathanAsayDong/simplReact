@@ -1,6 +1,6 @@
 import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { LinearProgress, Modal } from '@mui/material';
+import { Modal } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { UserIconModal } from '../../modals/UserIconModal/UserIconModal';
