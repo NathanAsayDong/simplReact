@@ -144,6 +144,7 @@
             width: 100%;
             justify-content: center;
             font-weight: 400;
+            color: var(--secondary-color);
         }
         
         .category-amount {
@@ -152,6 +153,7 @@
             justify-content: center;
             font-weight: 800;
             font-size: 20px;
+            color: var(--secondary-color);
     
             p {
                 margin: 0;
@@ -222,6 +224,7 @@
             .value {
                 font-size: 38px;
                 font-weight: 800;
+                color: var(--secondary-color)
             }
         }
     }

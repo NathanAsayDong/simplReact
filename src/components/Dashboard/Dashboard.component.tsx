@@ -197,7 +197,7 @@ const Dashboard: FC<DashboardProps> = () => {
     <>
       <div className='dashboard'>
           <div className='row' style={{paddingTop: '10px'}}>
-            <h1 className='archivo-font-bold'>Dashboard</h1>
+            <h1 className='archivo-font-bold' style={{color: 'var(--secondary-color)'}}>Dashboard</h1>
             <div className='filters'>
               <FontAwesomeIcon icon={faFilter} className='icon' onClick={handleOpenConfigModal}/>
             </div>
