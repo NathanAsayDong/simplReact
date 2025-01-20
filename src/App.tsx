@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import './App.scss'
-import Accounts from './components/Accounts/Accounts'
+import Accounts from './components/Accounts/Accounts.component'
 import Budgets from './components/Budgets/Budgets'
-import CategoryManagement from './components/CategoryManagement/CategoryManagement'
-import Dashboard from './components/Dashboard/Dashboard'
+import CategoryManagement from './components/Categories/Categories.component'
+import Dashboard from './components/Dashboard/Dashboard.component'
 import Login from './components/Login/Login'
 import NavBar from './components/NavBar/NavBar'
-import Onboarding from './components/Onboarding/Onboarding'
+import Onboarding from './components/Onboarding/Onboarding.module'
 import PrivacyPolicy from './components/PrivacyPolicy/PrivacyPolicy'
 import Settings from './components/Settings/Settings'
 import TransactionsManagement from './components/TransactionsManagement/TransactionsManagement'
@@ -108,7 +108,7 @@ function App() {
           <Route path="*" element={<Navigate to="/onboarding" />} />
         </Routes>
       ) : isLoggedIn ? (
-        <>
+        <div className='app'>
           <NavBar handleLogout={handleLogout} />
           <Routes>
             <Route path="/dashboard" element={<Dashboard handleLogout={handleLogout} />} />
@@ -121,7 +121,7 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>
-        </>
+        </div>
       ) : (
         <Routes>
           <Route path="/login" element={<Login handleLogin={handleLogin} />} />

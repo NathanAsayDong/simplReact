@@ -1,11 +1,11 @@
 import { FC, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import OnboardingReview from './Review/Review';
-import UserCategories from './UserCategories/UserCategories';
+import UserCategories from './UserCategories/UserCategories.component';
 import { LinearProgress } from '@mui/material';
 import 'swiper/css';
 import { OnboardingDataProvider } from './Onboarding.context';
-import './Onboarding.scss';
+import './Onboarding.module.scss';
 import UserAccounts from './UserAccounts/UserAccounts';
 
 interface OnboardingProps { handleLogin: () => void; }

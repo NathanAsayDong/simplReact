@@ -5,7 +5,7 @@ import { Account } from '../../services/Classes/classes';
 import { DataApiService } from '../../services/Classes/dataApiService';
 import { SetUserAccountData, UserAccountsData } from '../../services/Classes/dataContext';
 import PlaidService from '../../services/Classes/plaidApiService';
-import './Accounts.scss';
+import './Accounts.component.scss';
 
 interface AccountsProps {}
 
@@ -76,7 +76,7 @@ const Accounts: FC<AccountsProps> = () =>  {
     <>
       <div className='page hide-scroll'>
         <div className='row' style={{paddingTop: '1em'}}>
-            <h3 className='special-title'>Accounts</h3>
+            <h3 className='page-title'>Accounts</h3>
             <button className='add-button-accounts' onClick={AddPlaidAccounts}><FontAwesomeIcon icon={faPlus} size='lg' /></button>
         </div>
         <div className='container-transparent'>
@@ -84,31 +84,36 @@ const Accounts: FC<AccountsProps> = () =>  {
               <div className='loading'>Loading...</div>
             ) : (
               accounts.map((account: Account, index: any) => (
-                <div key={index} className='account-row'>
+                <div key={index} className='account-row hide-scroll'>
 
-                  <div className='item' style={{marginLeft: '2%'}}> 
+                  <div className='item hide-scroll' style={{marginLeft: '2%'}}> 
                     <h3 className='roboto-bold'>Account:</h3>
                     <input className='account-name-input' value={updatedAccountNamesMap.has(account.id) ? updatedAccountNamesMap.get(account.id) : account.name} onChange={(event) => updateAccountName(account.id, event.target.value)}/>
                   </div>
 
-                  <div className='item' style={{width: 'auto'}}>
+                  <div className='item hide-scroll' style={{width: 'auto'}}>
                     <h3 className='roboto-bold'>Type:</h3>
                     <h3>{account.type}</h3>
                   </div>
 
-                  <div className='item' style={{width: 'auto'}}>
+                  <div className='item hide-scroll' style={{width: 'auto'}}>
+                    <h3 className='roboto-bold'>Current Balance:</h3>
+                    <h3>${account.refBalance}</h3>
+                  </div>
+
+                  <div className='item hide-scroll' style={{width: 'auto'}}>
                     <h3 className='roboto-bold'>Source:</h3>
                     <h3 style={{whiteSpace: 'nowrap'}}>{account.source}</h3>
                   </div>
 
                   {!canSave(account.id) && (
-                    <div className='item' style={{marginRight: '8%'}}>
+                    <div className='item hide-scroll' style={{marginRight: '8%'}}>
                       <FontAwesomeIcon icon={faTrash} className='trash-icon' onClick={() => deleteAccount(account)}/>
                     </div>
                   )}
 
                   {canSave(account.id) && (
-                    <div className='item' style={{marginRight: '8%'}}>
+                    <div className='item hide-scroll' style={{marginRight: '8%'}}>
                       <FontAwesomeIcon icon={faCheck} className='upload-icon' onClick={() => saveName(account.id)}/>
                       <FontAwesomeIcon icon={faTimes} className='cancel-icon' onClick={() => resetName(account.id)}/>
                     </div>

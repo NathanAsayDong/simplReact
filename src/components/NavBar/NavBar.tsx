@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { UserIconModal } from '../../modals/UserIconModal/UserIconModal';
 import { InitializeDataForContext } from '../../services/Classes/dataContext';
 import './NavBar.scss';
+import LoadingDots from '../SharedComponents/LoadingDots/LoadingDots.component';
 
 interface NavBarProps {
     handleLogout: () => void;
@@ -15,6 +16,7 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
     const [isMobile, setIsMobile] = useState<boolean>(false);
     const [showDropdown, setShowDropdown] = useState<boolean>(false);
     const [showUserModal, setShowUserModal] = useState<boolean>(false);
+    const [slectedTab, setSelectedTab] = useState<string>('dashboard');
     const isLoading = InitializeDataForContext().loading;
 
     useEffect(() => {
@@ -27,24 +29,35 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
         setShowDropdown(!showDropdown);
     }
 
+    const updateSelectedTab = (tabName: string) => {
+        setSelectedTab(tabName);
+    }
+
+    const tabIsSelected = (tabName: string) => {
+        return slectedTab.includes(tabName);
+    }
+
     return (
     <>
         <div className='navbar'>
 
-            <h3>Simpl Finance</h3>
+            <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                <h3>Simpl Finance</h3>
+                {isLoading && <LoadingDots />}
+            </div>
             
             {isMobile ? <FontAwesomeIcon icon={faBars} className='account-icon' onClick={handleBarsClick}/>
             : (
             <div className='nav-items'>
-                <Link to="/"><h3 className='nav-item'>Dashboard</h3></Link>
+                <Link to="/"><h3 className={`nav-item ${tabIsSelected('dashboard') ? 'nav-item-selected' : ''}`} onClick={() => updateSelectedTab('dashboard')}>Dashboard</h3></Link>
 
-                <Link to="/accounts"><h3 className='nav-item'>Accounts</h3></Link>
+                <Link to="/accounts"><h3 className={`nav-item ${tabIsSelected('accounts') ? 'nav-item-selected' : ''}`} onClick={() => updateSelectedTab('accounts')}>Accounts</h3></Link>
 
-                <Link to="/manage-categories"><h3 className='nav-item'>Categories</h3></Link>
+                <Link to="/manage-categories"><h3 className={`nav-item ${tabIsSelected('manage-categories') ? 'nav-item-selected' : ''}`} onClick={() => updateSelectedTab('manage-categories')}>Categories</h3></Link>
 
-                <Link to="/manage-transactions"><h3 className='nav-item'>Transactions</h3></Link>
+                <Link to="/manage-transactions"><h3 className={`nav-item ${tabIsSelected('manage-transactions') ? 'nav-item-selected' : ''}`} onClick={() => updateSelectedTab('manage-transactions')}>Transactions</h3></Link>
 
-                <Link to="/settings"><FontAwesomeIcon icon={faUser} className='account-icon' /></Link>
+                <Link to="/settings"><FontAwesomeIcon icon={faUser} className={`account-icon ${tabIsSelected('settings') ? 'nav-item-selected' : ''}`} onClick={() => updateSelectedTab('settings')} /></Link>
             </div>
             )}
 
@@ -70,7 +83,6 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
             </Modal>
 
         </div>
-        <LinearProgress className={`navbar-loading-bar ${isLoading ? '' : 'hide'}`} color="primary" />
 
     </>
 

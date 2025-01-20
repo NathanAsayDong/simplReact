@@ -2,7 +2,7 @@ import { faMinusCircle, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC, Key } from 'react';
 import { OnboardingData } from '../Onboarding.context';
-import './UserCategories.scss';
+import './UserCategories.component.scss';
 
 
 interface UserCategoriesProps {}

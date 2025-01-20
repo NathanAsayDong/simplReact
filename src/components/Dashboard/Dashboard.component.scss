@@ -1,0 +1,284 @@
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+
+    .net-value-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--secondary-linear-background);
+        width: 100%;
+        border-radius: var(--border-radius);
+        height: 80px;
+        box-shadow: var(--box-shadow);
+
+        .net-value {
+            color: var(--secondary-color);
+            font-size: 24px;
+            margin: 0px 20px;
+        }
+    }
+
+    .total-changes {
+        color: var(--secondary-color);
+    }
+
+    .demo {
+        padding:50px;
+    }
+
+    .row {
+        width: 95%;
+    }
+
+    .column {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .swiper-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        overflow-x: scroll;
+        padding: 10px;
+        flex-wrap: wrap;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+            background: transparent;
+        }
+    }
+
+
+    .green-arrow-up {
+        transform: rotate(270deg);
+        color: green;
+        margin-left: 5px;
+        font-size: 20px;
+    }
+
+    .red-arrow-down {
+        transform: rotate(90deg);
+        color: red;
+        margin-left: 5px;
+        font-size: 20px;
+    }
+
+    .graph-container {
+        width: 65%;
+        height: auto;
+        border-radius: var(--border-radius);
+        background: var(--secondary-linear-background);
+        padding: 20px;
+        box-shadow: var(--box-shadow);
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    .pie-container {
+        width: 100%;
+        flex: 1;
+        border-radius: var(--border-radius);
+        background: var(--secondary-linear-background);
+        box-shadow: var(--box-shadow);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: visible;
+        .recharts-surface {
+            overflow: visible !important;
+        }
+    }
+
+    .categories-container {
+        overflow-y: auto;
+        display: flex;
+        gap: 5px;
+        justify-content: space-evenly;
+        background: var(--secondary-linear-background);
+        box-shadow: var(--box-shadow);
+        width: 70%;
+        height: 315px;
+        overflow-x: scroll;
+        scrollbar-color: white;
+        border-radius: var(--border-radius);
+        position: relative;
+
+        &::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+            background: transparent;
+        }
+
+        .category {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: auto;
+            width: 100px;
+            border: none;
+            padding: 0px;
+        }
+    
+        .category-budget-bar {
+            border: 1px solid var(--primary-color);
+            width: 100%;
+            border-top-left-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
+            background: var(--linear-background-vertical-bar);
+        }
+    
+        .category-name {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            font-weight: 400;
+        }
+        
+        .category-amount {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 20px;
+    
+            p {
+                margin: 0;
+            }
+        }
+    
+        .budgets-title {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: var(--secondary-color);
+            font-size: 20px;
+            font-weight: 800;
+        }
+    }
+
+    .accounts-container {
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        justify-content: space-evenly;
+        width: 30%;
+        overflow: visible;
+        
+        &::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+            background: transparent;
+        }
+    }
+
+
+    .account {
+        width: 100%;
+        height: 100px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: var(--border-radius);
+        background: var(--secondary-linear-background);
+        box-shadow: var(--box-shadow);
+
+        .account-name {
+            text-align: start;
+            color: var(--secondary-color);
+            font-size: 22px;
+            font-weight: 800;
+            margin-left: 10px;
+        }
+
+        .account-balance {
+            text-align: start;
+            color: var(--secondary-color);
+            font-size: 16px;
+            margin: 0;
+            margin-left: 10px;
+        }
+
+        .account-net-change {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            width: auto;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            
+            .value {
+                font-size: 38px;
+                font-weight: 800;
+            }
+        }
+    }
+}
+
+
+
+.pie-label {
+    .recharts-text {
+        fill: var(--secondary-color);
+        font-size: 12px;
+    }
+}
+
+.filters {
+    display: flex;
+    gap: 1rem;
+
+    .icon {
+        color: var(--secondary-color);
+    }
+}
+
+.card-more-dots {
+    display: flex;
+    justify-content: flex-end;
+    align-self: flex-end;
+    justify-self: flex-end;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    margin-top: auto;
+}
+
+// ToolTip ---------------------------------------
+
+.box {
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 0;
+    min-width: 150px;
+    min-height: 100px;
+}
+
+.content {
+    color: black;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 3px;
+
+    p {
+        margin: 0;
+        padding: 0;
+    }
+}

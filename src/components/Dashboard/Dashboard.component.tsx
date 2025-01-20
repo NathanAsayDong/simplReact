@@ -10,7 +10,8 @@ import { convertNumberToCurrency, dateFormatPretty } from '../../services/Classe
 import StripeService from '../../services/Classes/stripeApiService';
 import StripePayments from '../StripePayments/StripePayments';
 import { account_balance_for_dates, getDates, getFilteredAccounts, getFilteredTransactions, getNetValueFromAccounts } from './Dashboard.Service';
-import './Dashboard.scss';
+import './Dashboard.component.scss';
+import { Margin } from 'recharts/types/util/types';
 
 interface DashboardProps {
   handleLogout: () => void;
@@ -105,6 +106,16 @@ const Dashboard: FC<DashboardProps> = () => {
     setNetValue(getNetValueFromAccounts(accounts));
   }
 
+  const calculateTotalChanges = () => {
+    return categoryData.reduce((acc, category) => acc + Math.abs(category.amount), 0);
+  }
+
+  const calculateDivHeight = (amount: number) => {
+    const total = categoryData.reduce((acc, category) => acc + Math.abs(category.amount), 0);
+    const height = (Math.abs(amount) / total) * 100;
+    return `${Math.max(height, 5)}%`;
+  }
+
   const processTransactionsIntoCategories = (transactions: Transaction[]) => {
     const data: any[] = [];
     transactions = transactions.filter((transaction) => {
@@ -186,84 +197,94 @@ const Dashboard: FC<DashboardProps> = () => {
     <>
       <div className='dashboard'>
           <div className='row' style={{paddingTop: '10px'}}>
-            <h3 className='net-value'>Net Value: ${netValue.toFixed(2)}</h3>
+            <h1 className='archivo-font-bold'>Dashboard</h1>
             <div className='filters'>
               <FontAwesomeIcon icon={faFilter} className='icon' onClick={handleOpenConfigModal}/>
             </div>
           </div>
 
-        <div className='row' style={{gap: '10px', paddingTop: '0 !important'}}>
+
+
+        <div className='row' style={{gap: '10px', paddingTop: '0 !important', height: '390px'}}>
           <div className='graph-container'>
             <ResponsiveContainer width="100%" height={350}>
               <AreaChart data={lineChartData} margin={{ left: 10, right: 10 }}>
                 <Tooltip content={<CustomTooltipArea dateFormat={getDateFormat()}/>} />
-                <Area dataKey='balance' stroke='var(--primary-color)' strokeWidth={2} fill='url(#graphGradient)'  type="monotone" />
+                <Area dataKey='balance' stroke='var(--secondary-color)' strokeWidth={2} fill='url(#graphGradient)'  type="monotone" />
                 <XAxis dataKey="date" tickFormatter={(value) => dateFormatPretty(value, getDateFormat())}
-                tick={{ fill: 'var(--primary-color)', fontSize: 12 }} tickLine={{ stroke: 'none' }} mirror={true} stroke='none'
+                tick={{ fill: 'var(--secondary-color)', fontSize: 12 }} tickLine={{ stroke: 'none' }} mirror={true} stroke='none'
                 ></XAxis>
                 <YAxis
-                tick={{ fill: 'var(--primary-color)', fontSize: 12, width: 100 }} tickLine={{ stroke: 'none' }}
+                tick={{ fill: 'var(--secondary-color)', fontSize: 12, width: 100 }} tickLine={{ stroke: 'none' }}
                 tickFormatter={(value) => `$${value.toFixed(2)}`} mirror={false} stroke='none'
                 orientation='left'
                 ></YAxis>
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className='pie-container'>
-            <ResponsiveContainer width="100%" height={250} >
-              <PieChart >
-                <Pie data={categoryDataToPositivesOnly(categoryData)} dataKey="amount" nameKey="category" cx="50%" cy="50%" fill="var(--primary-color)" label={(entry) => entry.name} className='pie-label' labelLine={false}/>
-                <Tooltip content={<CustomTooltipPie />} />
-              </PieChart>
-            </ResponsiveContainer>
+          <div className='column' style={{width: '35%'}}>
+            <div className='net-value-container'>
+              <h3 className='net-value'>Net Value</h3>
+              <h3 className='net-value'>${netValue.toFixed(2)}</h3>
+            </div>
+            <div className='pie-container'>
+              <ResponsiveContainer width={'100%'} height={'100%'} style={{display: 'flex', justifyContent: 'center'}}>
+                <PieChart margin={PieChartMargin} width={100} height={100}>
+                  <Pie data={categoryDataToPositivesOnly(categoryData)} 
+                  dataKey="amount"
+                  nameKey="category" cx="50%" cy="50%"
+                  innerRadius={70} outerRadius={100}
+                  fill="url(#graphGradient)" label={(entry) => entry.name}
+                  className='pie-label' labelLine={false}/>
+                  <Tooltip content={<CustomTooltipPie />} />
+                  <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fill='var(--secondary-color)' fontWeight={600} fontSize={20}>
+                      ${calculateTotalChanges()}
+                  </text>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
 
-          <div className='row'>
-            <p className='section-title poppins-bold'>Categories</p>
-          </div>
+        <div className='row' style={{gap: '10px', maxHeight: 'calc(100vh - 200px)'}}>
+          <div className='accounts-container'>
+                {accountData.sort((a, b) => b.netChange - a.netChange).slice(0,3).map((account, index) => (
+                <div key={index} className='account'>
+                  <div>
+                    <h4 className='account-name'>{getAccountNameFromId(account.id)}</h4>
+                    <p className='account-balance roboto-light'>Balance: ${account.balance}</p>
+                  </div>
 
-          <div className='swiper-row'>
-            {categoryData.map((category, index) => (
-              <div key={index} className='category-card'>
-                <div className='card-name archivo-font'>
-                  <h4>{category.category}</h4>
-                </div>
-                <div className='card-amount roboto-light'>
-                  <p>Spend: ${category.amount.toFixed(2) * -1}</p>
-                </div>
-                {/* <FontAwesomeIcon icon={faEllipsis} className='card-more-dots'/> */}
-              </div>
-            ))}
-          </div>
-
-          <div className='row'>
-            <p className='section-title poppins-bold'>Accounts</p>
-          </div>
-
-          <div className='swiper-row'>
-            {accountData.map((account, index) => (
-              <div key={index} className='category-card'>
-                <div className='card-name archivo-font'>
-                  <h4>{getAccountNameFromId(account.id)}</h4>
-                </div>
-                <div className='card-amount roboto-light'>
-                  <p>Balance: ${account.balance}</p>
-                </div>
-                <div className='card-amount roboto-light'>
-                    <div className='card-net-change'>
-                    <p>Change: ${account.netChange.toFixed(2) * -1}</p>
+                  <div className='account-net-change archivo-font'>
+                    <p className='value'>${account.netChange.toFixed(2) * -1}</p>
                     <FontAwesomeIcon 
                       icon={faPlay} 
-                      className={account.netChange < 0 ? 'green-arrow-up' : 'red-arrow-down'} 
+                      className={account.netChange < 0 ? 'green-arrow-up' : 'red-arrow-down'}
                     />
-                    </div>
+                  </div>
                 </div>
-                {/* <FontAwesomeIcon icon={faEllipsis} className='card-more-dots'/> */}
-              </div>
-            ))}
+              ))}
           </div>
 
+
+          <div className='categories-container'>
+              {categoryData.map((category, index) => (
+                <div key={index} className='category'>
+                  <div className='category-name roboto-bold'>
+                    <h4>{category.category}</h4>
+                  </div>
+                  <div className='category-amount archivo-font'>
+                    <p>${category.amount.toFixed(2) * -1}</p>
+                  </div>
+                  <div style={{ height: calculateDivHeight(category.amount) }} className='category-budget-bar'>
+                  </div>
+                </div>
+              ))}
+              <h3 className='budgets-title'>Budgets</h3>
+          </div>
+
+          
+        </div>
       </div>
 
 
@@ -294,19 +315,23 @@ const Dashboard: FC<DashboardProps> = () => {
 
       <svg style={{ height: 0 }}>
         <defs>
-        <linearGradient id="graphGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" style={{ stopColor: '#194254', stopOpacity: 0 }} />
-          <stop offset="100%" style={{ stopColor: '#2c5364', stopOpacity: 1 }} />
-        </linearGradient>
-        <linearGradient id="graphGradient2" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" style={{ stopColor: '#2c5364', stopOpacity: 0 }} />
-          <stop offset="100%" style={{ stopColor: '#2c5364', stopOpacity: .7 }} />
-        </linearGradient>
+          <linearGradient id="graphGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" style={{ stopColor: 'var(--primary-color)', stopOpacity: 0 }} />
+          <stop offset="50%" style={{ stopColor: 'var(--primary-color)', stopOpacity: 0.02 }} />
+          <stop offset="100%" style={{ stopColor: 'white', stopOpacity: 1 }} />
+          </linearGradient>
         </defs>
       </svg>
     </>
   );
 };
+
+const PieChartMargin : Margin = {
+  top: 20,
+  right: 20,
+  left: 20,
+  bottom: 20
+}
 
 const CustomTooltipArea = ({ active, payload, label, dateFormat }: any) => {
   if (active && payload && payload.length) {
