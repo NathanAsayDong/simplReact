@@ -101,7 +101,7 @@ export const getFilteredCategories = (transactions: Transaction[], filterData: D
 
 export const getNetValueFromAccounts = (accounts: Account[]): number => {
     return accounts.reduce((acc, account) => {
-        if (account.type == "checking" || account.type == "savings") {
+        if (account.type == "checking" || account.type == "savings" || account.type == "brokerage") {
             return acc + account.refBalance;
         }
         if (account.type == "credit") {

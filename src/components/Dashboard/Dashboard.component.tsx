@@ -107,7 +107,7 @@ const Dashboard: FC<DashboardProps> = () => {
   }
 
   const calculateTotalChanges = () => {
-    return categoryData.reduce((acc, category) => acc + Math.abs(category.amount), 0);
+    return categoryData.reduce((acc, category) => acc + Math.abs(category.amount), 0).toFixed(2);
   }
 
   const calculateDivHeight = (amount: number) => {
@@ -246,7 +246,7 @@ const Dashboard: FC<DashboardProps> = () => {
           </div>
         </div>
 
-        <div className='row' style={{gap: '10px', maxHeight: 'calc(100vh - 200px)'}}>
+        <div className='row' style={{gap: '10px', maxHeight: 'calc(100vh - 200px)', alignItems: 'flex-start'}}>
           <div className='accounts-container'>
                 {accountData.sort((a, b) => b.netChange - a.netChange).slice(0,3).map((account, index) => (
                 <div key={index} className='account'>
