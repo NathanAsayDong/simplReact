@@ -13,18 +13,18 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
   const updateCategories = SetUserCategoryData();
   const [newCategory, setNewCategory] = useState<string>('');
 
-  const handleCategoryChange = (e: any) => {
-    setNewCategory(e.target.value);
-  }
+  // const handleCategoryChange = (e: any) => {
+  //   setNewCategory(e.target.value);
+  // }
 
-  const addCategory = async () => {
-    const val = newCategory.toLowerCase().replace(/\b[a-z]/g, (letter) => letter.toUpperCase()); // Capitalize first letter and lowercase the rest
-    const res = await DataApiService.addCategory(val);
-    if (res) {
-      updateCategories(categories.concat(val));
-    }
-    setNewCategory('');
-  }
+  // const addCategory = async () => {
+  //   const val = newCategory.toLowerCase().replace(/\b[a-z]/g, (letter) => letter.toUpperCase()); // Capitalize first letter and lowercase the rest
+  //   const res = await DataApiService.addCategory(val);
+  //   if (res) {
+  //     updateCategories(categories.concat(val));
+  //   }
+  //   setNewCategory('');
+  // }
   
   const deleteCategory = async (category: string) => {
     const res = await DataApiService.deleteCategory(category);
