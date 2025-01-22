@@ -1,6 +1,6 @@
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { DataApiService } from '../../services/Classes/dataApiService';
 import { SetUserCategoryData, UserCategoriesData } from '../../services/Classes/dataContext';
 import './Categories.component.scss';
