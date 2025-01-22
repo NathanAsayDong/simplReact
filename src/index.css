@@ -104,12 +104,12 @@ input {
 }
 
 .page-title {
-  color: var(--primary-color);
+  color: var(--secondary-color);
   font-size: 20px;
 }
 
 .section-title {
-  color: var(--primary-color);
+  color: var(--secondary-color);
   font-size: 18px;
 }
 
@@ -157,7 +157,7 @@ button:focus-visible {
   align-items: center;
   flex-direction: column;
   gap: 1em;
-  padding: 0 100px;
+  padding: 0 75px !important;
   overflow-y: scroll;
   height: 100vh;
 }

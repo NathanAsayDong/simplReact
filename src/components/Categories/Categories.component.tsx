@@ -40,15 +40,6 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
             <h3 className='page-title'>Categories</h3>
             <button className='add-button-accounts'><FontAwesomeIcon icon={faPlus} size='lg' /></button>
         </div>
-        
-        <div className='add-category-row'>
-          <input type='text' placeholder='Category' style={{marginLeft: '10px', width: '50%'}} onChange={handleCategoryChange} value={newCategory}/>
-          <button className='special-button app-button' style={{marginRight: '10px'}} onClick={addCategory}>Add Category</button>
-        </div>
-
-        <div className='row'>
-          <h3 className='section-title' style={{paddingTop: '1em'}}>Categories</h3>
-        </div>
 
         <div className='container-transparent'>
           {categories.length == 0 ? (
@@ -57,7 +48,7 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
               categories.map((category: string, index: any) => (
                 <div key={index} className='category-row'>
 
-                  <div className='item' style={{width: '24%', marginLeft: '60px'}}>
+                  <div className='item' style={{width: '34%', marginLeft: '60px'}}>
                     <h3 className='roboto-bold'>Category:</h3>
                     <h3>{category}</h3>
                   </div>

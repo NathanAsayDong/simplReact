@@ -9,7 +9,8 @@
     border: 1px solid var(--primary-color);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
-    color: var(--primary-color);
+    background: var(--secondary-linear-background);
+    color: var(--secondary-color);
 
     &:hover {
         transform: scale(1.005);
@@ -45,5 +46,9 @@
 
 .loading {
     color: white
+}
+
+.label {
+    color: var(--secondary-color);
 }
 
