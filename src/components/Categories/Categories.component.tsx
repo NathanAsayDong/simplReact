@@ -11,7 +11,7 @@ interface CategoryManagementProps {}
 const CategoryManagement: FC<CategoryManagementProps> = () => {
   const categories = UserCategoriesData() || [];
   const updateCategories = SetUserCategoryData();
-  const [newCategory, setNewCategory] = useState<string>('');
+  // const [newCategory, setNewCategory] = useState<string>('');
 
   // const handleCategoryChange = (e: any) => {
   //   setNewCategory(e.target.value);
