@@ -12,6 +12,7 @@ import StripePayments from '../StripePayments/StripePayments';
 import { account_balance_for_dates, getDates, getFilteredAccounts, getFilteredTransactions, getNetValueFromAccounts } from './Dashboard.Service';
 import './Dashboard.component.scss';
 import { Margin } from 'recharts/types/util/types';
+import Assistant from '../Assistant/Assistant.component';
 
 interface DashboardProps {
   handleLogout: () => void;
@@ -308,10 +309,9 @@ const Dashboard: FC<DashboardProps> = () => {
           <StripePayments />
         </div>
       </Modal>
-      {/*onClose={stripeService.needsSubscription ? undefined : () => setShowPaymentModal(false)} */}
 
 
-
+      <Assistant />
 
       <svg style={{ height: 0 }}>
         <defs>
