@@ -3,23 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ChangeEvent, FC, useState } from 'react';
 import './Assistant.component.scss';
 import { Modal } from '@mui/material';
+import LoadingDots from '../SharedComponents/LoadingDots/LoadingDots.component';
+import { DataApiService } from '../../services/Classes/dataApiService';
 
 
 interface AssistantProps {}
 
 const Assistant: FC<AssistantProps> = () => {
     const [showAssistantModal, setShowAssistantModal] = useState(false);
-    const [messages, setMessages] = useState<AssistantMessage[]>([]);
+    const [messages, setMessages] = useState<AssistantMessage[]>(defaultStarterMessages);
     const [inputValue, setInputValue] = useState('');
-
-    const insertDummyMessagesForTesting = () => {
-        const dummyMessages: AssistantMessage[] = [
-            { role: 'assistant', content: 'Hello! How can I help you?' },
-            { role: 'user', content: 'What is the weather like today?' },
-            { role: 'assistant', content: 'The weather is sunny with a high of 75°F.' },
-        ];
-        setMessages(dummyMessages);
-    }
+    const [awaitingResponse, setAwaitingResponse] = useState(false);
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -27,6 +21,7 @@ const Assistant: FC<AssistantProps> = () => {
             if (inputValue.trim()) {
                 setMessages([...messages, { role: 'user', content: inputValue }]);
                 setInputValue('');
+                requestAiResponse(inputValue);
             }
         }
     };
@@ -35,15 +30,26 @@ const Assistant: FC<AssistantProps> = () => {
         if (inputValue.trim()) {
             setMessages([...messages, { role: 'user', content: inputValue }]);
             setInputValue('');
+            requestAiResponse(inputValue);
         }
     }
 
     const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(e.target.value);
-        // Auto-resize
         e.target.style.height = 'inherit';
         e.target.style.height = `${e.target.scrollHeight}px`;
     };
+
+    const requestAiResponse = async (question : string) => {
+        setAwaitingResponse(true);
+        const conversationContext = messages.map((message) => message.content).join(' ');
+        const response = await DataApiService.getAiQuestionResponse(question, conversationContext);
+        setAwaitingResponse(false);
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            { role: 'assistant', content: response},
+        ]);
+    }
 
     return (
         <>
@@ -55,7 +61,7 @@ const Assistant: FC<AssistantProps> = () => {
         <Modal open={showAssistantModal} onClose={() => setShowAssistantModal(false)}>
             <div className='assistant-modal'>
                 <div className='assistant-modal-header'>
-                    <h2 onClick={insertDummyMessagesForTesting}>Simpl Assistant</h2>
+                    <h2>Simpl Assistant</h2>
                     
                 </div>
                 <div className='scroll-container'>
@@ -64,6 +70,9 @@ const Assistant: FC<AssistantProps> = () => {
                             {message.content}
                         </div>
                     ))}
+                    {awaitingResponse && ( <div className='message assistant'>
+                        <LoadingDots />
+                    </div> )}
                 </div>
                 <div className='input-text'>
                     <textarea
@@ -88,3 +97,8 @@ interface AssistantMessage {
     role: 'user' | 'assistant';
     content: string;
 }
+
+const defaultStarterMessages: AssistantMessage[] = [
+    { role: 'assistant', content: 'Hello! I am the Simpl Assistant. How can I help you today?' },
+    { role: 'assistant', content: '(Please note that I can only access your past 3 months of financial data)' },
+];

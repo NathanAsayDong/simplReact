@@ -84,10 +84,13 @@
     border-top-right-radius: var(--border-radius);
     border-top-left-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    max-width: 70%;
 }
 
 .message.user {
-    border: var(--secondary-color) 1px solid;
+    border: var(--primary-color) 1px solid;
     box-shadow: var(--box-shadow);
     padding: 10px;
     text-align: left;
@@ -95,8 +98,9 @@
     border-top-right-radius: var(--border-radius);
     border-top-left-radius: var(--border-radius);
     border-bottom-left-radius: var(--border-radius);
-    background: var(--secondary-color);
-    color: var(--primary-color);
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    max-width: 70%;
 }
 
 .input-text {

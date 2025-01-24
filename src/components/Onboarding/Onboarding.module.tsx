@@ -33,7 +33,7 @@ const Onboarding: FC<OnboardingProps> = ({ handleLogin }) =>  {
                 {loading && <LinearProgress style={{marginBottom: '16px'}} color="inherit" />}
                 <div className='onboarding-header'>
                     <h2 style={{"marginLeft":"10px"}}>SIMPL.</h2>
-                    <button style={{"marginLeft":"auto","marginRight":"10px","color":"var(--secondary-color)"}} className="subtle-button" onClick={returnToLogin}>Sign in with other account?</button>
+                    <button style={{"marginLeft":"auto","marginRight":"10px","color":"var(--primary-color)"}} className="subtle-button" onClick={returnToLogin}>Sign in with other account?</button>
                 </div>
 
                 <div className='swiper-container'>

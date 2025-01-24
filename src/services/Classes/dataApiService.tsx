@@ -1,7 +1,6 @@
 import { Account, Transaction } from './classes';
 
 const baseUrl = __API_URL__;
-console.log('API URL:', baseUrl);
 
 export class DataApiService {
     public static processTransactions = async (csvData: any, account: Account) => {
@@ -338,10 +337,41 @@ export class DataApiService {
                 'Content-Type': 'application/json'
             }
         });
-
         if (!response.ok) {
             const errorBody = await response.json();
             throw new Error(`Failed to sync data: ${response.status} ${response.statusText} - ${errorBody}`);
+        }
+    }
+
+    public static getAiQuestionResponse = async (question: string, conversationContext: string) : Promise<string> => {
+        try {
+            const id = localStorage.getItem('id');
+            if (!id) throw new Error('User ID is missing in local storage.');
+
+            const url = baseUrl + 'ai/get-response';
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify({
+                    question: question,
+                    userId: id,
+                    conversationContext: conversationContext
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(`Failed to get AI response: ${response.status} ${response.statusText} - ${errorBody}`);
+            }
+
+            const res = await response.json();
+            return res;
+        } catch (error) {
+            console.error('Error during getting AI response:', error);
+            return "Looks like there was an error with the AI. Please try again later.";
         }
     }
 
