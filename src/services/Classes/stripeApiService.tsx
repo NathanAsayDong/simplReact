@@ -32,7 +32,7 @@ export const getSubscriptions = async (customerId: string): Promise<StripeSubscr
 }
 
 export const getStripeCustomer = async (): Promise<any> => {
-    const userId = localStorage.getItem('id')
+    const userId = localStorage.getItem('firebaseAuthId')
     const extension = "stripe/setup";
     const url = __API_URL__ + extension + "?userId=" + userId;
     try {

@@ -1,11 +1,13 @@
 .add-category-icon {
-    color: #2c5364;
-    height: 40px;
-    margin-left: 10px;
+    height: 20px;
+    width: 20px;
     transition: all 0.3s;
-
+    border-radius: 13px;
+    margin-left: 10px;
+    background-color: var(--primary-color-light);
+    color: var(--secondary-color);
+    padding: 10px;
     &:hover {
-        color: #234461;
         scale: 1.1;
     }
 }
@@ -23,24 +25,30 @@
 .category {
     display: flex;
     align-items: center;
-    border: 1px solid #e9e3e3;
-    border-radius: 8px;
+    border: 1px solid var(--primary-color);
+    border-radius: var(--border-radius);
     height: 27px;
     padding: 5px;
-
 
     p {
         margin: 0 10px 0 0;
     }
+
+    .remove-category-icon {
+        margin-right: 0px;
+        margin-left: auto;
+        color: rgb(230, 35, 35);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+            scale: 1.1;
+        }
+    }
 }
 
-.remove-category-icon {
-    margin-right: 0px;
-    margin-left: auto;
-    color: rgb(230, 35, 35);
-    border-radius: 50%;
-    cursor: pointer;
-}
+
 
 .recommended-categories {
     gap: 5px;
@@ -49,9 +57,15 @@
 }
 
 .recommended-category-button {
-    border: 1px solid var(--primary-color);
+    border: none;
     background: var(--secondary-color);
     color: var(--primary-color);
     border-radius: var(--border-radius);
     padding: 8px;
+    box-shadow: var(--box-shadow);
+    transition: all 0.3s ease-in-out;
+    &:hover {
+        cursor: pointer;
+        scale: 1.05;
+    }
 }

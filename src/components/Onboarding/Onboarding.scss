@@ -1,6 +1,23 @@
+.onboarding {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
 .section-title {
     margin-bottom : 10px;
     font-size: 30px;
+    color: var(--secondary-color);
+}
+
+.section-subtitle {
+    margin-bottom : 20px;
+    font-size: 13px;
+    color: var(--secondary-color);
+    margin-top: 5px;
 }
 
 .onboarding-footer {
@@ -12,12 +29,22 @@
 .onboarding-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 10px;
     position: fixed;
     top: 0;
     width: 100%;
     color: var(--secondary-color);
-    background-color: var(--primary-color);
+
+    .has-account-button {
+        margin-right: 20px;
+        transition: all 0.3s ease-in-out;
+        font-size: 12px;
+        &:hover {
+            cursor: pointer;
+            scale: 1.05;
+        }
+    }
 }
 
 .swiper-container {
@@ -38,8 +65,9 @@
 }
 
 .form-container {
-    border-radius: 20px;
+    border-radius: var(--border-radius);
     padding: 20px;
+    margin-bottom: 10px;
     width: 350px;
     display: flex;
     flex-direction: column;
@@ -47,13 +75,14 @@
     overflow-y: scroll;
     box-shadow: var(--box-shadow);
     overflow-x: hidden;
+    background-color: var(--secondary-color);
 }
 
 .form-container input, .form-container input:focus, .form-container input:active {
     margin: 10px 0;
     padding: 10px;
-    border-radius: 15px;
-    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--primary-color);
     width: 90%;
     color: #2c5364;
 }
@@ -62,7 +91,7 @@
     border-radius: var(--border-radius);
     margin-left: 10px;
     margin-right: 10px;
-    background-color: var(--secondarys-color);
+    background-color: var(--secondary-color);
     color: var(--primary-color);
     border: 1px solid var(--primary-color);
     box-shadow: var(--box-shadow);
@@ -78,9 +107,24 @@
 }
 
 .swiper-button-save {
-    background: var(--primary-color);
+    border-radius: var(--border-radius);
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: var(--secondary-color);
     color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
+    box-shadow: var(--box-shadow);
+    padding: 10px;
+    font-weight: 600;
+    font-size: large;
+    transition: all 0.3s;
+
+    &:hover {
+        scale: 1.1;
+        cursor: pointer;
+    }
 }
+    
 
 .alert-text {
     color: red;
@@ -88,8 +132,4 @@
     align-self: flex-start;
     margin-left: 10px;
     margin-bottom: -5px;
-}
-
-.subtle-button {
-    color: var(--primary-color) !important;
 }

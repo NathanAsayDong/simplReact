@@ -1,8 +1,10 @@
-import { faMinusCircle, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+import { faMinusCircle, faPlus, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC, Key } from 'react';
 import { OnboardingData } from '../Onboarding.context';
 import './UserCategories.component.scss';
+import { DataApiService } from '../../../services/Classes/dataApiService';
+import { Category } from '../../../services/Classes/classes';
 
 
 interface UserCategoriesProps {}
@@ -41,7 +43,7 @@ const UserCategories: FC<UserCategoriesProps> = () =>  {
     return (
         <>
             <h1 className='section-title roboto-bold'>Spending Categories</h1>
-            <p>Please select from the recommended categories or add your own.</p>
+            <p className='section-subtitle'>Please select from the recommended categories or add your own.</p>
             <div className='recommended-categories'>
                 {recommendedCategories.map((category, idx) => (
                     <button key={idx} onClick={() => addCategory(category)} className='recommended-category-button'>
@@ -49,16 +51,16 @@ const UserCategories: FC<UserCategoriesProps> = () =>  {
                     </button>
                 ))}
             </div>
-            <div className='form-container hide-scroll' style={{height: 450}}>
+            <div className='form-container hide-scroll' style={{height: 450, marginBottom: 60}}>
                 <div className='row' style={{paddingRight: 5, paddingLeft: 5, height: 'fit-content'}}>
                     <input type='text' id='newCategory' placeholder='Category Name' onKeyUp={handleEnterKey}/>
-                    <FontAwesomeIcon icon={faSquarePlus} className='add-category-icon' onClick={() => addCategory()}/>
-                </div>
+                    <FontAwesomeIcon icon={faPlus} className='add-category-icon' onClick={() => addCategory()}/>
+                </div> 
 
                 <div className='categories hide-scrollbar'>
                     {OnboardingContext.onboardingData?.categories?.map((category: string, idx: Key | null | undefined) => (
                         <div className='category' key={idx}>
-                            <p style={{color: 'black'}}>{category}</p>
+                            <p>{category}</p>
                             <FontAwesomeIcon icon={faMinusCircle} className='remove-category-icon' onClick={() => removeCategory(category)}/>
                         </div>
                     ))}

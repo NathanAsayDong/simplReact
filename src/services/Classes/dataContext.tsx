@@ -122,7 +122,7 @@ export function AppDataProvider({ children }: any){
     }
 
     const initializeData = async () => {
-        const userId = localStorage.getItem('id');
+        const userId = localStorage.getItem('firebaseAuthId');
         if (!userId) return;
         setLoading(true);
         loadCachedData();

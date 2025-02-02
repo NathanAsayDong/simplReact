@@ -108,11 +108,6 @@ input {
   font-size: 20px;
 }
 
-.section-title {
-  color: var(--secondary-color);
-  font-size: 18px;
-}
-
 .app-button {
   padding: 0.6em 1.2em;
   font-size: 1em;
@@ -130,13 +125,6 @@ input {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
-
-.subtle-button, .subtle-button:focus {
-  border: none;
-  background: none;
-  box-shadow: none;
-  outline: none;;
 }
 
 @media (prefers-color-scheme: light) {

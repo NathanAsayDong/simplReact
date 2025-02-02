@@ -37,25 +37,42 @@ export const accountSources = [
 ];
 
 export class Account {
-    id: string;
-    name: string;
-    type: string;
-    source: string
+    accountId: number;
+    plaidAccountId: string;
+    accountName: string;
+    accountType: string;
+    accountSource: string
     refDate: string | null;
     refBalance: number;
     accessToken: string = '';
-    constructor(id: string, name: string, type: string, source: string, refDate: string = "NA", refBalance: number = 0, accessToken: string = '') {
-        this.id = id //provided by plaid
-        this.name = name; //user defined
-        this.type = type;
-        this.source = source; //instution name
+    userId: number | null;
+    constructor(accountId: number, plaidAccountId: string, accountName: string, accountType: string, accountSource: string, refDate: string = "NA", refBalance: number = 0, accessToken: string = '', userId: number | null = null) {
+        this.accountId = accountId;
+        this.plaidAccountId = plaidAccountId //provided by plaid
+        this.accountName = accountName; //user defined
+        this.accountType = accountType;
+        this.accountSource = accountSource; //instution name
         this.refDate = refDate;
         this.refBalance = refBalance;
         this.accessToken = accessToken;
+        this.userId = userId
     }
 
     getAccountSource(): string {
-        return this.source;
+        return this.accountSource;
+    }
+}
+
+export class Category {
+    id: number;
+    name: string;
+    parentCategoryId: number;
+    userId: string;
+    constructor(id: number, name: string, parentCategoryId: number, userId: string) {
+        this.id = id;
+        this.name = name;
+        this.parentCategoryId = parentCategoryId;
+        this.userId = userId;
     }
 }
 

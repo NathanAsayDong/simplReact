@@ -5,7 +5,7 @@ import Accounts from './components/Accounts/Accounts.component'
 import Budgets from './components/Budgets/Budgets'
 import CategoryManagement from './components/Categories/Categories.component'
 import Dashboard from './components/Dashboard/Dashboard.component'
-import Login from './components/Login/Login'
+import Login from './components/Login/Login.component'
 import NavBar from './components/NavBar/NavBar'
 import Onboarding from './components/Onboarding/Onboarding.module'
 import PrivacyPolicy from './components/PrivacyPolicy/PrivacyPolicy'
@@ -21,7 +21,7 @@ import { ThemeProvider, createTheme } from '@mui/material'
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [onboardingCompleted, setOnboardingCompleted] = useState(true)
-  const [userId, setUserId] = useState('')
+  const [firebaseAuthId, setFirebaseAuthId] = useState('')
   const initContext = InitializeDataForContext().initializeData;
 
 
@@ -43,9 +43,9 @@ function App() {
   });
 
   const handleLogin = async () => {
-    const id = localStorage.getItem('id');
-    if (id) {
-      const status = await getUserOnboardStatus(id);
+    const firebaseAuthId = localStorage.getItem('firebaseAuthId');
+    if (firebaseAuthId) {
+      const status = await getUserOnboardStatus(firebaseAuthId);
       if (status === OnboardingStatus.COMPLETE) {
         setOnboardingCompleted(true);
       } else {
@@ -62,7 +62,7 @@ function App() {
 
   const checkOnboarding = async() => {
     if (isLoggedIn) {
-      const status = await getUserOnboardStatus(userId);
+      const status = await getUserOnboardStatus(firebaseAuthId);
       if (status == OnboardingStatus.COMPLETE) {
         setOnboardingCompleted(true);
       } else {
@@ -74,10 +74,10 @@ function App() {
   }
 
   const checkLoggedIn = () => {
-    const id = localStorage.getItem('id');
-    if (id !== 'undefined' && id !== null && id !== '' && id !== undefined) {
+    const firebaseAuthId = localStorage.getItem('firebaseAuthId');
+    if (firebaseAuthId !== 'undefined' && firebaseAuthId !== null && firebaseAuthId !== '' && firebaseAuthId !== undefined) {
       setIsLoggedIn(true);
-      setUserId(id);
+      setFirebaseAuthId(firebaseAuthId);
     }
     else {
       setIsLoggedIn(false);

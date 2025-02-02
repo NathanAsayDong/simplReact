@@ -100,5 +100,4 @@ interface AssistantMessage {
 
 const defaultStarterMessages: AssistantMessage[] = [
     { role: 'assistant', content: 'Hello! I am the Simpl Assistant. How can I help you today?' },
-    { role: 'assistant', content: '(Please note that I can only access your past 3 months of financial data)' },
 ];

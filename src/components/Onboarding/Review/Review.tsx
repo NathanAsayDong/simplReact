@@ -51,7 +51,7 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
                 }
             }
             setProgress(50);
-            await updateUserOnboardStatus(localStorage.getItem('id') as string,  OnboardingStatus.COMPLETE);
+            await updateUserOnboardStatus(localStorage.getItem('firebaseAuthId') as string,  OnboardingStatus.COMPLETE);
             setProgress(75);
             await DataApiService.syncData();
             setProgress(100);
@@ -74,14 +74,14 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
             {!settingUpAccount && (
                 <>
                     <h1 className='section-title'>Review</h1>
-                    <p>Take one last look before we create your account!</p>
+                    <p className='section-subtitle'>Take one last look before we create your account!</p>
                     <div className='review-container'>
                         <div className='form-container hide-scroll' style={{height: 450}}>
                             <h2>Spending Categories</h2>
                             <div className='categories hide-scrollbar'>
                                 {onboardingData?.categories?.map((category: string, idx: Key | null | undefined) => (
                                     <div className='category' key={idx} >
-                                        <p style={{color: 'black', margin: 0}}>{category}</p>
+                                        <p style={{margin: 0}}>{category}</p>
                                     </div>
                                 ))}
                             </div>
@@ -90,14 +90,14 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
                             <h2>Financial Accounts</h2>
                             {onboardingData?.accounts?.map((account: any, idx: any) => (
                                 <div className='account-row-card' key={idx}>
-                                    <input type="text" value={account.name} className='account-name'/>
+                                    <input type="text" value={account.accountName} className='account-name'/>
                                     <div className='row' style={{height: 38}}>
                                         <p>Institution</p>
-                                        <p className='highlight'>{account.source}</p>
+                                        <p className='highlight'>{account.accountSource}</p>
                                     </div>
                                     <div className='row' style={{height: 38}}>
                                         <p>Type</p>
-                                        <p className='highlight'>{account.type}</p>
+                                        <p className='highlight'>{account.accountType}</p>
                                     </div>
                                 </div>
                             ))}

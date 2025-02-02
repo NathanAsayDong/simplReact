@@ -40,8 +40,8 @@ export const attemptCreateAccount = async (email: string | undefined, password: 
     return data;
 }
 
-export const getUserOnboardStatus = async (id: string): Promise<OnboardingStatus> => {
-    const response = await fetch(`${baseUrl}onboarding-status?userId=${encodeURIComponent(id)}`, {
+export const getUserOnboardStatus = async (firebaseAuthId: string): Promise<OnboardingStatus> => {
+    const response = await fetch(`${baseUrl}onboarding-status?firebaseAuthId=${encodeURIComponent(firebaseAuthId)}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -55,14 +55,14 @@ export const getUserOnboardStatus = async (id: string): Promise<OnboardingStatus
     return status;
 }
 
-export const updateUserOnboardStatus = async (id: string, status: OnboardingStatus) => {
+export const updateUserOnboardStatus = async (firebaseAuthId: string, status: OnboardingStatus) => {
     const response = await fetch(baseUrl + 'onboarding-status', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            userId: id,
+            firebaseAuthId: firebaseAuthId,
             status: status
         })
     });

@@ -5,7 +5,7 @@ import UserCategories from './UserCategories/UserCategories.component';
 import { LinearProgress } from '@mui/material';
 import 'swiper/css';
 import { OnboardingDataProvider } from './Onboarding.context';
-import './Onboarding.module.scss';
+import './Onboarding.scss';
 import UserAccounts from './UserAccounts/UserAccounts';
 
 interface OnboardingProps { handleLogin: () => void; }
@@ -23,17 +23,18 @@ const Onboarding: FC<OnboardingProps> = ({ handleLogin }) =>  {
     };
 
     const returnToLogin = () => {
-        localStorage.removeItem('id');
+        localStorage.removeItem('firebaseAuthId');
         handleLogin();
+        window.location.reload();
     }
 
     return (
         <OnboardingDataProvider>
-            <div>
+            <div className={'onboarding special-background'}>
                 {loading && <LinearProgress style={{marginBottom: '16px'}} color="inherit" />}
                 <div className='onboarding-header'>
                     <h2 style={{"marginLeft":"10px"}}>SIMPL.</h2>
-                    <button style={{"marginLeft":"auto","marginRight":"10px","color":"var(--primary-color)"}} className="subtle-button" onClick={returnToLogin}>Sign in with other account?</button>
+                    <p className='has-account-button' onClick={returnToLogin}>Sign in with other account?</p>
                 </div>
 
                 <div className='swiper-container'>
@@ -64,7 +65,7 @@ const Onboarding: FC<OnboardingProps> = ({ handleLogin }) =>  {
                     <div className='swiper-buttons'>
                         <button className='swiper-button-back swiper-button' onClick={() => swiperRef.slidePrev()}>Back</button>
                         {!lastSlide && <button className='swiper-button-next swiper-button' onClick={() => swiperRef.slideNext()}>Next</button>}
-                        {lastSlide && <button className='swiper-button-save swiper-button' onClick={handleSave}>Save</button>}
+                        {lastSlide && <button className='special-background-animated swiper-button-save' onClick={handleSave}>Save</button>}
                     </div>
                 </div>
                 

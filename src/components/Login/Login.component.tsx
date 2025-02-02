@@ -1,8 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { attemptCreateAccount, attemptLogin } from '../../services/Classes/userApiService';
-import './Login.scss';
-
+import './Login.component.scss';
 
 interface LoginProps {
    handleLogin: () => void;
@@ -46,7 +45,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       }
       const success = await attemptLogin(email, password);
       if (success) {
-         localStorage.setItem('id', success.authToken);
+         localStorage.setItem('firebaseAuthId', success.firebaseAuthId);
          setLoading(false);
          handleLogin();
          navigate('/onboarding');
@@ -70,7 +69,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       }
       const success = await attemptCreateAccount(email, password);
       if (success) {
-         localStorage.setItem('id', success.authToken);
+         localStorage.setItem('firebaseAuthId', success.authToken);
          handleLogin();
          navigate('/onboarding');
       }

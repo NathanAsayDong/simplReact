@@ -45,7 +45,17 @@ const PlaidService = () => {
 
     const handleNewAccounts = (data: any) => {
         const accounts = data.accounts.map((account: any) => {
-            return new Account(account.id, account.accountName, account.accountType, account.accountSource, String(new Date()), undefined);
+            return new Account(
+                account.accountId,
+                account.plaidAccountId,
+                account.accountName,
+                account.accountType,
+                account.accountSource,
+                account.refDate,
+                account.refBalance,
+                account.accessToken,
+                account.userId
+            );
         });
         setNewAccounts([...newAccounts, ...accounts]);
     }
@@ -54,7 +64,7 @@ const PlaidService = () => {
         async (public_token: string, metadata: PlaidLinkOnSuccessMetadata) => {
             const extension = "plaid/exchange-public-token";
             const url = __API_URL__ + extension;
-            const userId = localStorage.getItem('id');
+            const firebaseAuthId = localStorage.getItem('firebaseAuthId');
             try {
                 const response = await fetch(url, {
                     method: 'POST',
@@ -65,7 +75,7 @@ const PlaidService = () => {
                         "public_token": public_token,
                         "accounts": metadata.accounts,
                         "source": metadata.institution?.name,
-                        "userId": userId
+                        "firebaseAuthId": firebaseAuthId
                     }),
                 });
 
