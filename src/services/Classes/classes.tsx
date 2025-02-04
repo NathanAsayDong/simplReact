@@ -1,21 +1,23 @@
 import dayjs from "dayjs";
 
 export class Transaction {
-    id: number;
+    transactionId: number;
+    plaidTransactionId: number;
     timestamp: number;
     amount: number;
     description: string;
     category: string;
     accountId: string;
-    balance: number
-    constructor(id: number = -1, timestamp: number, amount: number, description: string, accountId: string, category: string, balance: number) {
-        this.id = id;
+    userId: number;
+    constructor(transactionId: number = -1, plaidTransactionId: number = -1, timestamp: number, amount: number, description: string, accountId: string, category: string, userId: number) {
+        this.transactionId = transactionId;
+        this.plaidTransactionId = plaidTransactionId;
         this.timestamp = timestamp;
         this.amount = amount;
         this.description = description;
         this.category = category;
         this.accountId = accountId;
-        this.balance = balance;
+        this.userId = userId;
     }
 }
 

@@ -51,7 +51,7 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
                 }
             }
             setProgress(50);
-            await updateUserOnboardStatus(localStorage.getItem('firebaseAuthId') as string,  OnboardingStatus.COMPLETE);
+            await updateUserOnboardStatus(localStorage.getItem('firebaseAuthId') as string,  true);
             setProgress(75);
             await DataApiService.syncData();
             setProgress(100);
@@ -66,14 +66,17 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
             setSettingUpAccount(false);
             setProgress(0);
         }
+    }
 
+    const updateOnboardingStatusComplete = async () => {
+        await updateUserOnboardStatus(localStorage.getItem('firebaseAuthId') as string, true);
     }
     
     return (
         <>
             {!settingUpAccount && (
                 <>
-                    <h1 className='section-title'>Review</h1>
+                    <h1 className='section-title' onClick={updateOnboardingStatusComplete} >Review</h1>
                     <p className='section-subtitle'>Take one last look before we create your account!</p>
                     <div className='review-container'>
                         <div className='form-container hide-scroll' style={{height: 450}}>

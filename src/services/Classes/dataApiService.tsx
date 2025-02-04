@@ -48,7 +48,7 @@ export class DataApiService {
             const res = await response.json();
             // convert the response to a Transaction object
             const transactions = res.map((transaction: any) => {
-                return new Transaction(transaction.id, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.accountId, transaction.category, transaction.balance);
+                return new Transaction(transaction.transactionId, transaction.plaidTransactionId, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.accountId, transaction.category, transaction.userId);
             });
             transactions.sort((a: Transaction, b: Transaction) => {
                 return a.timestamp - b.timestamp;
@@ -73,7 +73,7 @@ export class DataApiService {
             }
             const res = await response.json();
             const transactions = res.map((transaction: any) => {
-                return new Transaction(transaction.id, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.accountId, transaction.category, transaction.balance);
+                return new Transaction(transaction.transactionId, transaction.plaidTransactionId, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.accountId, transaction.category, transaction.userId);
             });
             transactions.sort((a: Transaction, b: Transaction) => {
                 return a.timestamp - b.timestamp;

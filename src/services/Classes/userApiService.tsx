@@ -55,7 +55,7 @@ export const getUserOnboardStatus = async (firebaseAuthId: string): Promise<Onbo
     return status;
 }
 
-export const updateUserOnboardStatus = async (firebaseAuthId: string, status: OnboardingStatus) => {
+export const updateUserOnboardStatus = async (firebaseAuthId: string, status: boolean) => {
     const response = await fetch(baseUrl + 'onboarding-status', {
         method: 'PUT',
         headers: {
