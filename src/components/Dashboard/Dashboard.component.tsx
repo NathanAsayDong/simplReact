@@ -4,8 +4,8 @@ import { Modal } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import { Area, AreaChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { DashboardConfig } from '../../modals/DashboardConfig/DasboardConfig';
-import { Account, DashboardFilterData, Transaction, defaultDashboardFilterData } from '../../services/Classes/classes';
-import { TransactionData, UserAccountsData } from '../../services/Classes/dataContext';
+import { Account, Category, DashboardFilterData, Transaction, defaultDashboardFilterData } from '../../services/Classes/classes';
+import { TransactionData, UserAccountsData, UserCategoriesData } from '../../services/Classes/dataContext';
 import { convertNumberToCurrency, dateFormatPretty } from '../../services/Classes/formatService';
 import StripeService from '../../services/Classes/stripeApiService';
 import StripePayments from '../StripePayments/StripePayments';
@@ -13,6 +13,7 @@ import { account_balance_for_dates, getDates, getFilteredAccounts, getFilteredTr
 import './Dashboard.component.scss';
 import { Margin } from 'recharts/types/util/types';
 import Assistant from '../Assistant/Assistant.component';
+import { dashboardAccount } from '../../services/Classes/dashboardClasses';
 
 interface DashboardProps {
   handleLogout: () => void;
@@ -23,13 +24,14 @@ const Dashboard: FC<DashboardProps> = () => {
   //VARIABLES:
   const transactions = TransactionData() || []; //context transactions
   const accounts = UserAccountsData() || []; //context accounts
+  const categories = UserCategoriesData() || []; //context categories
   const [categoryData, setCategoryData] = useState<any[]>([]); //processed transactions into categories
-  const [accountData, setAccountData] = useState<any[]>([]); //processed transactions into accounts
+  const [accountData, setAccountData] = useState<dashboardAccount[]>([]); //processed transactions into accounts
   const [netValue, setNetValue] = useState<number>(0); //some number we use for net value when processing transactions to accounts
   const [lineChartData, setLineChartData] = useState<any[]>([]); //graph date for accounts {date, balance}
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false); //config modal object that we use for filtering, modes, and sorting
   const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false); //payment modal object that we use for stripe payments
-  const stripeService = StripeService();
+  // const stripeService = StripeService();
 
   //FILTERS:
   const [dateScale, setDateScale] = useState<any>('day');
@@ -37,27 +39,23 @@ const Dashboard: FC<DashboardProps> = () => {
 
   useEffect(() => {
     if (transactions.length > 0 && accounts.length > 0) {
-      //just for build
       setDateScale('day');
       const filteredTransactions = getFilteredTransactions(transactions, dashboardFilterData);
       const filteredAccounts = getFilteredAccounts(accounts, dashboardFilterData);
 
-      processTransactionsIntoCategories(filteredTransactions);
+      processTransactionsIntoCategories(filteredTransactions, categories);
       processTransactionsIntoAccounts(filteredTransactions, filteredAccounts);
       calculateLineChartData();
       calculateNetValue(filteredAccounts);
     }
   }, [transactions, accounts, dateScale, dashboardFilterData])
 
-  useEffect(() => {
-    if (stripeService.needsSubscription) {
-      setShowPaymentModal(true);
-    }
-  }, [stripeService.needsSubscription]);
+  // useEffect(() => {
+  //   if (stripeService.needsSubscription) {
+  //     setShowPaymentModal(true);
+  //   }
+  // }, [stripeService.needsSubscription]);
 
-  // const changeDateScale = (event: any) => {
-  //   setDateScale(event.target.value);
-  // }
 
   const getDateFormat = () => {
     switch (dateScale) {
@@ -71,11 +69,6 @@ const Dashboard: FC<DashboardProps> = () => {
         return 'MM/DD/YYYY';
     }
   };
-
-  const getAccountNameFromId = (id: string) => {
-    const account = accounts.find((account : Account) => account.id === id);
-    return account?.name || 'Unknown';
-  }
 
   const calculateLineChartData = async () => {
     const dates = getDates(dashboardFilterData.startDate, dateScale);
@@ -117,37 +110,28 @@ const Dashboard: FC<DashboardProps> = () => {
     return `${Math.max(height, 5)}%`;
   }
 
-  const processTransactionsIntoCategories = (transactions: Transaction[]) => {
+  const processTransactionsIntoCategories = (transactions: Transaction[], categories: Category[]) => {
     const data: any[] = [];
-    transactions = transactions.filter((transaction) => {
-      if (!dashboardFilterData.selectedAccounts.includes('All')) {
-        return dashboardFilterData.selectedAccounts.includes(transaction.accountId);
-      }
-      if (!dashboardFilterData.selectedCategories.includes('All')) {
-        return dashboardFilterData.selectedCategories.includes(transaction.category);
-      }
-      return true;
-    });
     transactions.forEach((transaction: Transaction) => {
-      const categoryIndex = data.findIndex((d) => d.category === transaction.category);
+      const categoryName = categories.find(cat => cat.categoryId === transaction.categoryId)?.categoryName || "Unknown";
+      const categoryIndex = data.findIndex((d) => d.category === categoryName);
       if (categoryIndex === -1) {
-        data.push({ category: transaction.category, amount: transaction.amount });
+        data.push({ category: categoryName, amount: transaction.amount });
       } else {
         data[categoryIndex].amount += transaction.amount;
       }
     });
-    data.forEach((category) => {
-      category.amount = convertNumberToCurrency(category.amount);
+    data.forEach((item) => {
+      item.amount = convertNumberToCurrency(item.amount);
     });
-
-
+    
     setCategoryData(data);
-    data.forEach((category) => {
-      if (!dashboardFilterData.categoryOptions.includes(category.category)) {
-        dashboardFilterData.categoryOptions.push(category.category);
+    data.forEach((item) => {
+      if (!dashboardFilterData.categoryOptions.includes(item.category)) {
+        dashboardFilterData.categoryOptions.push(item.category);
       }
     });
-  }
+  };
 
   const categoryDataToPositivesOnly = (categoryData: any[]) => {
     const data: any[] = [];
@@ -164,28 +148,22 @@ const Dashboard: FC<DashboardProps> = () => {
 
   const processTransactionsIntoAccounts = (transactions: Transaction[], accounts: Account[]) => {
     const data: any[] = [];
+    console.log('transactions', transactions);
     transactions.forEach((transaction: Transaction) => {
-      const accountIndex = data.findIndex((d) => d.id === transaction.accountId);
-      let accountType = accounts.find((account) => account.name === transaction.accountId)?.type;
-      const amount = accountType === 'Credit' ? transaction.amount * -1 : transaction.amount;
+      let account = accounts.find((acc) => acc.accountId === transaction.accountId);
+      if (!account) return;
+      const signedAmount = account.accountType === 'Credit' ? transaction.amount * -1 : transaction.amount;
+      const accountIndex = data.findIndex((d) => d.accountId === transaction.accountId);
       if (accountIndex === -1) {
-        data.push({ id: transaction.accountId, netChange: amount });
+        let dashboardAcc = new dashboardAccount(transaction.accountId, account.accountName, signedAmount, convertNumberToCurrency(account.refBalance || 0));
+        data.push(dashboardAcc);
       } else {
-        data[accountIndex].amount += transaction.amount;
+        data[accountIndex].netChange += signedAmount;
       }
     });
-    data.forEach((account) => {
-      const matchingAccount = accounts.find((acc) => acc.id === account.id);
-      account.balance = convertNumberToCurrency(matchingAccount?.refBalance || 0);
-    });
-
+    console.log(data);
     setAccountData(data);
-    data.forEach((account) => {
-      if (!dashboardFilterData.accountOptions.includes(account.id)) {
-        dashboardFilterData.accountOptions.push(account.id);
-      }
-    });
-  }
+  };
 
   const handleOpenConfigModal = () => setShowConfigModal(true);
   const handleCloseConfigModal = () => setShowConfigModal(false);
@@ -249,15 +227,15 @@ const Dashboard: FC<DashboardProps> = () => {
 
         <div className='row' style={{gap: '10px', maxHeight: 'calc(100vh - 200px)', alignItems: 'flex-start'}}>
           <div className='accounts-container'>
-                {accountData.sort((a, b) => b.netChange - a.netChange).slice(0,3).map((account, index) => (
+                {accountData.sort((a, b) => b.netChange - a.netChange).slice(0,3).map((account: dashboardAccount, index) => (
                 <div key={index} className='account'>
                   <div>
-                    <h4 className='account-name'>{getAccountNameFromId(account.id)}</h4>
-                    <p className='account-balance roboto-light'>Balance: ${account.balance}</p>
+                    <h4 className='account-name'>{account.accountName}</h4>
+                    <p className='account-balance roboto-light'>Balance: ${account.currentBalance}</p>
                   </div>
 
                   <div className='account-net-change archivo-font'>
-                    <p className='value'>${account.netChange.toFixed(2) * -1}</p>
+                    <p className='value'>${account.netChange * -1}</p>
                     <FontAwesomeIcon 
                       icon={faPlay} 
                       className={account.netChange < 0 ? 'green-arrow-up' : 'red-arrow-down'}

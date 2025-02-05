@@ -6,16 +6,16 @@ export class Transaction {
     timestamp: number;
     amount: number;
     description: string;
-    category: string;
-    accountId: string;
+    categoryId: number;
+    accountId: number;
     userId: number;
-    constructor(transactionId: number = -1, plaidTransactionId: number = -1, timestamp: number, amount: number, description: string, accountId: string, category: string, userId: number) {
+    constructor(transactionId: number = -1, plaidTransactionId: number = -1, timestamp: number, amount: number, description: string, accountId: number, categoryId: number, userId: number) {
         this.transactionId = transactionId;
         this.plaidTransactionId = plaidTransactionId;
         this.timestamp = timestamp;
         this.amount = amount;
         this.description = description;
-        this.category = category;
+        this.categoryId = categoryId;
         this.accountId = accountId;
         this.userId = userId;
     }
@@ -66,32 +66,32 @@ export class Account {
 }
 
 export class Category {
-    id: number;
-    name: string;
+    categoryId: number;
+    categoryName: string;
     parentCategoryId: number;
     userId: string;
-    constructor(id: number, name: string, parentCategoryId: number, userId: string) {
-        this.id = id;
-        this.name = name;
+    constructor(categoryId: number, categoryName: string, parentCategoryId: number, userId: string) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
         this.parentCategoryId = parentCategoryId;
         this.userId = userId;
     }
 }
 
 export class DashboardFilterData {
-    selectedAccounts: string[];
-    selectedCategories: string[];
+    selectedAccountIds: number[];
+    selectedCategoryIds: number[];
     startDate: Date | null | undefined;
     endDate: Date | null | undefined;
     areaChartDateScale: 'day' | 'week' | 'month' | 'year';
-    accountOptions: string[];
-    categoryOptions: string[];
+    accountOptions: Account[];
+    categoryOptions: Category[];
     lineChartMode: 'netValue' | 'category' | 'account';
     pieChartMode: 'category' | 'account';
 
-    constructor(selectedAccounts: string[], selectedCategories: string[], startDate: Date, endDate: Date, areaChartDateScale: 'day' | 'week' | 'month' | 'year', accountOptions: string[], categoryOptions: string[], lineChartMode: 'netValue' | 'category' | 'account', pieChartMode: 'category' | 'account') {
-        this.selectedAccounts = selectedAccounts;
-        this.selectedCategories = selectedCategories;
+    constructor(selectedAccountIds: number[], selectedCategoryIds: number[], startDate: Date, endDate: Date, areaChartDateScale: 'day' | 'week' | 'month' | 'year', accountOptions: Account[], categoryOptions: Category[], lineChartMode: 'netValue' | 'category' | 'account', pieChartMode: 'category' | 'account') {
+        this.selectedAccountIds = selectedAccountIds;
+        this.selectedCategoryIds = selectedCategoryIds;
         this.startDate = startDate;
         this.endDate = endDate;
         this.areaChartDateScale = areaChartDateScale;
@@ -102,7 +102,7 @@ export class DashboardFilterData {
     }
 }
 
-export const defaultDashboardFilterData = new DashboardFilterData(['All'], ['All'], dayjs().subtract(7, 'day').toDate(), dayjs().toDate(), 'day', [], ['All'], 'netValue', 'category');
+export const defaultDashboardFilterData = new DashboardFilterData([], [], dayjs().subtract(7, 'day').toDate(), dayjs().toDate(), 'day', [], [], 'netValue', 'category');
 
 export class StripeSubscriptionObject {
     id: string;

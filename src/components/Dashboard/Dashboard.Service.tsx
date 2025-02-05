@@ -50,13 +50,13 @@ export const getFilteredTransactions = (transactions: Transaction[], filterData:
     const endDateNum = filterData.endDate?.getTime() || null;
     let filteredTransaction = transactions.filter((transaction) => {
         if ((!startDateNum || transaction.timestamp >= startDateNum) && (!endDateNum || transaction.timestamp <= endDateNum)) {
-            if (filterData.selectedAccounts.includes('All') && filterData.selectedCategories.includes('All')) {
+            if (filterData.selectedAccountIds.length == 0 && filterData.selectedCategoryIds.length == 0) {
                 return true;
-            } else if (filterData.selectedAccounts.includes('All') && filterData.selectedCategories.includes(transaction.category)) {
+            } else if (filterData.selectedAccountIds.length == 0 && filterData.selectedCategoryIds.includes(transaction.categoryId)) {
                 return true;
-            } else if (filterData.selectedAccounts.includes(transaction.accountId) && filterData.selectedCategories.includes('All')) {
+            } else if (filterData.selectedAccountIds.includes(transaction.accountId) && filterData.selectedCategoryIds.length == 0) {
                 return true;
-            } else if (filterData.selectedAccounts.includes(transaction.accountId) && filterData.selectedCategories.includes(transaction.category)) {
+            } else if (filterData.selectedAccountIds.includes(transaction.accountId) && filterData.selectedCategoryIds.includes(transaction.categoryId)) {
                 return true;
             }
         }
@@ -75,36 +75,31 @@ export const filterTransactionsByDate = (transactions: Transaction[], filterData
 
 export const filterTransactionsByCategory = (transactions: Transaction[], filterData: DashboardFilterData): Transaction[] => {
     return transactions.filter((transaction) => {
-        return filterData.selectedCategories.includes(transaction.category) || filterData.selectedCategories.includes('All');
+        return filterData.selectedCategoryIds.includes(transaction.categoryId) || filterData.selectedCategoryIds.length == 0;
     });
 }
 
 export const filterTransactionsByAccount = (transactions: Transaction[], filterData: DashboardFilterData): Transaction[] => {
     return transactions.filter((transaction) => {
-        return filterData.selectedAccounts.includes(transaction.accountId) || filterData.selectedAccounts.includes('All');
+        return filterData.selectedAccountIds.includes(transaction.accountId) || filterData.selectedAccountIds.length == 0;
     });
 }
 
 export const getFilteredAccounts = (accounts: Account[], filterData: DashboardFilterData): Account[] => {
     return accounts.filter((account) => {
-        if (filterData.selectedAccounts.includes('All')) {
+        if (filterData.selectedAccountIds.length == 0) {
             return true;
         }
-        return (filterData.selectedAccounts.includes(account.name));
+        return (filterData.selectedAccountIds.includes(account.accountId));
     });
-}
-
-export const getFilteredCategories = (transactions: Transaction[], filterData: DashboardFilterData): string[] => {
-    const categories = transactions.map((transaction) => transaction.category);
-    return Array.from(new Set(categories)).filter((category) => filterData.selectedCategories.includes(category) || filterData.selectedCategories.includes('All'));
 }
 
 export const getNetValueFromAccounts = (accounts: Account[]): number => {
     return accounts.reduce((acc, account) => {
-        if (account.type == "checking" || account.type == "savings" || account.type == "brokerage") {
+        if (account.accountType == "checking" || account.accountType == "savings" || account.accountType == "brokerage") {
             return acc + account.refBalance;
         }
-        if (account.type == "credit") {
+        if (account.accountType == "credit") {
             return acc - account.refBalance;
         }
         else {
@@ -116,24 +111,28 @@ export const getNetValueFromAccounts = (accounts: Account[]): number => {
 // --------------------- LINE CHART ---------------------
 
 export const getRunningBalanceForAccount = async (transactions: Transaction[], account: Account) => {
-    transactions = transactions.filter((transaction) => transaction.accountId === account.id).sort((a, b) => b.timestamp - a.timestamp); //most recent to least recent
+    // Use account.accountId instead of account.id
+    const accountTransactions = transactions
+      .filter((transaction) => transaction.accountId === account.accountId)
+      .sort((a, b) => b.timestamp - a.timestamp); // most recent to least recent
     const data: any[] = [];
     let accountBalance = account.refBalance;
-    for (let i = 0; i < transactions.length; i++) {
-        accountBalance -= transactions[i].amount;
-        data.push({ date: transactions[i].timestamp, accountBalance });
+    for (let i = 0; i < accountTransactions.length; i++) {
+      accountBalance -= accountTransactions[i].amount;
+      data.push({ date: accountTransactions[i].timestamp, accountBalance });
     }
+    // Remove duplicate dates if any
     const filteredData: any[] = [];
-    for (let i = 0; i < data.length; i++) {
-        const dateIndex = filteredData.findIndex((d) => d.date === data[i].date);
-        if (dateIndex === -1) {
-        filteredData.push(data[i]);
-    } else {
-        filteredData[dateIndex] = data[i];
-        }
-    }
-    return { account: account.name, running_log: filteredData }; //filteredData is type { date: number, accountBalance: number }[]
-}
+    data.forEach((entry) => {
+      const index = filteredData.findIndex((d) => d.date === entry.date);
+      if (index === -1) {
+        filteredData.push(entry);
+      } else {
+        filteredData[index] = entry;
+      }
+    });
+    return { account: account.accountName, running_log: filteredData };
+  };
 
 export const getMapOfDatesToAccountBalances = async (transactions: Transaction[], accounts: Account[], dateScale: string, filterData: DashboardFilterData): Promise<{ [date : number] : { [account: string] : number}}> => {
     //1) Get all the dates, scaled and in range
@@ -143,12 +142,12 @@ export const getMapOfDatesToAccountBalances = async (transactions: Transaction[]
     const account_running_logs: { [key: string]: any[] } = {};
     for (const account of accounts) {
         const accountData = await getRunningBalanceForAccount(transactions, account);
-        account_running_logs[account.name] = accountData.running_log;
+        account_running_logs[account.accountName] = accountData.running_log;
     }
     //3) For each account, create a map of date to running account balance
     let account_to_day_value_map :{ [accountName: string]: { [date: number]: number } } = {};
     for (const accountName of Object.keys(account_running_logs)) {
-        const account = accounts.find((account) => account.name === accountName);
+        const account = accounts.find((account) => account.accountName === accountName);
         if (!account) {
             continue;
         }
@@ -184,13 +183,13 @@ export const getMapOfDatesToAccountBalances = async (transactions: Transaction[]
 export const computeNetForDate = (account_to_running_balance_map : { [account: string] : { [date : number]: number }}, accounts: Account[], filterData : DashboardFilterData, date: number): any => {
     let total = 0;
     for (const account of accounts) {
-        if (filterData.selectedAccounts.includes(account.name) || filterData.selectedAccounts.includes('All')) {
-            if (account.name in account_to_running_balance_map && date in account_to_running_balance_map[account.name]) {
-                if (account.type === 'checking' || account.type === 'savings') {
-                    total += account_to_running_balance_map[account.name][date];
+        if (filterData.selectedAccountIds.includes(account.accountId) || filterData.selectedAccountIds.length == 0) {
+            if (account.accountName in account_to_running_balance_map && date in account_to_running_balance_map[account.accountName]) {
+                if (account.accountType === 'checking' || account.accountType === 'savings') {
+                    total += account_to_running_balance_map[account.accountName][date];
                 }
-                if (account.type === 'credit') {
-                    total -= account_to_running_balance_map[account.name][date];
+                if (account.accountType === 'credit') {
+                    total -= account_to_running_balance_map[account.accountName][date];
                 }
             }
         }
@@ -206,27 +205,30 @@ export const convertMapToRunningBalanceArray = (account_to_running_balance_map :
     return return_array;
 }
 
-export const account_balance_for_dates = (dates: number[], account: Account, transactions: Transaction[]): { [date : number] : number} => {
-    transactions = transactions.sort((a, b) => a.timestamp - b.timestamp);
-    let account_balance = account.refBalance;
-    let res: { [date : number] : number} = [];
+export const account_balance_for_dates = (dates: number[], account: Account, transactions: Transaction[]): { [date: number]: number } => {
+    // Sort transactions for this account using account.accountId
+    const sortedTransactions = transactions.filter((t) => t.accountId === account.accountId)
+      .sort((a, b) => a.timestamp - b.timestamp);
+    let accountBalance = account.refBalance;
+    const res: { [date: number]: number } = {};
     
+    // Iterate from the last date to the earliest in the dates array
     for (let i = dates.length - 1; i >= 0; i--) {
-        const date = dates[i];
-        let transactions_for_date = transactions.filter((transaction) => transaction.timestamp === date && transaction.accountId === account.id);
-        for (const transaction of transactions_for_date) {
-            if (account.type == "checking" || account.type == "savings") {
-                account_balance += transaction.amount;
-            }
-            else {
-                account_balance -= transaction.amount;
-            }
+      const date = dates[i];
+      const transactionsForDate = sortedTransactions.filter((t) => t.timestamp === date);
+      transactionsForDate.forEach((transaction) => {
+        // Adjust balance based on account type (and potential sign adjustments)
+        if (account.accountType === "checking" || account.accountType === "savings") {
+          accountBalance -= transaction.amount;
+        } else if (account.accountType === "credit") {
+          accountBalance += transaction.amount; // Assuming credit accounts work oppositely
         }
-        account_balance = Math.round(account_balance * 100) / 100;
-        res[date] = account_balance;
+      });
+      accountBalance = Math.round(accountBalance * 100) / 100;
+      res[date] = accountBalance;
     }
     return res;
-}
+  };
 
 
 

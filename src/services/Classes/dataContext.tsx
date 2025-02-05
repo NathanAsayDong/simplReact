@@ -1,13 +1,13 @@
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { createContext, useContext, useState } from 'react';
-import { Account, Transaction } from './classes';
+import { Account, Category, Transaction } from './classes';
 import { DataApiService } from './dataApiService';
 
 
 type TransactionDataContextType = Transaction[] | null;
 type UserAccountsDataContextType = Account[] | null;
-type UserCategoriesDataContextType = string[] | null;
+type UserCategoriesDataContextType = Category[] | null;
 
 const CACHE_KEYS = {
     TRANSACTIONS: 'cached_transactions',
@@ -122,8 +122,8 @@ export function AppDataProvider({ children }: any){
     }
 
     const initializeData = async () => {
-        const userId = localStorage.getItem('firebaseAuthId');
-        if (!userId) return;
+        const firebaseAuthId = localStorage.getItem('firebaseAuthId');
+        if (!firebaseAuthId) return;
         setLoading(true);
         loadCachedData();
         await syncWithPlaid();

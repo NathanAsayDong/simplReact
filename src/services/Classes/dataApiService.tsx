@@ -3,41 +3,12 @@ import { Account, Category, Transaction } from './classes';
 const baseUrl = __API_URL__;
 
 export class DataApiService {
-    public static processTransactions = async (csvData: any, account: Account) => {
-        try {
-            
-            const id = localStorage.getItem('firebaseAuthId');
-            if (!id) throw new Error('User ID is missing in local storage.');
-            
-            const url = baseUrl + 'upload-transactions-csv' + '?account=' + account.accountName + '&accountType=' + '&userId=' + id;
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                body: csvData,
-                headers: {
-                    'Content-Type': 'text/csv'
-                }
-            });
-            
-            if (!response.ok) {
-                const errorBody = await response.text();
-                throw new Error(`Failed to upload CSV: ${response.status} ${response.statusText} - ${errorBody}`);
-            }
-            
-            const res = await response.json();
-            return res;
-        } catch (error) {
-            console.error('Error during CSV upload:', error);
-            throw error;
-        }
-    }
-
     public static getAllTransactions = async () => {
         try {
-            const id = localStorage.getItem('firebaseAuthId');
-            if (!id) throw new Error('User ID is missing in local storage.');
+            const firebaseAuthId = localStorage.getItem('firebaseAuthId');
+            if (!firebaseAuthId) throw new Error('FireabseAuthId is missing in local storage.');
 
-            const url = baseUrl + 'get-transactions-all' + '?userId=' + id;
+            const url = baseUrl + 'get-transactions-all' + '?firebaseAuthId=' + firebaseAuthId;
 
             const response = await fetch(url);
 
@@ -48,7 +19,7 @@ export class DataApiService {
             const res = await response.json();
             // convert the response to a Transaction object
             const transactions = res.map((transaction: any) => {
-                return new Transaction(transaction.transactionId, transaction.plaidTransactionId, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.accountId, transaction.category, transaction.userId);
+                return new Transaction(transaction.transactionId, transaction.plaidTransactionId, new Date(transaction.timestamp).getTime(), transaction.amount, transaction.description, transaction.accountId, transaction.categoryId, transaction.userId);
             });
             transactions.sort((a: Transaction, b: Transaction) => {
                 return a.timestamp - b.timestamp;
@@ -61,11 +32,11 @@ export class DataApiService {
         }
     }
 
-    public static getTransactionsForAccount = async (account: Account) => {
+    public static getTransactionsForAccount = async (account: Account) : Promise<Transaction[]> => {
         try {
-            const id = localStorage.getItem('firebaseAuthId');
-            if (!id) throw new Error('User ID is missing in local storage.');
-            const url = baseUrl + 'get-transactions-account' + '?userId=' + id + '&account=' + account.accountName;
+            const firebaseAuthId = localStorage.getItem('firebaseAuthId');
+            if (!firebaseAuthId) throw new Error('FirebaseAuthId is missing in local storage.');
+            const url = baseUrl + 'get-transactions-account' + '?firebaseAuthId=' + firebaseAuthId + '&account=' + account.accountName;
             const response = await fetch(url);
             if (!response.ok) {
                 const errorBody = await response.text(); // Or response.json() if the server sends JSON
@@ -116,10 +87,10 @@ export class DataApiService {
 
     public static addAccount = async (account: Account) => {
         try {
-            const id = localStorage.getItem('firebaseAuthId');
-            if (!id) throw new Error('User ID is missing in local storage.');
+            const firebaseAuthId = localStorage.getItem('firebaseAuthId');
+            if (!firebaseAuthId) throw new Error('FirebaseAuthId is missing in local storage.');
 
-            const url = baseUrl + 'add-account' + '?userId=' + id;
+            const url = baseUrl + 'add-account' + '?firebaseAuthId=' + firebaseAuthId;
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -146,7 +117,7 @@ export class DataApiService {
             const firebaseAuthId = localStorage.getItem('firebaseAuthId');
             if (!firebaseAuthId) throw new Error('User ID is missing in local storage.');
 
-            const url = baseUrl + 'update-account' + '?userId=' + firebaseAuthId;
+            const url = baseUrl + 'update-account' + '?firebaseAuthId=' + firebaseAuthId;
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -212,9 +183,11 @@ export class DataApiService {
             }
 
             const res = await response.json();
+            console.log(res);
             const categories = res.map((category: any) => {
-                return new Category(category.id, category.name, category.parentCategoryId, category.userId);
+                return new Category(category.categoryId, category.categoryName, category.parentCategoryId, category.userId);
             });
+            console.log(categories);
             return categories;
         } catch (error) {
             console.error('Error during getting categories:', error);
@@ -251,7 +224,7 @@ export class DataApiService {
         }
     }
 
-    public static deleteCategory = async (category: string) => {
+    public static deleteCategory = async (category: Category) => {
         try {
             const firebaseAuthId = localStorage.getItem('firebaseAuthId');
             if (!firebaseAuthId) throw new Error('FirebaseAuthId is missing in local storage.');
@@ -260,9 +233,7 @@ export class DataApiService {
 
             const response = await fetch(url, {
                 method: 'POST',
-                body: JSON.stringify({
-                    category: category
-                }),
+                body: JSON.stringify(category),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -280,18 +251,17 @@ export class DataApiService {
         }
     }
 
-    public static updateCategoryForTransaction = async (transactionId: number, newCategory: string, accountId: string) => {
+    public static updateCategoryForTransaction = async (transaction: Transaction, newCategoryId: number) => {
         try {
             const firebaseAuthId = localStorage.getItem('firebaseAuthId');
             if (!firebaseAuthId) throw new Error('FirebaseAuthId is missing in local storage.');
 
-            const url = baseUrl + 'update-category-transaction' + '?firebaseAuthId=' + firebaseAuthId;
+            const url = baseUrl + 'update-transaction-category' + '?firebaseAuthId=' + firebaseAuthId;
             const response = await fetch(url, {
                 method: 'POST',
                 body: JSON.stringify({
-                    transactionId: transactionId,
-                    newCategory: newCategory,
-                    accountId: accountId
+                    transaction: transaction,
+                    categoryId: newCategoryId,
                 }),
                 headers: {
                     'Content-Type': 'application/json'

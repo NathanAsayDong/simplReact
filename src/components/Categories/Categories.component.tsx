@@ -4,12 +4,13 @@ import { FC } from 'react';
 import { DataApiService } from '../../services/Classes/dataApiService';
 import { SetUserCategoryData, UserCategoriesData } from '../../services/Classes/dataContext';
 import './Categories.component.scss';
+import { Category } from '../../services/Classes/classes';
 
 
 interface CategoryManagementProps {}
 
 const CategoryManagement: FC<CategoryManagementProps> = () => {
-  const categories = UserCategoriesData() || [];
+  const categories: Category[] = UserCategoriesData() || [];
   const updateCategories = SetUserCategoryData();
   // const [newCategory, setNewCategory] = useState<string>('');
 
@@ -26,10 +27,10 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
   //   setNewCategory('');
   // }
   
-  const deleteCategory = async (category: string) => {
+  const deleteCategory = async (category: Category) => {
     const res = await DataApiService.deleteCategory(category);
     if (res) {
-      updateCategories(categories.filter((cat: string) => cat !== category));
+      updateCategories(categories.filter((cat: Category) => cat.categoryId !== category.categoryId));
     }
   }
 
@@ -45,12 +46,12 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
           {categories.length == 0 ? (
               <div className='loading'>Loading...</div>
             ) : (
-              categories.map((category: string, index: any) => (
+              categories.map((category: Category, index: any) => (
                 <div key={index} className='category-row'>
 
                   <div className='item' style={{width: '34%', marginLeft: '60px'}}>
                     <h3 className='roboto-bold'>Category:</h3>
-                    <h3>{category}</h3>
+                    <h3>{category.categoryName}</h3>
                   </div>
 
 

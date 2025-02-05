@@ -13,10 +13,10 @@ const Accounts: FC<AccountsProps> = () =>  {
   const accounts = UserAccountsData() || [];
   const updateAccounts = SetUserAccountData();
   const { open, ready, exit, newAccounts } = PlaidService();
-  const [updatedAccountNamesMap, setUpdatedAccountNamesMap] = useState<Map<string, string>>(new Map());
+  const [updatedAccountNamesMap, setUpdatedAccountNamesMap] = useState<Map<number, string>>(new Map());
 
   useEffect(() => {
-    const newAccountsFiltered = newAccounts.filter((newAccount: Account) => !accounts.some((account: Account) => account.id === newAccount.id));
+    const newAccountsFiltered = newAccounts.filter((newAccount: Account) => !accounts.some((account: Account) => account.accountId === newAccount.accountId));
     localStorage.removeItem('lastSync')
     updateAccounts([...accounts, ...newAccountsFiltered]);
     console.log('exit', exit); //this is bad, i just added this so i could build
@@ -35,38 +35,38 @@ const Accounts: FC<AccountsProps> = () =>  {
     updateAccounts(accounts.filter((acc: Account) => acc !== account));
   }
 
-  const updateAccountName = (id: string, name: string) => {
+  const updateAccountName = (accountId: number, name: string) => {
     const updatedAccountNames = new Map(updatedAccountNamesMap);
-    updatedAccountNames.set(id, name);
+    updatedAccountNames.set(accountId, name);
     setUpdatedAccountNamesMap(updatedAccountNames);
   }
 
-  const canSave = (id: string) => {
-    return updatedAccountNamesMap.has(id);
+  const canSave = (accountId: number) => {
+    return updatedAccountNamesMap.has(accountId);
   }
 
-  const saveName = async (id: string) => {
-    const name = updatedAccountNamesMap.get(id);
+  const saveName = async (accountId: number) => {
+    const name = updatedAccountNamesMap.get(accountId);
     const updatedAccounts = accounts.map((account: Account) => {
-      if (account.id === id && name) {
-        account.name = name;
+      if (account.accountId === accountId && name) {
+        account.accountName = name;
       }
       return account;
     });
     updateAccounts(updatedAccounts);
-    const updatedAccount = accounts.find((account: Account) => account.id === id);
+    const updatedAccount = accounts.find((account: Account) => account.accountId === accountId);
     //TODO: loading
     await DataApiService.updateAccount(updatedAccount);
     const updatedAccountNames = new Map(updatedAccountNamesMap);
-    updatedAccountNames.delete(id);
+    updatedAccountNames.delete(accountId);
     setUpdatedAccountNamesMap(updatedAccountNames);
   }
 
-  const resetName = (id: string) => {
-    const originalName = accounts.find((account: Account) => account.id === id)?.name;
+  const resetName = (accountId: number) => {
+    const originalName = accounts.find((account: Account) => account.accountId === accountId)?.name;
     if (originalName) {
       const updatedAccountNames = new Map(updatedAccountNamesMap);
-      updatedAccountNames.delete(id);
+      updatedAccountNames.delete(accountId);
       setUpdatedAccountNamesMap(updatedAccountNames);
     }
   }
@@ -88,12 +88,12 @@ const Accounts: FC<AccountsProps> = () =>  {
 
                   <div className='item hide-scroll' style={{marginLeft: '2%'}}> 
                     <h3 className='roboto-bold'>Account:</h3>
-                    <input className='account-name-input' value={updatedAccountNamesMap.has(account.id) ? updatedAccountNamesMap.get(account.id) : account.name} onChange={(event) => updateAccountName(account.id, event.target.value)}/>
+                    <input className='account-name-input' value={updatedAccountNamesMap.has(account.accountId) ? updatedAccountNamesMap.get(account.accountId) : account.accountName} onChange={(event) => updateAccountName(account.accountId, event.target.value)}/>
                   </div>
 
                   <div className='item hide-scroll' style={{width: 'auto'}}>
                     <h3 className='roboto-bold'>Type:</h3>
-                    <h3>{account.type}</h3>
+                    <h3>{account.accountType}</h3>
                   </div>
 
                   <div className='item hide-scroll' style={{width: 'auto'}}>
@@ -103,19 +103,19 @@ const Accounts: FC<AccountsProps> = () =>  {
 
                   <div className='item hide-scroll' style={{width: 'auto'}}>
                     <h3 className='roboto-bold'>Source:</h3>
-                    <h3 style={{whiteSpace: 'nowrap'}}>{account.source}</h3>
+                    <h3 style={{whiteSpace: 'nowrap'}}>{account.accountSource}</h3>
                   </div>
 
-                  {!canSave(account.id) && (
+                  {!canSave(account.accountId) && (
                     <div className='item hide-scroll' style={{marginRight: '8%'}}>
                       <FontAwesomeIcon icon={faTrash} className='trash-icon' onClick={() => deleteAccount(account)}/>
                     </div>
                   )}
 
-                  {canSave(account.id) && (
+                  {canSave(account.accountId) && (
                     <div className='item hide-scroll' style={{marginRight: '8%'}}>
-                      <FontAwesomeIcon icon={faCheck} className='upload-icon' onClick={() => saveName(account.id)}/>
-                      <FontAwesomeIcon icon={faTimes} className='cancel-icon' onClick={() => resetName(account.id)}/>
+                      <FontAwesomeIcon icon={faCheck} className='upload-icon' onClick={() => saveName(account.accountId)}/>
+                      <FontAwesomeIcon icon={faTimes} className='cancel-icon' onClick={() => resetName(account.accountId)}/>
                     </div>
                   )}
 

@@ -32,9 +32,9 @@ export const getSubscriptions = async (customerId: string): Promise<StripeSubscr
 }
 
 export const getStripeCustomer = async (): Promise<any> => {
-    const userId = localStorage.getItem('firebaseAuthId')
+    const firebaseAuthId = localStorage.getItem('firebaseAuthId')
     const extension = "stripe/setup";
-    const url = __API_URL__ + extension + "?userId=" + userId;
+    const url = __API_URL__ + extension + "?firebaseAuthId=" + firebaseAuthId;
     try {
         const response = await fetch(url);
         if (!response.ok) throw new Error('Failed to fetch stripe customer');

@@ -3,7 +3,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
-import { Account, Transaction } from '../../services/Classes/classes';
+import { Account, Category, Transaction } from '../../services/Classes/classes';
 import { DataApiService } from '../../services/Classes/dataApiService';
 import { SetTransactionData, TransactionData, UserAccountsData, UserCategoriesData } from '../../services/Classes/dataContext';
 import './TransactionsManagement.scss';
@@ -13,9 +13,9 @@ interface TransactionsManagementProps {}
 
 const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   //  --------------------- CONTEXT DATA ---------------------
-  const transactions = TransactionData() || [];
-  const accounts = UserAccountsData() || [];
-  const categories = UserCategoriesData() || [];
+  const transactions: Transaction[] = TransactionData() || [];
+  const accounts: Account[] = UserAccountsData() || [];
+  const categories: Category[] = UserCategoriesData() || [];
   const updateTransactions = SetTransactionData();
 
   //  --------------------- VARIABLES ---------------------
@@ -41,8 +41,13 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     return filteredCategories.includes('All Unsure');
   }
 
-  const getAccountName = (id: string) => {
-    const name = accounts.find((account: Account) => account.id === id)?.name;
+  const getAccountName = (accountId: number) => {
+    const name = accounts.find((account: Account) => account.accountId === accountId)?.accountName;
+    return name ? name : 'Unknown';
+  }
+
+  const getTransactionCategoryName = (transaction: Transaction) : string => {
+    let name = categories.find((category: Category) => category.categoryId === transaction.categoryId)?.categoryName;
     return name ? name : 'Unknown';
   }
 
@@ -64,7 +69,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     }
     else if (filteredCategories.includes('All Unsure')) {
       let trans = transactions.filter((transaction: Transaction) => {
-        return transaction.category == "unsure";
+        return getTransactionCategoryName(transaction).toLowerCase() == "unsure" || transaction.categoryId == null;
       });
       setFilteredTransactions(trans)
     }
@@ -72,28 +77,28 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
       let trans = transactions.filter((transaction: Transaction) => {
         return ((!dateRanges.startDate || dayjs(transaction.timestamp).isAfter(dateRanges.startDate)))
         && (!dateRanges.endDate || dayjs(transaction.timestamp).isBefore(dateRanges.endDate))
-        && (filteredCategories.includes('All') || filteredCategories.includes(transaction.category))
+        && (filteredCategories.includes('All') || filteredCategories.includes(getTransactionCategoryName(transaction)))
         && ((filteredAccounts.includes('All') || filteredAccounts.includes(getAccountName(transaction.accountId))));
       });
       setFilteredTransactions(trans)
     }
   }, [dateRanges, transactions, filteredCategories, filteredAccounts]);
 
-  const updateCategory = async (id: number, event: any, accountId: string) => {
-    const category = event.target.value;
-    if (!category) {
+  const updateCategory = async (transaction: Transaction, event: any) => {
+    const updatedCategoryId = event.target.value;
+    if (!updatedCategoryId) {
       alert('There was an issue');
       return;
     }
     setLoading(true);
-    await DataApiService.updateCategoryForTransaction(id, category, accountId).then(
+    await DataApiService.updateCategoryForTransaction(transaction, updatedCategoryId).then(
       (res: any) => {
         if (res) {
-          updateTransactions(transactions.map((transaction: Transaction) => {
-            if (transaction.id === id) {
-              transaction.category = category;
+          updateTransactions(transactions.map((tra: Transaction) => {
+            if (tra.transactionId === transaction.transactionId) {
+              tra.categoryId = updatedCategoryId;
             }
-            return transaction;
+            return tra;
           }));
         }
         for (let i = 0; i <+ 100; i++) {
@@ -171,8 +176,8 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
               multiple
             >
             <MenuItem key={1000} value={'All'}>{"All"}</MenuItem>
-            {categories.map((category: string, index: any) => (
-            <MenuItem key={index} value={category}>{category}</MenuItem>
+            {categories.map((category: Category, index: any) => (
+            <MenuItem key={index} value={category.categoryId}>{category.categoryName}</MenuItem>
             ))}
             <MenuItem key={1001} value={'unsure'}>{"unsure"}</MenuItem>
             <MenuItem key={1002} value={"All Unsure"}>{"All Unsure"}</MenuItem>
@@ -192,7 +197,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
             >
             <MenuItem key={1000} value={'All'}>{"All"}</MenuItem>
             {accounts.map((account: Account, index: any) => (
-            <MenuItem key={index} value={account.name}>{account.name}</MenuItem>
+            <MenuItem key={index} value={account.accountId}>{account.accountName}</MenuItem>
             ))}
           </Select>
           </FormControl> }
@@ -233,12 +238,17 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
                 <div className='item' style={{width: '18%', marginRight: '2%'}}>
                   <h3 className='roboto-bold'>Category:</h3>
-                  <select className='select-category' value={transaction.category} onChange={(event) => updateCategory(transaction.id, event, transaction.accountId)}>
-                      <option value="none">{transaction.category}</option>
-                      {categories.map((category: any, index: any) => (
-                        <option key={index} value={category}>{category}</option>
-                      ))}
-                    </select>
+                  <select
+                    className='select-category'
+                    value={transaction.categoryId ?? ''}
+                    onChange={(event) => updateCategory(transaction, event)}
+                  >
+                    {categories.map((category: Category, index: any) => (
+                      <option key={index} value={category.categoryId}>
+                        {category.categoryName}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className='item' style={{width: '18%'}}>
