@@ -31,7 +31,7 @@ const Dashboard: FC<DashboardProps> = () => {
   const [lineChartData, setLineChartData] = useState<any[]>([]); //graph date for accounts {date, balance}
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false); //config modal object that we use for filtering, modes, and sorting
   const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false); //payment modal object that we use for stripe payments
-  // const stripeService = StripeService();
+  const stripeService = StripeService();
 
   //FILTERS:
   const [dateScale, setDateScale] = useState<any>('day');
@@ -50,11 +50,11 @@ const Dashboard: FC<DashboardProps> = () => {
     }
   }, [transactions, accounts, dateScale, dashboardFilterData])
 
-  // useEffect(() => {
-  //   if (stripeService.needsSubscription) {
-  //     setShowPaymentModal(true);
-  //   }
-  // }, [stripeService.needsSubscription]);
+  useEffect(() => {
+    if (stripeService.needsSubscription) {
+      setShowPaymentModal(true);
+    }
+  }, [stripeService.needsSubscription]);
 
 
   const getDateFormat = () => {

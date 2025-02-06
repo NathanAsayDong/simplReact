@@ -4,9 +4,6 @@ import { updateUserOnboardStatus } from '../../../services/Classes/userApiServic
 import { OnboardingData, OnboardingDataObject } from '../Onboarding.context';
 import './Review.scss';
 import GeneratingAccount from '../GeneratingAccount/GeneratingAccount.tsx';
-import { OnboardingStatus } from '../../../services/Classes/classes.tsx';
-
-
 
 interface OnboardingReviewProps { handleLogin: (firebaseAuthId: string) => void; setLoading: (loading: boolean) => void; }
 

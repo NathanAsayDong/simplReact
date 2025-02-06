@@ -1,11 +1,8 @@
-import { faMinusCircle, faPlus, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+import { faMinusCircle, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FC, Key } from 'react';
 import { OnboardingData } from '../Onboarding.context';
 import './UserCategories.component.scss';
-import { DataApiService } from '../../../services/Classes/dataApiService';
-import { Category } from '../../../services/Classes/classes';
-
 
 interface UserCategoriesProps {}
 
