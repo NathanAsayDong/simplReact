@@ -26,9 +26,11 @@ export function OnboardingDataProvider({ children }: any) {
     }
 
     const fetchAccounts = async () => {
-        DataApiService.getAllAccounts().then((accounts: Account[]) => {
-            setAccounts(accounts);
-        });
+        if (!!localStorage.getItem('firebaseAuthId')) {
+            DataApiService.getAllAccounts().then((accounts: Account[]) => {
+                setAccounts(accounts);
+            });
+        }
     }
 
 

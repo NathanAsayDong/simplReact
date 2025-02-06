@@ -27,9 +27,9 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
         ]);
     }, [newAccounts]);
 
-    useEffect(() => {
-        OnboardingContext.fetchAccounts();
-    }, [open, ready]);
+    // useEffect(() => {
+    //     OnboardingContext.fetchAccounts();
+    // }, [open, ready]);
 
     const updateAccountName = (e: any, index: any) => {
         const updatedAccounts = OnboardingContext?.onboardingData?.accounts;

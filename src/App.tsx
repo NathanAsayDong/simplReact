@@ -42,17 +42,21 @@ function App() {
     },
   });
 
-  const handleLogin = async () => {
-    const firebaseAuthId = localStorage.getItem('firebaseAuthId');
-    if (firebaseAuthId) {
+  const handleLogin = async (firebaseAuthId: string) => {
+    if (firebaseAuthId && firebaseAuthId !== '') {
       const status = await getUserOnboardStatus(firebaseAuthId);
       if (status === OnboardingStatus.COMPLETE) {
         setOnboardingCompleted(true);
       } else {
         setOnboardingCompleted(false);
       }
+      localStorage.setItem('firebaseAuthId', firebaseAuthId);
+      setIsLoggedIn(true);
     }
-    setIsLoggedIn(true);
+    else {
+      setIsLoggedIn(false);
+      setOnboardingCompleted(false);
+    }
   };
 
   const handleLogout = () => {

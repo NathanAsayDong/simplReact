@@ -74,7 +74,9 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-        <AddCategoryModal onClose={onCloseModal} onUpload={addCategory}/>
+        <div>
+          <AddCategoryModal onClose={onCloseModal} onUpload={addCategory}/>
+        </div>
       </Modal>
     </>
   );

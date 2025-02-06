@@ -16,8 +16,11 @@ export const generateLinkToken = async () => {
     const extension = "plaid/create-link-token";
     const url = __API_URL__ + extension;
 
+    const firebaseAuthId = localStorage.getItem('firebaseAuthId');
+    const urlWithParams = url + "?firebaseAuthId=" + firebaseAuthId;
+
     try {
-        const response = await fetch(url, {
+        const response = await fetch(urlWithParams, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -106,9 +109,7 @@ const PlaidService = () => {
     const onEvent = useCallback<PlaidLinkOnEvent>(
         (eventName: PlaidLinkStableEvent | string, metadata: PlaidLinkOnEventMetadata) => {
             console.log('event', eventName, metadata);
-        },
-        []
-    );
+    }, []);
 
     useEffect(() => {
         const fetchLinkToken = async () => {

@@ -4,7 +4,7 @@ import { attemptCreateAccount, attemptLogin } from '../../services/Classes/userA
 import './Login.component.scss';
 
 interface LoginProps {
-   handleLogin: () => void;
+   handleLogin: (firebaseAuthId: string) => void;
 }
 
 const Login: FC<LoginProps> = ({ handleLogin }) => {
@@ -47,7 +47,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       if (success) {
          localStorage.setItem('firebaseAuthId', success.firebaseAuthId);
          setLoading(false);
-         handleLogin();
+         handleLogin(success.firebaseAuthId);
          navigate('/onboarding');
       } else {
          setLoading(false);
@@ -69,8 +69,8 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       }
       const success = await attemptCreateAccount(email, password);
       if (success) {
-         localStorage.setItem('firebaseAuthId', success.authToken);
-         handleLogin();
+         await localStorage.setItem('firebaseAuthId', success.authToken);
+         handleLogin(success.firebaseAuthId);
          navigate('/onboarding');
       }
    }

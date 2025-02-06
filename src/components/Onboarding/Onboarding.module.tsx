@@ -8,7 +8,7 @@ import { OnboardingDataProvider } from './Onboarding.context';
 import './Onboarding.scss';
 import UserAccounts from './UserAccounts/UserAccounts';
 
-interface OnboardingProps { handleLogin: () => void; }
+interface OnboardingProps { handleLogin: (firebaseAuthId: string) => void; }
 
 const Onboarding: FC<OnboardingProps> = ({ handleLogin }) =>  {
     const [swiperRef, setSwiperRef] = useState<any>(null);
@@ -24,7 +24,7 @@ const Onboarding: FC<OnboardingProps> = ({ handleLogin }) =>  {
 
     const returnToLogin = () => {
         localStorage.removeItem('firebaseAuthId');
-        handleLogin();
+        handleLogin('');
         window.location.reload();
     }
 

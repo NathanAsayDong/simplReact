@@ -8,7 +8,7 @@ import { OnboardingStatus } from '../../../services/Classes/classes.tsx';
 
 
 
-interface OnboardingReviewProps { handleLogin: () => void; setLoading: (loading: boolean) => void; }
+interface OnboardingReviewProps { handleLogin: (firebaseAuthId: string) => void; setLoading: (loading: boolean) => void; }
 
 const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (props, ref) => {
     const onboardingData: OnboardingDataObject = OnboardingData().onboardingData;
@@ -58,7 +58,7 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
             setLoading(false);
             setSettingUpAccount(false);
             setProgress(0);
-            handleLogin();
+            handleLogin('');
         }
         catch (e) {
             console.error(e);
