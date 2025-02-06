@@ -1,0 +1,57 @@
+.add-category-modal {
+    transform: translate(-50%, -50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 35%;
+    min-width: 295px;
+
+    height: 15%;
+    max-height: 550px;
+
+    background: white;
+    border-radius: var(--border-radius);
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+
+    .button-row {
+        display: flex;
+        justify-content: space-evenly;
+        width: 100%;
+    }
+
+    .cancel-button {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 5px 10px;
+        transition: all 0.3s ease;
+        width: 80px;
+        height: 40px;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    .add-button {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 5px 10px;
+        transition: all 0.3s ease;
+        width: 80px;
+        height: 40px;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}

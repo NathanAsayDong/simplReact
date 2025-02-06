@@ -112,12 +112,12 @@ export class DataApiService {
         }
     }
 
-    public static updateAccount = async (account: Account) => {
+    public static updateAccountName = async (account: Account) => {
         try {
             const firebaseAuthId = localStorage.getItem('firebaseAuthId');
             if (!firebaseAuthId) throw new Error('User ID is missing in local storage.');
 
-            const url = baseUrl + 'update-account' + '?firebaseAuthId=' + firebaseAuthId;
+            const url = baseUrl + 'update-account-name' + '?firebaseAuthId=' + firebaseAuthId;
 
             const response = await fetch(url, {
                 method: 'POST',

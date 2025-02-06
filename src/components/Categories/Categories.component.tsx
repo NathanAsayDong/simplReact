@@ -1,10 +1,12 @@
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { DataApiService } from '../../services/Classes/dataApiService';
-import { SetUserCategoryData, UserCategoriesData } from '../../services/Classes/dataContext';
+import { InitializeDataForContext, SetUserCategoryData, UserCategoriesData } from '../../services/Classes/dataContext';
 import './Categories.component.scss';
 import { Category } from '../../services/Classes/classes';
+import Modal from '@mui/material/Modal';
+import { AddCategoryModal } from '../../modals/addCategoryModal/addCategoryModal';
 
 
 interface CategoryManagementProps {}
@@ -12,20 +14,22 @@ interface CategoryManagementProps {}
 const CategoryManagement: FC<CategoryManagementProps> = () => {
   const categories: Category[] = UserCategoriesData() || [];
   const updateCategories = SetUserCategoryData();
-  // const [newCategory, setNewCategory] = useState<string>('');
+  const refreshCategories = InitializeDataForContext().refreshCategories;
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState<boolean>(false);
 
-  // const handleCategoryChange = (e: any) => {
-  //   setNewCategory(e.target.value);
-  // }
+  const addCategory = async (categoryName: string) => {
+    await DataApiService.addCategory(categoryName);
+    await refreshCategories();
+    setShowAddCategoryModal(false);
+  }
 
-  // const addCategory = async () => {
-  //   const val = newCategory.toLowerCase().replace(/\b[a-z]/g, (letter) => letter.toUpperCase()); // Capitalize first letter and lowercase the rest
-  //   const res = await DataApiService.addCategory(val);
-  //   if (res) {
-  //     updateCategories(categories.concat(val));
-  //   }
-  //   setNewCategory('');
-  // }
+  const openModal = () => {
+    setShowAddCategoryModal(true);
+  }
+
+  const onCloseModal = () => {
+    setShowAddCategoryModal(false);
+  }
   
   const deleteCategory = async (category: Category) => {
     const res = await DataApiService.deleteCategory(category);
@@ -39,7 +43,7 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
       <div className='page hide-scroll'>
         <div className='row' style={{paddingTop: '1em'}}>
             <h3 className='page-title'>Categories</h3>
-            <button className='add-button-accounts'><FontAwesomeIcon icon={faPlus} size='lg' /></button>
+            <button className='add-button-accounts' onClick={openModal} ><FontAwesomeIcon icon={faPlus} size='lg' /></button>
         </div>
 
         <div className='container-transparent'>
@@ -63,7 +67,15 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
             )}
         </div>
       
-    </div>
+      </div>
+
+      <Modal
+          open={showAddCategoryModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+        <AddCategoryModal onClose={onCloseModal} onUpload={addCategory}/>
+      </Modal>
     </>
   );
 };

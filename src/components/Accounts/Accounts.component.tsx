@@ -56,7 +56,7 @@ const Accounts: FC<AccountsProps> = () =>  {
     updateAccounts(updatedAccounts);
     const updatedAccount = accounts.find((account: Account) => account.accountId === accountId);
     //TODO: loading
-    await DataApiService.updateAccount(updatedAccount);
+    await DataApiService.updateAccountName(updatedAccount);
     const updatedAccountNames = new Map(updatedAccountNamesMap);
     updatedAccountNames.delete(accountId);
     setUpdatedAccountNamesMap(updatedAccountNames);

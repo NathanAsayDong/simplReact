@@ -121,6 +121,13 @@ export function AppDataProvider({ children }: any){
         }
     }
 
+    const refreshCategories = async () => {
+        const response = await DataApiService.getAllCategories();
+        if (response) {
+            updateCategories(response);
+        }
+    }
+
     const initializeData = async () => {
         const firebaseAuthId = localStorage.getItem('firebaseAuthId');
         if (!firebaseAuthId) return;
@@ -142,7 +149,7 @@ export function AppDataProvider({ children }: any){
                         <SetUserAccountDataContext.Provider value={ updateAccounts }>
                             <UserCategoriesDataContext.Provider value={ userCategories }>
                                 <SetUserCategoryDataContext.Provider value={ updateCategories }>
-                                    <InitializeDataContext.Provider value={{ initializeData, loading, setLoading }}>
+                                    <InitializeDataContext.Provider value={{ initializeData, loading, setLoading, refreshCategories }}>
                                             {children}
                                     </InitializeDataContext.Provider>
                                 </SetUserCategoryDataContext.Provider>
