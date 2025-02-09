@@ -93,13 +93,13 @@ function App() {
     }
   }
 
-  // useEffect(() => {
-  //   checkLoggedIn()
-  // }, [onboardingCompleted]);
+  useEffect(() => {
+    checkLoggedIn()
+  }, [onboardingCompleted]);
 
-  // useEffect(() => {
-  //   checkOnboarding()
-  // }, [isLoggedIn])
+  useEffect(() => {
+    checkOnboarding()
+  }, [isLoggedIn])
 
   useEffect(() => {
     if (isLoggedIn && onboardingCompleted) {
