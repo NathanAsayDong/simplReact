@@ -150,10 +150,6 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     }
   }
 
-  const test = () => {
-    console.log('filters', filteredCategories, filteredAccounts, dateRanges);
-  }
-
   return (
   <>
     {loading ? <LinearProgress color="inherit" variant='determinate' value={loadingProgress} /> : null}
@@ -161,7 +157,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
     <div className='page hide-scroll'>
       <div className='container-transparent'>
         <div className='filters-row-transaction-managment' style={{gap: '5px', marginTop: '1em'}}>
-          <h3 className='page-title' style={{marginRight: 'auto'}} onClick={test}>Transactions</h3>
+          <h3 className='page-title' style={{marginRight: 'auto'}} >Transactions</h3>
 
           <FormControl sx={{ minWidth: 120 }}>
           <p className='label' style={{textAlign: 'start', margin: 0}}>Categories</p>

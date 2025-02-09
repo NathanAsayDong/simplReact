@@ -47,22 +47,9 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
         }
     }
 
-    const addTestAccount = () => {
-        // OnboardingContext?.setAccounts([
-        //     ...(OnboardingContext?.onboardingData?.accounts ?? []),
-        //     {
-        //         id: 'test',
-        //         name: 'Test Account',
-        //         source: 'Test Source',
-        //         type: 'Test Type',
-        //     }
-        // ]);
-        console.log('accounts', OnboardingContext?.onboardingData?.accounts);
-    }
-
     return (
         <>
-            <h1 className='section-title' onClick={addTestAccount}>Connect Accounts </h1>
+            <h1 className='section-title' >Connect Accounts </h1>
             <p className='section-subtitle'>Connect to all your financial insitutions so Simpl can access your financial data.</p>
             <div className='form-container hide-scroll' style={{height: 450}}>
                 <button onClick={openPlaid} className='add-account-button' style={{marginBottom: 10}}> Add Account </button>

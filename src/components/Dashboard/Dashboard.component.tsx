@@ -9,7 +9,7 @@ import { TransactionData, UserAccountsData, UserCategoriesData } from '../../ser
 import { convertNumberToCurrency, dateFormatPretty } from '../../services/Classes/formatService';
 import StripeService from '../../services/Classes/stripeApiService';
 import StripePayments from '../StripePayments/StripePayments';
-import { account_balance_for_dates, getDates, getFilteredAccounts, getFilteredTransactions, getNetValueFromAccounts } from './Dashboard.Service';
+import { account_balance_for_dates, getDatesForXAxis, getFilteredAccounts, getFilteredTransactions, getNetValueFromAccounts } from './Dashboard.Service';
 import './Dashboard.component.scss';
 import { Margin } from 'recharts/types/util/types';
 import Assistant from '../Assistant/Assistant.component';
@@ -42,11 +42,10 @@ const Dashboard: FC<DashboardProps> = () => {
       setDateScale('day');
       const filteredTransactions = getFilteredTransactions(transactions, dashboardFilterData);
       const filteredAccounts = getFilteredAccounts(accounts, dashboardFilterData);
-
       processTransactionsIntoCategories(filteredTransactions, categories);
       processTransactionsIntoAccounts(filteredTransactions, filteredAccounts);
       calculateLineChartData();
-      calculateNetValue(filteredAccounts);
+      setNetValue(getNetValueFromAccounts(accounts));
     }
   }, [transactions, accounts, dateScale, dashboardFilterData])
 
@@ -71,14 +70,14 @@ const Dashboard: FC<DashboardProps> = () => {
   };
 
   const calculateLineChartData = async () => {
-    const dates = getDates(dashboardFilterData.startDate, dateScale);
+    const dates = getDatesForXAxis(dashboardFilterData.startDate, dateScale);
     const net_value_per_day: { [date: number] : number} = {};
     for (const date of dates) {
       net_value_per_day[Number(date)] = 0;
     }
     for (const account of accounts) {
-      let balance_log = account_balance_for_dates(dates, account, transactions.filter((transaction: Transaction) => transaction.accountId === account.id));
-      if (account.type == 'checking' || account.type == 'savings') {
+      let balance_log = account_balance_for_dates(dates, account, transactions);
+      if (account.accountType == 'checking' || account.accountType == 'savings') {
         for (const date of Object.keys(balance_log)) {
           net_value_per_day[Number(date)] = Number((net_value_per_day[Number(date)] + balance_log[Number(date)]).toFixed(2));
         }
@@ -94,10 +93,6 @@ const Dashboard: FC<DashboardProps> = () => {
     }
     lineChartData.sort((a, b) => a.date - b.date);
     setLineChartData(lineChartData);
-  }
-
-  const calculateNetValue = (accounts: Account[]) => {
-    setNetValue(getNetValueFromAccounts(accounts));
   }
 
   const calculateTotalChanges = () => {
@@ -148,11 +143,10 @@ const Dashboard: FC<DashboardProps> = () => {
 
   const processTransactionsIntoAccounts = (transactions: Transaction[], accounts: Account[]) => {
     const data: any[] = [];
-    console.log('transactions', transactions);
     transactions.forEach((transaction: Transaction) => {
       let account = accounts.find((acc) => acc.accountId === transaction.accountId);
       if (!account) return;
-      const signedAmount = account.accountType === 'Credit' ? transaction.amount * -1 : transaction.amount;
+      const signedAmount = account.accountType === 'credit' ? transaction.amount * -1 : transaction.amount;
       const accountIndex = data.findIndex((d) => d.accountId === transaction.accountId);
       if (accountIndex === -1) {
         let dashboardAcc = new dashboardAccount(transaction.accountId, account.accountName, signedAmount, convertNumberToCurrency(account.refBalance || 0));
@@ -161,7 +155,6 @@ const Dashboard: FC<DashboardProps> = () => {
         data[accountIndex].netChange += signedAmount;
       }
     });
-    console.log(data);
     setAccountData(data);
   };
 
@@ -231,11 +224,11 @@ const Dashboard: FC<DashboardProps> = () => {
                 <div key={index} className='account'>
                   <div>
                     <h4 className='account-name'>{account.accountName}</h4>
-                    <p className='account-balance roboto-light'>Balance: ${account.currentBalance}</p>
+                    <p className='account-balance roboto-light'>Balance: ${account.currentBalance.toFixed(2)}</p>
                   </div>
 
                   <div className='account-net-change archivo-font'>
-                    <p className='value'>${account.netChange * -1}</p>
+                    <p className='value'>${(account.netChange * -1).toFixed(2)}</p>
                     <FontAwesomeIcon 
                       icon={faPlay} 
                       className={account.netChange < 0 ? 'green-arrow-up' : 'red-arrow-down'}

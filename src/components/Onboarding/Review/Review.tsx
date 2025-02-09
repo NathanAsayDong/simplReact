@@ -90,7 +90,7 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
                             <h2>Financial Accounts</h2>
                             {onboardingData?.accounts?.map((account: any, idx: any) => (
                                 <div className='account-row-card' key={idx}>
-                                    <input type="text" value={account.accountName} className='account-name'/>
+                                    <p className='account-name'>{account.accountName}</p>
                                     <div className='row' style={{height: 38}}>
                                         <p>Institution</p>
                                         <p className='highlight'>{account.accountSource}</p>

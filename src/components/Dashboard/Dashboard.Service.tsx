@@ -10,7 +10,7 @@ export const getDatesFromTransactions = (transactions: Transaction[], dateScale:
     return Array.from(new Set(dates));
 }
 
-export const getDates = (startDate: Date | null | undefined, dateScale: string): number[] => {
+export const getDatesForXAxis = (startDate: Date | null | undefined, dateScale: string): number[] => {
     const dates: number[] = [];
     if (!startDate) {
         return dates;
@@ -136,8 +136,7 @@ export const getRunningBalanceForAccount = async (transactions: Transaction[], a
 
 export const getMapOfDatesToAccountBalances = async (transactions: Transaction[], accounts: Account[], dateScale: string, filterData: DashboardFilterData): Promise<{ [date : number] : { [account: string] : number}}> => {
     //1) Get all the dates, scaled and in range
-    const dates = getDates(filterData.startDate, dateScale); //Gets a scaled date array from now to the end date
-    console.log(dates);
+    const dates = getDatesForXAxis(filterData.startDate, dateScale); //Gets a scaled date array from now to the end date
     //2) For each account, process a changing accoung balance as time goes on in an array
     const account_running_logs: { [key: string]: any[] } = {};
     for (const account of accounts) {
@@ -206,29 +205,26 @@ export const convertMapToRunningBalanceArray = (account_to_running_balance_map :
 }
 
 export const account_balance_for_dates = (dates: number[], account: Account, transactions: Transaction[]): { [date: number]: number } => {
-    // Sort transactions for this account using account.accountId
-    const sortedTransactions = transactions.filter((t) => t.accountId === account.accountId)
-      .sort((a, b) => a.timestamp - b.timestamp);
+    const filteredTransactions = transactions.filter((transaction) => transaction.accountId === account.accountId);
+    const sortedTransactions = filteredTransactions.sort((a, b) => a.timestamp - b.timestamp);
     let accountBalance = account.refBalance;
+
     const res: { [date: number]: number } = {};
-    
-    // Iterate from the last date to the earliest in the dates array
     for (let i = dates.length - 1; i >= 0; i--) {
-      const date = dates[i];
-      const transactionsForDate = sortedTransactions.filter((t) => t.timestamp === date);
-      transactionsForDate.forEach((transaction) => {
-        // Adjust balance based on account type (and potential sign adjustments)
+        const date = dates[i];
+        const transactionsForDate = sortedTransactions.filter((t) => t.timestamp === date);
+        transactionsForDate.forEach((transaction) => {
         if (account.accountType === "checking" || account.accountType === "savings") {
-          accountBalance -= transaction.amount;
+            accountBalance -= transaction.amount;
         } else if (account.accountType === "credit") {
-          accountBalance += transaction.amount; // Assuming credit accounts work oppositely
+            accountBalance += transaction.amount;
         }
-      });
+    });
       accountBalance = Math.round(accountBalance * 100) / 100;
-      res[date] = accountBalance;
+        res[date] = accountBalance;
     }
     return res;
-  };
+};
 
 
 

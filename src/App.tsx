@@ -19,7 +19,7 @@ import { ThemeProvider, createTheme } from '@mui/material'
 
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('firebaseAuthId') !== null)
   const [onboardingCompleted, setOnboardingCompleted] = useState(true)
   const [firebaseAuthId, setFirebaseAuthId] = useState('')
   const initContext = InitializeDataForContext().initializeData;
@@ -47,8 +47,10 @@ function App() {
       const status = await getUserOnboardStatus(firebaseAuthId);
       if (status === OnboardingStatus.COMPLETE) {
         setOnboardingCompleted(true);
+        localStorage.setItem('onboardingCompleted', 'true');
       } else {
         setOnboardingCompleted(false);
+        localStorage.removeItem('onboardingCompleted');
       }
       localStorage.setItem('firebaseAuthId', firebaseAuthId);
       setIsLoggedIn(true);
@@ -56,6 +58,7 @@ function App() {
     else {
       setIsLoggedIn(false);
       setOnboardingCompleted(false);
+      localStorage.clear();
     }
   };
 
@@ -69,8 +72,10 @@ function App() {
       const status = await getUserOnboardStatus(firebaseAuthId);
       if (status == OnboardingStatus.COMPLETE) {
         setOnboardingCompleted(true);
+        localStorage.setItem('onboardingCompleted', 'true');
       } else {
         setOnboardingCompleted(false);
+        localStorage.removeItem('onboardingCompleted');
       }
     } else {
       setOnboardingCompleted(false);
@@ -88,13 +93,13 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    checkLoggedIn()
-  }, [onboardingCompleted]);
+  // useEffect(() => {
+  //   checkLoggedIn()
+  // }, [onboardingCompleted]);
 
-  useEffect(() => {
-    checkOnboarding()
-  }, [isLoggedIn])
+  // useEffect(() => {
+  //   checkOnboarding()
+  // }, [isLoggedIn])
 
   useEffect(() => {
     if (isLoggedIn && onboardingCompleted) {

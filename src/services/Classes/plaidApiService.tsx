@@ -35,7 +35,7 @@ export const generateLinkToken = async () => {
         }
 
         const data = await response.json();
-        return data;
+        return data['link_token'];
     } catch (error) {
         console.error('Error generating link token:', error);
         throw error;
@@ -99,7 +99,6 @@ const PlaidService = () => {
     const onExit = useCallback<PlaidLinkOnExit>(
         (error: PlaidLinkError | null, metadata: PlaidLinkOnExitMetadata) => {
             if (error && error.error_code === 'INVALID_LINK_TOKEN') {
-                // Handle invalid link token
                 console.log('metadata', metadata);
             }
         },
@@ -116,14 +115,12 @@ const PlaidService = () => {
             try {
                 const token = await generateLinkToken();
                 setLinkToken(token);
-                console.log('Link token set:', token);
             } catch (error) {
                 console.error('Error generating link token:', error);
             }
         };
 
         if (!linkToken) {
-            console.log('Fetching link token');
             fetchLinkToken();
         }
     }, [linkToken]);

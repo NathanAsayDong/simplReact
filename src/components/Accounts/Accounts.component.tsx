@@ -12,14 +12,13 @@ interface AccountsProps {}
 const Accounts: FC<AccountsProps> = () =>  {
   const accounts = UserAccountsData() || [];
   const updateAccounts = SetUserAccountData();
-  const { open, ready, exit, newAccounts } = PlaidService();
+  const { open, ready, newAccounts } = PlaidService();
   const [updatedAccountNamesMap, setUpdatedAccountNamesMap] = useState<Map<number, string>>(new Map());
 
   useEffect(() => {
     const newAccountsFiltered = newAccounts.filter((newAccount: Account) => !accounts.some((account: Account) => account.accountId === newAccount.accountId));
     localStorage.removeItem('lastSync')
     updateAccounts([...accounts, ...newAccountsFiltered]);
-    console.log('exit', exit); //this is bad, i just added this so i could build
   }, [newAccounts]);
 
   const AddPlaidAccounts = async () => {
