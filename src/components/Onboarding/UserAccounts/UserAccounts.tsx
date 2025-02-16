@@ -49,27 +49,28 @@ const UserAccounts: FC<UserAccountsProps> = () =>  {
 
     return (
         <>
-            <h1 className='section-title' >Connect Accounts </h1>
-            <p className='section-subtitle'>Connect to all your financial insitutions so Simpl can access your financial data.</p>
-            <div className='form-container hide-scroll' style={{height: 450}}>
-                <button onClick={openPlaid} className='add-account-button' style={{marginBottom: 10}}> Add Account </button>
+            <div className='user-accounts'>
+                <h1 className='section-title' >Connect Accounts </h1>
+                <p className='section-subtitle'>Connect to all your financial insitutions so Simpl can access your financial data.</p>
+                <div className='form-container hide-scroll' style={{height: 450}}>
+                    <button onClick={openPlaid} className='add-account-button' style={{marginBottom: 10}}> Add Account </button>
 
-                {OnboardingContext?.onboardingData?.accounts?.map((account: any, idx: any) => (
-                    <div className='account-row-card' key={idx}>
-                        <input type="text" value={account.accountName} onChange={(e) => updateAccountName(e, idx)} className='account-name'/>
-                        <div className='row' style={{height: 38}}>
-                            <p>Institution</p>
-                            <p className='highlight'>{account.accountSource}</p>
+                    {OnboardingContext?.onboardingData?.accounts?.map((account: any, idx: any) => (
+                        <div className='account-row-card' key={idx}>
+                            <input type="text" value={account.accountName} onChange={(e) => updateAccountName(e, idx)} className='account-name'/>
+                            <div className='row' style={{height: 38}}>
+                                <p>Institution</p>
+                                <p className='highlight'>{account.accountSource}</p>
+                            </div>
+                            <div className='row' style={{height: 38}}>
+                                <p>Type</p>
+                                <p className='highlight'>{account.accountType}</p>
+                            </div>
+                            <button className='remove-account-button' onClick={() => removeAccount(account.id)}>Remove Account</button>
                         </div>
-                        <div className='row' style={{height: 38}}>
-                            <p>Type</p>
-                            <p className='highlight'>{account.accountType}</p>
-                        </div>
-                        <button className='remove-account-button' onClick={() => removeAccount(account.id)}>Remove Account</button>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-
         </>
     )
 }

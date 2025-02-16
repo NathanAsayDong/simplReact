@@ -21,19 +21,6 @@ export class Transaction {
     }
 }
 
-export class Budget {
-    id: number;
-    name: string;
-    category: string;
-    amount: number;
-    constructor(id: number, name: string, category: string, amount: number) {
-        this.id = id;
-        this.name = name;
-        this.category = category;
-        this.amount = amount;
-    }
-}
-
 export const accountSources = [
     'Uccu', 'Chase', 'Discover', 'CapitalOne', 'Venmo', 'CashApp', 'Paypal', 'Cash', 'Other'
 ];
@@ -75,6 +62,37 @@ export class Category {
         this.categoryName = categoryName;
         this.parentCategoryId = parentCategoryId;
         this.userId = userId;
+    }
+}
+
+export class Budget {
+    budgetId: number | null;
+    budgetName: string | null;
+    userId: number | null;
+    categoryIds: number[] | null;
+    amount: number | null;
+    startDate: string | null;
+    endDate: string | null;
+    description: string | null;
+    
+    constructor(
+        budgetId?: number, 
+        budgetName?: string,
+        userId?: number, 
+        categoryIds?: number[], 
+        amount?: number, 
+        startDate?: string, 
+        endDate?: string, 
+        description?: string
+    ) {
+        this.budgetId = budgetId ?? null;
+        this.budgetName = budgetName ?? null;
+        this.userId = userId ?? null;
+        this.categoryIds = categoryIds ?? null;
+        this.amount = amount ?? null;
+        this.startDate = startDate ?? null;
+        this.endDate = endDate ?? null;
+        this.description = description ?? null;
     }
 }
 

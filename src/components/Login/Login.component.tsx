@@ -14,6 +14,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
    const [viewLogin, setViewLogin] = useState(true)
    const [loading, setLoading] = useState(false)
    const loginRef = useRef<HTMLDivElement>(null);
+   const isMobile = window.innerWidth < 600;
    const createAccountRef = useRef<HTMLDivElement>(null);
    const navigate = useNavigate();
 
@@ -77,29 +78,46 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
 
    return  (
       <>
-         <div className='center-page special-background'>
-            <div className='slogan'>
-               <h1>MAKING FINANCES SIMPL.</h1>
+         <div className='login'>
+         { !isMobile &&
+            <div className='center-page special-background'>
+               <div className='slogan'>
+                  <h1>MAKING FINANCES SIMPL.</h1>
+               </div>
+               <div className='form-column'>
+                  <div className={`form-container-login login ${viewLogin ? 'show' : 'hidden'}`} ref={loginRef}>
+                     <h2 className='roboto-bold'>Login</h2>
+                     <input id='email-login' type="email" placeholder='  email' value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
+                     <input id='password-login' type="password" placeholder='  password' value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
+                     {!loading && <button onClick={login} className='login-button'> Login </button>}
+                     {loading && <button className='loading-button'> Loading </button>}
+                     <p onClick={toggleView} className='create-account-toggle'> Create Account? </p>
+                  </div>
+                  <div className={`form-container-login createAccount ${!viewLogin ? 'show' : 'hidden'}`} ref={createAccountRef}>
+                     <h2 className='roboto-bold'>Create Account</h2>
+                     <input id='email-create-account' type="email" placeholder='email' value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? createAccount() : null)} />
+                     <input id='password-create-account' type="password" placeholder='password' value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? createAccount() : null)} />
+                     <input id='confirm-password-create-account' type="password" placeholder='confirm password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? createAccount() : null)} />
+                     {!loading && <button onClick={createAccount} className='login-button'>Create Account</button>}
+                     {loading && <button className='loading-button'> Loading </button>}
+                     <p onClick={toggleView} className='create-account-toggle'> Already have an account? </p>
+                  </div>
+               </div>
             </div>
-            <div className='form-column'>
-               <div className={`form-container-login login ${viewLogin ? 'show' : 'hidden'}`} ref={loginRef}>
-                  <h2 className='roboto-bold'>Login</h2>
+         }
+         { isMobile &&
+            <div className='special-background mobile-view'>
+               <h1 className='slogan-mobile'>Simple Finances</h1>
+               <div className="white-wrapper">
+                  <h2>Welcome back</h2>
+                  <p>Log in to continue</p>
                   <input id='email-login' type="email" placeholder='  email' value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
                   <input id='password-login' type="password" placeholder='  password' value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
-                  {!loading && <button onClick={login} className='login-button'> Login </button>}
-                  {loading && <button className='loading-button'> Loading </button>}
-                  <p onClick={toggleView} className='create-account-toggle'> Create Account? </p>
-               </div>
-               <div className={`form-container-login createAccount ${!viewLogin ? 'show' : 'hidden'}`} ref={createAccountRef}>
-                  <h2 className='roboto-bold'>Create Account</h2>
-                  <input id='email-create-account' type="email" placeholder='email' value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? createAccount() : null)} />
-                  <input id='password-create-account' type="password" placeholder='password' value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? createAccount() : null)} />
-                  <input id='confirm-password-create-account' type="password" placeholder='confirm password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? createAccount() : null)} />
-                  {!loading && <button onClick={createAccount} className='login-button'>Create Account</button>}
-                  {loading && <button className='loading-button'> Loading </button>}
-                  <p onClick={toggleView} className='create-account-toggle'> Already have an account? </p>
+                  <button className='login-button-mobile' onClick={login}>Login</button>
+                  <p className='forgot-password'>Forgot your password?</p>
                </div>
             </div>
+         }
          </div>
       </>
    );

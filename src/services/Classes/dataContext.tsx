@@ -1,18 +1,20 @@
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { createContext, useContext, useState } from 'react';
-import { Account, Category, Transaction } from './classes';
+import { Account, Budget, Category, Transaction } from './classes';
 import { DataApiService } from './dataApiService';
 
 
 type TransactionDataContextType = Transaction[] | null;
 type UserAccountsDataContextType = Account[] | null;
 type UserCategoriesDataContextType = Category[] | null;
+type UserBudgetsDataContext = Budget[] | null;
 
 const CACHE_KEYS = {
     TRANSACTIONS: 'cached_transactions',
     ACCOUNTS: 'cached_accounts',
-    CATEGORIES: 'cached_categories'
+    CATEGORIES: 'cached_categories',
+    BUDGETS: 'cached_budgets'
 };
 
 const TransactionsDataContext = createContext<any>(null);
@@ -21,6 +23,8 @@ const UserAccountsDataContext = createContext<any>(null);
 const SetUserAccountDataContext = createContext<any>(null);
 const UserCategoriesDataContext = createContext<any>(null);
 const SetUserCategoryDataContext = createContext<any>(null);
+const UserBudgetsDataContext = createContext<any>(null);
+const SetUserBudgetDataContext = createContext<any>(null);
 const InitializeDataContext = createContext<any>(null);
 
 export function TransactionData() {
@@ -47,6 +51,14 @@ export function SetUserCategoryData() {
     return useContext(SetUserCategoryDataContext);
 }
 
+export function UserBudgetsData() {
+    return useContext(UserBudgetsDataContext);
+}
+
+export function SetUserBudgetData() {
+    return useContext(SetUserBudgetDataContext);
+}
+
 export function InitializeDataForContext() {
     return useContext(InitializeDataContext);
 }
@@ -55,6 +67,7 @@ export function AppDataProvider({ children }: any){
     const [transactions, setTransactions] = useState<TransactionDataContextType>(null);
     const [userAccounts, setUserAccounts] = useState<UserAccountsDataContextType>(null);
     const [userCategories, setUserCategories] = useState<UserCategoriesDataContextType>(null);
+    const [userBudgets, setUserBudgets] = useState<UserBudgetsDataContext>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
     const loadCachedData = () => {
@@ -62,10 +75,12 @@ export function AppDataProvider({ children }: any){
             const cachedTransactions = localStorage.getItem(CACHE_KEYS.TRANSACTIONS);
             const cachedAccounts = localStorage.getItem(CACHE_KEYS.ACCOUNTS);
             const cachedCategories = localStorage.getItem(CACHE_KEYS.CATEGORIES);
+            const cachedBudgets = localStorage.getItem(CACHE_KEYS.BUDGETS);
 
             if (cachedTransactions) setTransactions(JSON.parse(cachedTransactions));
             if (cachedAccounts) setUserAccounts(JSON.parse(cachedAccounts));
             if (cachedCategories) setUserCategories(JSON.parse(cachedCategories));
+            if (cachedBudgets) setUserBudgets(JSON.parse(cachedBudgets));
         } catch (error) {
             console.error('Error loading cached data:', error);
         }
@@ -84,6 +99,11 @@ export function AppDataProvider({ children }: any){
     const updateCategories = (data: UserCategoriesDataContextType) => {
         setUserCategories(data);
         if (data) localStorage.setItem(CACHE_KEYS.CATEGORIES, JSON.stringify(data));
+    }
+
+    const updateBudgets = (data: UserBudgetsDataContext) => {
+        setUserBudgets(data);
+        if (data) localStorage.setItem(CACHE_KEYS.BUDGETS, JSON.stringify(data));
     }
 
     const syncWithPlaid = async () => {
@@ -121,6 +141,15 @@ export function AppDataProvider({ children }: any){
         }
     }
 
+    const initializeBudgets = async () => {
+        if (!userBudgets) {
+            const response = await DataApiService.getAllBudgets();
+            if (response) {
+                updateBudgets(response);
+            }
+        }
+    }
+
     const refreshCategories = async () => {
         const response = await DataApiService.getAllCategories();
         if (response) {
@@ -137,6 +166,7 @@ export function AppDataProvider({ children }: any){
         await initializeTransactions();
         await initializeAccounts();
         await initializeCategories();
+        await initializeBudgets();
         setLoading(false);
     }
 

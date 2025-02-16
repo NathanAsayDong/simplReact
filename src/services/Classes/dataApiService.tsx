@@ -1,4 +1,4 @@
-import { Account, Category, Transaction } from './classes';
+import { Account, Budget, Category, Transaction } from './classes';
 
 const baseUrl = __API_URL__;
 
@@ -337,7 +337,103 @@ export class DataApiService {
             return "Looks like there was an error with the AI. Please try again later.";
         }
     }
+
+
+
+
+
+
+
+
+    // --------       BUDGETS      --------
+    public static getAllBudgets = async () => {
+        try {
+            const firebaseAuthId = localStorage.getItem('firebaseAuthId');
+            if (!firebaseAuthId) throw new Error('FirebaseAuthId is missing in local storage.');
+
+            const url = baseUrl + 'get-budgets-all' + '?firebaseAuthId=' + firebaseAuthId;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(`Failed to get budgets: ${response.status} ${response.statusText} - ${errorBody}`);
+            }
+
+            const res = await response.json();
+            // Assuming your Python endpoint returns each budget with its categoryIds field populated,
+            // simply return the resulting array.
+            console.log(res);
+            return res;
+        } catch (error) {
+            console.error('Error during getting budgets:', error);
+            throw error;
+        }
+    }
     
+    public static addBudget = async (budget: Budget): Promise<any> => {
+        try {
+            const firebaseAuthId = localStorage.getItem('firebaseAuthId');
+            if (!firebaseAuthId) throw new Error('FirebaseAuthId is missing in local storage.');
+
+            const url = baseUrl + 'add-budget' + '?firebaseAuthId=' + firebaseAuthId;
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify({
+                    request: budget,
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(`Failed to add budget: ${response.status} ${response.statusText} - ${errorBody}`);
+            }
+            const res = await response.json();
+            return res;
+        } catch (error) {
+            console.error('Error during adding budget:', error);
+            throw error;
+        }
+    }
+
+    public static deleteBudget = async (budget: any): Promise<any> => {
+        try {
+            const firebaseAuthId = localStorage.getItem('firebaseAuthId');
+            if (!firebaseAuthId) throw new Error('FirebaseAuthId is missing in local storage.');
+
+            const url = baseUrl + 'delete-budget' + '?firebaseAuthId=' + firebaseAuthId;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(budget),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(`Failed to delete budget: ${response.status} ${response.statusText} - ${errorBody}`);
+            }
+
+            const res = await response.json();
+            return res;
+        } catch (error) {
+            console.error('Error during deleting budget:', error);
+            throw error;
+        }
+    }
+
+
+
+
+
+
+
+
 
 
 

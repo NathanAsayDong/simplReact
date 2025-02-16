@@ -53,9 +53,11 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
 
                 <Link to="/accounts"><h3 className={`nav-item ${tabIsSelected('accounts') ? 'nav-item-selected' : ''}`} onClick={() => updateSelectedTab('accounts')}>Accounts</h3></Link>
 
-                <Link to="/manage-categories"><h3 className={`nav-item ${tabIsSelected('manage-categories') ? 'nav-item-selected' : ''}`} onClick={() => updateSelectedTab('manage-categories')}>Categories</h3></Link>
+                <Link to="/categories"><h3 className={`nav-item ${tabIsSelected('categories') ? 'nav-item-selected' : ''}`} onClick={() => updateSelectedTab('categories')}>Categories</h3></Link>
 
-                <Link to="/manage-transactions"><h3 className={`nav-item ${tabIsSelected('manage-transactions') ? 'nav-item-selected' : ''}`} onClick={() => updateSelectedTab('manage-transactions')}>Transactions</h3></Link>
+                <Link to="/budgets"><h3 className={`nav-item ${tabIsSelected('budgets') ? 'nav-item-selected' : ''}`} onClick={() => updateSelectedTab('budgets')}>Budgets</h3></Link>
+
+                <Link to="/transactions"><h3 className={`nav-item ${tabIsSelected('transactions') ? 'nav-item-selected' : ''}`} onClick={() => updateSelectedTab('transactions')}>Transactions</h3></Link>
 
                 <Link to="/settings"><FontAwesomeIcon icon={faUser} className={`account-icon ${tabIsSelected('settings') ? 'nav-item-selected' : ''}`} onClick={() => updateSelectedTab('settings')} /></Link>
             </div>
@@ -65,11 +67,11 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
                 <div className='dropdown'>
                     <Link to="/" className="dropdown-item"><h2>Dashboard</h2></Link>
                     <Link to="/accounts" className="dropdown-item"><h2>Accounts</h2></Link>
-                    <Link to="/manage-categories" className="dropdown-item"><h2>Categories</h2></Link>
-                    <Link to="/manage-transactions" className="dropdown-item"><h2>Transactions</h2></Link>
+                    <Link to="/categories" className="dropdown-item"><h2>Categories</h2></Link>
+                    <Link to="/budgets" className="dropdown-item"><h2>Budgets</h2></Link>
+                    <Link to="/transactions" className="dropdown-item"><h2>Transactions</h2></Link>
                 </div>
             )}
-
 
             <Modal
                 open={showUserModal}

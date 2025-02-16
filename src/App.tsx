@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import './App.scss'
 import Accounts from './components/Accounts/Accounts.component'
-import Budgets from './components/Budgets/Budgets'
+import Budgets from './components/Budgets/Budgets.component'
 import CategoryManagement from './components/Categories/Categories.component'
 import Dashboard from './components/Dashboard/Dashboard.component'
 import Login from './components/Login/Login.component'
@@ -20,8 +20,7 @@ import { ThemeProvider, createTheme } from '@mui/material'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('firebaseAuthId') !== null)
-  const [onboardingCompleted, setOnboardingCompleted] = useState(true)
-  const [firebaseAuthId, setFirebaseAuthId] = useState('')
+  const [onboardingCompleted, setOnboardingCompleted] = useState(localStorage.getItem('onboardingCompleted') === 'true')
   const initContext = InitializeDataForContext().initializeData;
 
 
@@ -64,21 +63,21 @@ function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setOnboardingCompleted(false);
     localStorage.clear();
   }
 
   const checkOnboarding = async() => {
     if (isLoggedIn) {
-      const status = await getUserOnboardStatus(firebaseAuthId);
-      if (status == OnboardingStatus.COMPLETE) {
+      const status = await localStorage.getItem('onboardingCompleted');
+      if (status === 'true') {
         setOnboardingCompleted(true);
-        localStorage.setItem('onboardingCompleted', 'true');
       } else {
         setOnboardingCompleted(false);
-        localStorage.removeItem('onboardingCompleted');
       }
     } else {
       setOnboardingCompleted(false);
+      localStorage.removeItem('onboardingCompleted');
     }
   }
 
@@ -86,7 +85,6 @@ function App() {
     const firebaseAuthId = localStorage.getItem('firebaseAuthId');
     if (firebaseAuthId !== 'undefined' && firebaseAuthId !== null && firebaseAuthId !== '' && firebaseAuthId !== undefined) {
       setIsLoggedIn(true);
-      setFirebaseAuthId(firebaseAuthId);
     }
     else {
       setIsLoggedIn(false);
@@ -124,8 +122,8 @@ function App() {
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/budgets" element={<Budgets />} />
             <Route path="/accounts" element={<Accounts />} />
-            <Route path="/manage-categories" element={<CategoryManagement />} />
-            <Route path="/manage-transactions" element={<TransactionsManagement />} />
+            <Route path="/categories" element={<CategoryManagement />} />
+            <Route path="/transactions" element={<TransactionsManagement />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="*" element={<Navigate to="/dashboard" />} />

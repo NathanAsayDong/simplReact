@@ -49,6 +49,7 @@ const OnboardingReview: ForwardRefRenderFunction<any, OnboardingReviewProps> = (
             }
             setProgress(50);
             await updateUserOnboardStatus(localStorage.getItem('firebaseAuthId') as string,  true);
+            await localStorage.setItem('onboardingCompleted', 'true');
             setProgress(75);
             await DataApiService.syncData();
             setProgress(100);

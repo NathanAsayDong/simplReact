@@ -25,8 +25,8 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   //  --------------------- FILTER DATA ---------------------
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>(transactions);
   const [dateRanges, setDateRanges] = useState<any>({startDate: dayjs().subtract(2, 'week'), endDate: dayjs()});
-  const [filteredCategories, setFilteredCategories] = useState<string[]>(['All']);
-  const [filteredAccounts, setFilteredAccounts] = useState<string[]>(['All']);
+  const [filteredCategories, setFilteredCategories] = useState<number[]>([]);
+  const [filteredAccounts, setFilteredAccounts] = useState<number[]>([]);
 
   const filterStyling = {
     border: '1px solid white',
@@ -38,17 +38,17 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   }
 
   const allUnsureSelected = () => {
-    return filteredCategories.includes('All Unsure');
+    return filteredCategories.includes(-1);
   }
 
   const getAccountName = (accountId: number) => {
     const name = accounts.find((account: Account) => account.accountId === accountId)?.accountName;
-    return name ? name : 'Unknown';
+    return name ? name : 'unsure';
   }
 
   const getTransactionCategoryName = (transaction: Transaction) : string => {
     let name = categories.find((category: Category) => category.categoryId === transaction.categoryId)?.categoryName;
-    return name ? name : 'Unknown';
+    return name ? name : 'unsure';
   }
 
   const handleStartDateSelect = (date: any) => {
@@ -64,12 +64,12 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   };
 
   useEffect(() => {
-    if (!dateRanges.startDate && !dateRanges.endDate && filteredCategories.includes('All') && filteredAccounts.includes('All')) {
+    if (!dateRanges.startDate && !dateRanges.endDate && filteredCategories.length == 0 && filteredAccounts.length == 0) {
       setFilteredTransactions(transactions);
     }
-    else if (filteredCategories.includes('All Unsure')) {
+    else if (filteredCategories[0] == -1 && filteredAccounts.length == 0) {
       let trans = transactions.filter((transaction: Transaction) => {
-        return getTransactionCategoryName(transaction).toLowerCase() == "unsure" || transaction.categoryId == null;
+        return getTransactionCategoryName(transaction).toLowerCase() == "unsure" || transaction.categoryId == null || transaction.categoryId == -1;
       });
       setFilteredTransactions(trans)
     }
@@ -77,8 +77,8 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
       let trans = transactions.filter((transaction: Transaction) => {
         return ((!dateRanges.startDate || dayjs(transaction.timestamp).isAfter(dateRanges.startDate)))
         && (!dateRanges.endDate || dayjs(transaction.timestamp).isBefore(dateRanges.endDate))
-        && (filteredCategories.includes('All') || filteredCategories.includes(getTransactionCategoryName(transaction)))
-        && ((filteredAccounts.includes('All') || filteredAccounts.includes(getAccountName(transaction.accountId))));
+        && (filteredCategories.length == 0 || filteredCategories.includes(transaction.categoryId))
+        && ((filteredAccounts.length == 0 || filteredAccounts.includes(transaction.accountId)));
       });
       setFilteredTransactions(trans)
     }
@@ -124,28 +124,25 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
   const handleFilterSelect = (event: any) => {
     if (event.target.name === 'category') {
-      if (event.target.value.length === 0 || event.target.value == null) {
-        setFilteredCategories(['All']);
-      } else if (event.target.value.includes('All') && !filteredCategories.includes('All')) {
-        setFilteredCategories(['All']);
-      } else if (event.target.value.includes('All') && filteredCategories.includes('All')) {
-        setFilteredCategories(event.target.value.filter((category: string) => category !== 'All'));
-      } else if (event.target.value.includes('All Unsure') && !filteredCategories.includes('All Unsure')) {
-          setFilteredCategories(['All Unsure']);
-          setFilteredAccounts(['All']);
-      } else {
-        setFilteredCategories(event.target.value);
+      if (!event.target.value || event.target.value.length === 0 || event.target.value.includes('All')) {
+        setFilteredCategories([]);
+      } 
+      else if (event.target.value.includes('All Unsure')) {
+        setFilteredCategories([-1]);
+        setFilteredAccounts([]);
+      } 
+      else {
+        const numericCategories = event.target.value.filter((val: any) => typeof val === 'number');
+        setFilteredCategories(numericCategories);
       }
     }
     if (event.target.name === 'account') {
-      if (event.target.value.length === 0 || event.target.value == null) {
-        setFilteredAccounts(['All']);
-      } else if (event.target.value.includes('All') && !filteredAccounts.includes('All')) {
-        setFilteredAccounts(['All']);
-      } else if (event.target.value.includes('All') && filteredAccounts.includes('All')) {
-        setFilteredAccounts(event.target.value.filter((account: string) => account !== 'All'));
-      } else {
-        setFilteredAccounts(event.target.value);
+      if (!event.target.value || event.target.value.length === 0 || event.target.value.includes('All')) {
+        setFilteredAccounts([]);
+      }
+      else {
+        const numericAccounts = event.target.value.filter((val: any) => typeof val === 'number');
+        setFilteredAccounts(numericAccounts);
       }
     }
   }
@@ -206,7 +203,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
             />
           </div> }
           { !allUnsureSelected() && <div>
-            <p className='label' style={{textAlign: 'start', margin: 0}}>Start Date:</p>
+            <p className='label' style={{textAlign: 'start', margin: 0}}>End Date:</p>
             <DatePicker
               value={dateRanges.endDate}
               onChange={handleEndDateSelect}
