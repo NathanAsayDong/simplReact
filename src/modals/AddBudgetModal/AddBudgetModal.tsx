@@ -1,6 +1,7 @@
 import { FC, useState } from "react"
 import { Budget, Category } from "../../services/Classes/classes";
 import './AddBudgetModal.scss';
+import { CircularProgress } from "@mui/material";
 
 interface AddBudgetModalProps {
     saveBudget: (budget: Budget) => void;
@@ -10,12 +11,14 @@ interface AddBudgetModalProps {
 
 const AddBudgetModal: FC<AddBudgetModalProps> = ({saveBudget, closeModal, categories}) => {
     const [newBudget, setNewBudget] = useState(new Budget());
+    const [loading, setLoading] = useState<boolean>(false);
 
     const save = () => {
         if (!newBudget.startDate || !newBudget.endDate || !newBudget.amount || !newBudget.categoryIds) {
             alert("Please fill in all fields");
             return;
         }
+        setLoading(true);
         saveBudget(newBudget);
     }
 
@@ -32,20 +35,24 @@ const AddBudgetModal: FC<AddBudgetModalProps> = ({saveBudget, closeModal, catego
         <>
             <div className="add-budget-modal">
                 <div className="row">
-                    <div className="section" style={{height: "50px", marginTop: "20px", display: "flex", alignItems: "center"}}>
-                        <h3 className="poppins" onClick={test}>Add Budget</h3>
+                    <div className="section" style={{height: "50px", marginTop: "35px", display: "flex", alignItems: "center"}}>
+                        <h3 className="poppins" onClick={test}>Create a new Budget</h3>
                     </div>
                 </div>
 
                 <div className="row">
                     <div className="section">
                         <h4 className="section-title">Budget name:</h4>
-                        <input type="text" className="poppins" onChange={(e) => setNewBudget({...newBudget, budgetName: e.target.value})} />
+                        <input type="text" className="poppins" placeholder="Enter a name here"  onChange={(e) => setNewBudget({...newBudget, budgetName: e.target.value})} />
+                    </div>
+                    <div className="section">
+                        <h4 className="section-title">Amount:</h4>
+                        <input type="number" className="poppins" min="0.00" step="1.00" onChange={(e) => setNewBudget({...newBudget, amount: parseFloat(e.target.value)})} value={newBudget.amount !== undefined ? newBudget.amount.toFixed(2) : ""}/>
                     </div>
                 </div>
 
                 <div className="row">
-                    <div className="section">
+                    <div className=" section">
                         <h4 className="section-title">Start Date:</h4>
                         <input type="date" className="poppins" onChange={(e) => setNewBudget({...newBudget, startDate: e.target.value})} />
                     </div>
@@ -57,15 +64,8 @@ const AddBudgetModal: FC<AddBudgetModalProps> = ({saveBudget, closeModal, catego
 
                 <div className="row">
                     <div className="section">
-                        <h4 className="section-title">Amount:</h4>
-                        <input type="number" className="poppins" onChange={(e) => setNewBudget({...newBudget, amount: parseInt(e.target.value)})} />
-                    </div>
-                </div>
-
-                <div className="row">
-                    <div className="section">
                         <h4 className="section-title">Categories:</h4>
-                        <div className="categories">
+                        <div className="categories hide-scroll">
                         {categories.map((category: Category) => (
                             <div
                                 key={category.categoryId}
@@ -93,7 +93,7 @@ const AddBudgetModal: FC<AddBudgetModalProps> = ({saveBudget, closeModal, catego
 
                 <div className="final-buttons">
                     <button className="cancel poppins" onClick={cancel}>Cancel</button>
-                    <button className="save poppins special-background" onClick={save}>Add Budget</button>
+                    <button className="create poppins special-background" onClick={save}>{loading ? <CircularProgress color='inherit' /> : 'Create'}</button>
                 </div>
             </div>
         </>

@@ -183,11 +183,9 @@ export class DataApiService {
             }
 
             const res = await response.json();
-            console.log(res);
             const categories = res.map((category: any) => {
                 return new Category(category.categoryId, category.categoryName, category.parentCategoryId, category.userId);
             });
-            console.log(categories);
             return categories;
         } catch (error) {
             console.error('Error during getting categories:', error);
@@ -361,9 +359,6 @@ export class DataApiService {
             }
 
             const res = await response.json();
-            // Assuming your Python endpoint returns each budget with its categoryIds field populated,
-            // simply return the resulting array.
-            console.log(res);
             return res;
         } catch (error) {
             console.error('Error during getting budgets:', error);
@@ -405,7 +400,7 @@ export class DataApiService {
             if (!firebaseAuthId) throw new Error('FirebaseAuthId is missing in local storage.');
 
             const url = baseUrl + 'delete-budget' + '?firebaseAuthId=' + firebaseAuthId;
-
+            console.log("deleting budget", budget);
             const response = await fetch(url, {
                 method: 'POST',
                 body: JSON.stringify(budget),

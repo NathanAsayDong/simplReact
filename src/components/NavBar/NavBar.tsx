@@ -12,11 +12,23 @@ interface NavBarProps {
     handleLogout: () => void;
 }
 
+const validPaths = ['dashboard', 'accounts', 'categories', 'budgets', 'transactions', 'settings'];
+
+function parseTabFromPath(): string {
+    const path = window.location.pathname;
+    const pathArray = path.split('/');
+    const page = pathArray[1];
+    if (!validPaths.includes(page)) {
+        return 'dashboard';
+    }
+    return page;
+}
+
 const NavBar: FC<NavBarProps> = ({handleLogout}) => {
     const [isMobile, setIsMobile] = useState<boolean>(false);
     const [showDropdown, setShowDropdown] = useState<boolean>(false);
     const [showUserModal, setShowUserModal] = useState<boolean>(false);
-    const [slectedTab, setSelectedTab] = useState<string>('dashboard');
+    const [selectedTab, setSelectedTab] = useState<string>(parseTabFromPath());
     const isLoading = InitializeDataForContext().loading;
 
     useEffect(() => {
@@ -34,7 +46,7 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
     }
 
     const tabIsSelected = (tabName: string) => {
-        return slectedTab.includes(tabName);
+        return selectedTab.includes(tabName);
     }
 
     return (
@@ -90,5 +102,6 @@ const NavBar: FC<NavBarProps> = ({handleLogout}) => {
 
     );
 };
+
 
 export default NavBar;

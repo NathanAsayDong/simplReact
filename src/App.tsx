@@ -16,13 +16,15 @@ import { InitializeDataForContext } from './services/Classes/dataContext'
 import { getUserOnboardStatus } from './services/Classes/userApiService'
 import { OnboardingStatus } from './services/Classes/classes'
 import { ThemeProvider, createTheme } from '@mui/material'
+import LoadingScreen from './components/LoadingScreen/LoadingScreen.component'
 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('firebaseAuthId') !== null)
   const [onboardingCompleted, setOnboardingCompleted] = useState(localStorage.getItem('onboardingCompleted') === 'true')
+  const appProcessing = InitializeDataForContext().appProcessing;
+  const [displayLoading, setDisplayLoading] = useState(false);
   const initContext = InitializeDataForContext().initializeData;
-
 
   const theme = createTheme({
     palette: {
@@ -105,10 +107,20 @@ function App() {
     }
   }, [isLoggedIn, onboardingCompleted]);
 
-  
+  useEffect(() => {
+    if(appProcessing) {
+      setDisplayLoading(true);
+    } else {
+      const timer = setTimeout(() => setDisplayLoading(false), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [appProcessing, isLoggedIn]);
+
   return (
   <ThemeProvider theme={theme}>
-  <Router>
+    {displayLoading && <LoadingScreen fadeOut={!appProcessing} />}
+    {!appProcessing &&
+    <Router>
       {!onboardingCompleted && isLoggedIn ? (
         <Routes>
           <Route path="/onboarding" element={<Onboarding handleLogin={handleLogin} />} />
@@ -137,6 +149,7 @@ function App() {
         </Routes>
       )}
     </Router>
+    }
     </ThemeProvider>
   )
 }

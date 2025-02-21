@@ -1,6 +1,6 @@
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { Account, Budget, Category, Transaction } from './classes';
 import { DataApiService } from './dataApiService';
 
@@ -8,7 +8,7 @@ import { DataApiService } from './dataApiService';
 type TransactionDataContextType = Transaction[] | null;
 type UserAccountsDataContextType = Account[] | null;
 type UserCategoriesDataContextType = Category[] | null;
-type UserBudgetsDataContext = Budget[] | null;
+type UserBudgetsDataContextType = Budget[] | null;
 
 const CACHE_KEYS = {
     TRANSACTIONS: 'cached_transactions',
@@ -24,7 +24,7 @@ const SetUserAccountDataContext = createContext<any>(null);
 const UserCategoriesDataContext = createContext<any>(null);
 const SetUserCategoryDataContext = createContext<any>(null);
 const UserBudgetsDataContext = createContext<any>(null);
-const SetUserBudgetDataContext = createContext<any>(null);
+const UserBudgetDataMethodsContext = createContext<any>(null);
 const InitializeDataContext = createContext<any>(null);
 
 export function TransactionData() {
@@ -55,8 +55,8 @@ export function UserBudgetsData() {
     return useContext(UserBudgetsDataContext);
 }
 
-export function SetUserBudgetData() {
-    return useContext(SetUserBudgetDataContext);
+export function UserBudgetDataMethods() {
+    return useContext(UserBudgetDataMethodsContext);
 }
 
 export function InitializeDataForContext() {
@@ -67,8 +67,9 @@ export function AppDataProvider({ children }: any){
     const [transactions, setTransactions] = useState<TransactionDataContextType>(null);
     const [userAccounts, setUserAccounts] = useState<UserAccountsDataContextType>(null);
     const [userCategories, setUserCategories] = useState<UserCategoriesDataContextType>(null);
-    const [userBudgets, setUserBudgets] = useState<UserBudgetsDataContext>(null);
+    const [userBudgets, setUserBudgets] = useState<UserBudgetsDataContextType>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [appProcessing, setAppProcessing] = useState<boolean>(false);
 
     const loadCachedData = () => {
         try {
@@ -101,7 +102,7 @@ export function AppDataProvider({ children }: any){
         if (data) localStorage.setItem(CACHE_KEYS.CATEGORIES, JSON.stringify(data));
     }
 
-    const updateBudgets = (data: UserBudgetsDataContext) => {
+    const updateBudgets = (data: UserBudgetsDataContextType) => {
         setUserBudgets(data);
         if (data) localStorage.setItem(CACHE_KEYS.BUDGETS, JSON.stringify(data));
     }
@@ -157,16 +158,30 @@ export function AppDataProvider({ children }: any){
         }
     }
 
+    const refreshBudgets = async () => {
+        const response = await DataApiService.getAllBudgets();
+        if (response) {
+            updateBudgets(response);
+        }
+    }
+
     const initializeData = async () => {
         const firebaseAuthId = localStorage.getItem('firebaseAuthId');
         if (!firebaseAuthId) return;
         setLoading(true);
+        const lastSync = localStorage.getItem('lastSync');
+        if (!lastSync) {
+            setAppProcessing(true);
+        } else {
+            setAppProcessing(false);
+        }
         loadCachedData();
         await syncWithPlaid();
         await initializeTransactions();
         await initializeAccounts();
         await initializeCategories();
         await initializeBudgets();
+        setAppProcessing(false);
         setLoading(false);
     }
 
@@ -179,9 +194,13 @@ export function AppDataProvider({ children }: any){
                         <SetUserAccountDataContext.Provider value={ updateAccounts }>
                             <UserCategoriesDataContext.Provider value={ userCategories }>
                                 <SetUserCategoryDataContext.Provider value={ updateCategories }>
-                                    <InitializeDataContext.Provider value={{ initializeData, loading, setLoading, refreshCategories }}>
-                                            {children}
-                                    </InitializeDataContext.Provider>
+                                    <UserBudgetsDataContext.Provider value={ userBudgets }>
+                                        <UserBudgetDataMethodsContext.Provider value={{ updateBudgets, refreshBudgets }}>
+                                            <InitializeDataContext.Provider value={{ initializeData, loading, appProcessing, setLoading, refreshCategories }}>
+                                                {children}
+                                            </InitializeDataContext.Provider>
+                                        </UserBudgetDataMethodsContext.Provider>
+                                    </UserBudgetsDataContext.Provider>
                                 </SetUserCategoryDataContext.Provider>
                             </UserCategoriesDataContext.Provider>
                         </SetUserAccountDataContext.Provider>

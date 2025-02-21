@@ -2,6 +2,7 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { attemptCreateAccount, attemptLogin } from '../../services/Classes/userApiService';
 import './Login.component.scss';
+import { CircularProgress } from '@mui/material';
 
 interface LoginProps {
    handleLogin: (firebaseAuthId: string) => void;
@@ -45,15 +46,16 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
          return;
       }
       const success = await attemptLogin(email, password);
-      if (success) {
-         localStorage.setItem('firebaseAuthId', success.firebaseAuthId);
+      setTimeout(() => {
          setLoading(false);
-         handleLogin(success.firebaseAuthId);
-         navigate('/onboarding');
-      } else {
-         setLoading(false);
-         alert('Failed to login');
-      }
+         if (success) {
+            localStorage.setItem('firebaseAuthId', success.firebaseAuthId);
+            handleLogin(success.firebaseAuthId);
+            navigate('/onboarding');
+         } else {
+            alert('Failed to login');
+         }
+      }, 2000);
    }
 
    const createAccount = async () => {
@@ -90,7 +92,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
                      <input id='email-login' type="email" placeholder='  email' value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
                      <input id='password-login' type="password" placeholder='  password' value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
                      {!loading && <button onClick={login} className='login-button'> Login </button>}
-                     {loading && <button className='loading-button'> Loading </button>}
+                     {loading && <button className='loading-button'> <CircularProgress color='inherit' /> </button>}
                      <p onClick={toggleView} className='create-account-toggle'> Create Account? </p>
                   </div>
                   <div className={`form-container-login createAccount ${!viewLogin ? 'show' : 'hidden'}`} ref={createAccountRef}>

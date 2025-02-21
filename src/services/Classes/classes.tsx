@@ -70,7 +70,7 @@ export class Budget {
     budgetName: string | null;
     userId: number | null;
     categoryIds: number[] | null;
-    amount: number | null;
+    amount: number = 0;
     startDate: string | null;
     endDate: string | null;
     description: string | null;
@@ -89,7 +89,7 @@ export class Budget {
         this.budgetName = budgetName ?? null;
         this.userId = userId ?? null;
         this.categoryIds = categoryIds ?? null;
-        this.amount = amount ?? null;
+        this.amount = amount ?? 0;
         this.startDate = startDate ?? null;
         this.endDate = endDate ?? null;
         this.description = description ?? null;

@@ -4,6 +4,7 @@
     box-shadow: var(--box-shadow);
     width: 70%;
     min-width: 386px;
+    max-width: 800px;
     height: 60%;
     min-height: 800px;
     position: absolute;
@@ -18,6 +19,7 @@
     h3 {
         margin-left: 10px;
         font-size: larger;
+        font-weight: 700;
     }
     
     .final-buttons {
@@ -46,9 +48,10 @@
             width: 100px;
             height: 40px;
             font-size: large;
+            box-shadow: var(--box-shadow);
         }
     
-        .save {
+        .create {
             background-color: var(--linear-background);
             box-shadow: var(--box-shadow);
             border: none;
@@ -56,6 +59,9 @@
             width: 200px;
             height: 40px;
             font-size: large;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     }
 
@@ -81,13 +87,16 @@
     }
 
     input {
-        width: 200px;
+        width: auto;
         height: 20px;
         border: none;
         border-radius: 20px;
         margin: 10px 10px;
         padding: 10px;
         font-size: large;
+        background: var(--secondary-linear-background);
+        color: var(--secondary-color);
+        border: 1px solid rgba(white, 0.5);
     }
     
     input[type="date"]::-webkit-calendar-picker-indicator {
@@ -102,7 +111,7 @@
         flex-wrap: wrap;
         gap: 10px;
         justify-content: center;
-        width: 98%;
+        width: auto;
         padding: 10px;
     }
 
@@ -111,6 +120,8 @@
         max-width: 150px;
         height: 70px;
         background: var(--secondary-linear-background);
+        border: none;
+        box-shadow: var(--box-shadow);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -128,5 +139,10 @@
         background: var(--primary-color);
         scale: 1.05;
         box-shadow: var(--box-shadow);
+    }
+
+    .MuiCircularProgress-root {
+        height: 24px !important;
+        width: 24px !important;
     }
 }
