@@ -14,11 +14,10 @@
 
 .account-row {
     box-shadow: var(--box-shadow);
-    border: 1px solid var(--primary-color);
     background: var(--secondary-linear-background);
     width: 100%;
-    height: 60px;
-    border-radius: 10px;
+    height: 70px;
+    border-radius: var(--border-radius);
     display: grid;
     grid-template-columns: 28% 15% 20% 32% 5%;
     align-items: center;
@@ -34,6 +33,27 @@
         padding-left: 10px;
         overflow-x: auto;
         overflow-y: hidden;
+    }
+
+    input {
+        padding: 0.5em;
+        border-radius: 7px;
+        width: 40%;
+        height: 46%;
+        font-weight: 700;
+        border: 1px solid var(--secondary-color) !important;
+        background: transparent !important;
+        color: var(--secondary-color) !important;
+    }
+    
+    .account-name-input {
+        width: 46%;
+        min-width: 100px;
+        transition: all 0.3s ease;
+        border: 1px solid var(--primary-color);
+        &:focus {
+            border: 1px solid var(--primary-color);
+        }
     }
 }
 
@@ -77,21 +97,3 @@ select {
     min-width: 182px !important;
 }
 
-input {
-    padding: 0.5em;
-    border-radius: 7px;
-    color: var(--primary-color);
-    width: 40%;
-    height: 46%;
-    font-weight: 700;
-}
-
-.account-name-input {
-    width: 46%;
-    min-width: 100px;
-    transition: all 0.3s ease;
-    border: 1px solid var(--primary-color);
-    &:focus {
-        border: 1px solid var(--primary-color);
-    }
-}

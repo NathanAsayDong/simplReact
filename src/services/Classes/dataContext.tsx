@@ -109,14 +109,23 @@ export function AppDataProvider({ children }: any){
 
     const syncWithPlaid = async () => {
         const lastSync = localStorage.getItem('lastSync');
+        console.log('Last sync:', lastSync);
         if ((lastSync && (Date.now() - parseInt(lastSync) > 86400000)) || !lastSync) {
             await DataApiService.syncData();
             localStorage.setItem('lastSync', Date.now().toString());
         }
     }
 
+    const hasRecentlySynced = () => {
+        const lastSync = localStorage.getItem('lastSync');
+        if (lastSync && (Date.now() - parseInt(lastSync) < 86400000)) {
+            return true;
+        }
+        return false;
+    }
+
     const initializeTransactions = async () => {
-        if (!transactions) {
+        if (!transactions || !hasRecentlySynced()) {
             const response = await DataApiService.getAllTransactions();
             if (response) {
                 updateTransactions(response);
@@ -125,7 +134,7 @@ export function AppDataProvider({ children }: any){
     }
 
     const initializeAccounts = async () => {
-        if (!userAccounts) {
+        if (!userAccounts || !hasRecentlySynced()) {
             const response = await DataApiService.getAllAccounts();
             if (response) {
                 updateAccounts(response);
@@ -134,7 +143,7 @@ export function AppDataProvider({ children }: any){
     }
 
     const initializeCategories = async () => {
-        if (!userCategories) {
+        if (!userCategories || !hasRecentlySynced()) {
             const response = await DataApiService.getAllCategories();
             if (response) {
                 updateCategories(response);
@@ -143,7 +152,7 @@ export function AppDataProvider({ children }: any){
     }
 
     const initializeBudgets = async () => {
-        if (!userBudgets) {
+        if (!userBudgets || !hasRecentlySynced()) {
             const response = await DataApiService.getAllBudgets();
             if (response) {
                 updateBudgets(response);
@@ -169,19 +178,21 @@ export function AppDataProvider({ children }: any){
         const firebaseAuthId = localStorage.getItem('firebaseAuthId');
         if (!firebaseAuthId) return;
         setLoading(true);
-        const lastSync = localStorage.getItem('lastSync');
+        const lastSync = await localStorage.getItem('lastSync');
+        console.log('Last sync:', lastSync);
         if (!lastSync) {
+            console.log('No last sync found, setting app processing to true');
             setAppProcessing(true);
         } else {
             setAppProcessing(false);
         }
         loadCachedData();
-        await syncWithPlaid();
-        await initializeTransactions();
-        await initializeAccounts();
-        await initializeCategories();
-        await initializeBudgets();
+        if (!transactions) await initializeTransactions();
+        if (!userAccounts) await initializeAccounts();
+        if (!userCategories) await initializeCategories();
+        if (!userBudgets) await initializeBudgets();
         setAppProcessing(false);
+        await syncWithPlaid();
         setLoading(false);
     }
 

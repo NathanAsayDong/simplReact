@@ -36,8 +36,6 @@ const Assistant: FC<AssistantProps> = () => {
 
     const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(e.target.value);
-        e.target.style.height = 'inherit';
-        e.target.style.height = `${e.target.scrollHeight}px`;
     };
 
     const requestAiResponse = async (question : string) => {
@@ -66,7 +64,7 @@ const Assistant: FC<AssistantProps> = () => {
                 </div>
                 <div className='scroll-container'>
                     {messages.map((message, index) => (
-                        <div key={index} className={`message ${message.role}`}>
+                        <div key={index} className={`message ${message.role} poppins`}>
                             {message.content}
                         </div>
                     ))}
@@ -79,10 +77,15 @@ const Assistant: FC<AssistantProps> = () => {
                         value={inputValue}
                         onChange={handleInputChange}
                         onKeyPress={handleKeyPress}
-                        placeholder='How can I help you?'
+                        placeholder='Type your message here...'
                         rows={1}
+                        className='poppins'
                     />
-                    <FontAwesomeIcon icon={faPaperPlane} className='send-message-icon' onClick={handleSendMessage} />
+                    <FontAwesomeIcon 
+                        icon={faPaperPlane} 
+                        className={`send-message-icon ${inputValue.trim() ? 'can-send' : ''}`} 
+                        onClick={handleSendMessage} 
+                    />
                 </div>
             </div>
         </Modal>

@@ -2,10 +2,11 @@ import { faFilter, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Modal } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Area, AreaChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { DashboardConfig } from '../../modals/DashboardConfig/DasboardConfig';
-import { Account, Category, DashboardFilterData, Transaction, defaultDashboardFilterData } from '../../services/Classes/classes';
-import { TransactionData, UserAccountsData, UserCategoriesData } from '../../services/Classes/dataContext';
+import { Account, Budget, Category, DashboardFilterData, Transaction, defaultDashboardFilterData } from '../../services/Classes/classes';
+import { TransactionData, UserAccountsData, UserBudgetsData, UserCategoriesData } from '../../services/Classes/dataContext';
 import { convertNumberToCurrency, dateFormatPretty } from '../../services/Classes/formatService';
 import StripeService from '../../services/Classes/stripeApiService';
 import StripePayments from '../StripePayments/StripePayments';
@@ -14,23 +15,25 @@ import './Dashboard.component.scss';
 import { Margin } from 'recharts/types/util/types';
 import Assistant from '../Assistant/Assistant.component';
 import { dashboardAccount } from '../../services/Classes/dashboardClasses';
+import { calculateBudgetPercentage, calculateRawBudgetPercentage } from '../Budgets/Budgets.service';
 
 interface DashboardProps {
   handleLogout: () => void;
 }
-
 const Dashboard: FC<DashboardProps> = () => {
+  const navigate = useNavigate();
 
   //VARIABLES:
-  const transactions = TransactionData() || []; //context transactions
-  const accounts = UserAccountsData() || []; //context accounts
-  const categories = UserCategoriesData() || []; //context categories
-  const [categoryData, setCategoryData] = useState<any[]>([]); //processed transactions into categories
-  const [accountData, setAccountData] = useState<dashboardAccount[]>([]); //processed transactions into accounts
-  const [netValue, setNetValue] = useState<number>(0); //some number we use for net value when processing transactions to accounts
-  const [lineChartData, setLineChartData] = useState<any[]>([]); //graph date for accounts {date, balance}
-  const [showConfigModal, setShowConfigModal] = useState<boolean>(false); //config modal object that we use for filtering, modes, and sorting
-  const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false); //payment modal object that we use for stripe payments
+  const transactions = TransactionData() || [];
+  const accounts = UserAccountsData() || [];
+  const categories = UserCategoriesData() || [];
+  const budgets = UserBudgetsData() || [];
+  const [categoryData, setCategoryData] = useState<any[]>([]);
+  const [accountData, setAccountData] = useState<dashboardAccount[]>([]);
+  const [netValue, setNetValue] = useState<number>(0);
+  const [lineChartData, setLineChartData] = useState<any[]>([]);
+  const [showConfigModal, setShowConfigModal] = useState<boolean>(false);
+  const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
   const stripeService = StripeService();
 
   //FILTERS:
@@ -54,6 +57,11 @@ const Dashboard: FC<DashboardProps> = () => {
       setShowPaymentModal(true);
     }
   }, [stripeService.needsSubscription]);
+
+  useEffect(() => {
+    dashboardFilterData.accountOptions = accounts;
+    dashboardFilterData.categoryOptions = categories;
+  }, [accounts, categories]);
 
 
   const getDateFormat = () => {
@@ -99,12 +107,6 @@ const Dashboard: FC<DashboardProps> = () => {
     return categoryData.reduce((acc, category) => acc + Math.abs(category.amount), 0).toFixed(2);
   }
 
-  const calculateDivHeight = (amount: number) => {
-    const total = categoryData.reduce((acc, category) => acc + Math.abs(category.amount), 0);
-    const height = (Math.abs(amount) / total) * 100;
-    return `${Math.max(height, 5)}%`;
-  }
-
   const processTransactionsIntoCategories = (transactions: Transaction[], categories: Category[]) => {
     const data: any[] = [];
     transactions.forEach((transaction: Transaction) => {
@@ -121,11 +123,6 @@ const Dashboard: FC<DashboardProps> = () => {
     });
     
     setCategoryData(data);
-    data.forEach((item) => {
-      if (!dashboardFilterData.categoryOptions.includes(item.category)) {
-        dashboardFilterData.categoryOptions.push(item.category);
-      }
-    });
   };
 
   const categoryDataToPositivesOnly = (categoryData: any[]) => {
@@ -164,6 +161,10 @@ const Dashboard: FC<DashboardProps> = () => {
     setDashboardFilterData(newFilter);
     setShowConfigModal(false);
   };
+
+  const navigateToBudgets = () => {
+    navigate('/budgets');
+  }
 
   return (
     <>
@@ -239,16 +240,24 @@ const Dashboard: FC<DashboardProps> = () => {
           </div>
 
 
-          <div className='categories-container'>
-              {categoryData.map((category, index) => (
-                <div key={index} className='category'>
-                  <div className='category-name roboto-bold'>
-                    <h4>{category.category}</h4>
+          <div className='budgets-container'>
+              {(budgets?.length == 0 || budgets == undefined) && (
+                <div className='no-budgets-message'>
+                  <h4>No Budgets</h4>
+                  <button className='create-budget roboto-light' onClick={navigateToBudgets}> Create a budget </button>
+                </div>
+              )}
+              {budgets.slice(0, 8).map((budget: Budget, index: number) => (
+                <div key={index} className='budget'>
+                  <div className='budget-name roboto-bold'>
+                    <h4>{budget.budgetName}</h4>
                   </div>
-                  <div className='category-amount archivo-font'>
-                    <p>${category.amount.toFixed(2) * -1}</p>
+                  <div className='budget-amount archivo-font'>
+                    <p>${calculateRawBudgetPercentage(budget, transactions).toFixed(2)}</p>
                   </div>
-                  <div style={{ height: calculateDivHeight(category.amount) }} className='category-budget-bar'>
+                  <div style={{ height: `${calculateBudgetPercentage(budget, transactions)}%`, maxHeight: '260px', paddingTop: '10px' }} 
+                    className='budget-budget-bar'>
+                    {calculateRawBudgetPercentage(budget, transactions).toFixed(0)}%
                   </div>
                 </div>
               ))}
@@ -262,25 +271,17 @@ const Dashboard: FC<DashboardProps> = () => {
 
       {/* --------------------------------------- CONFIG ITEMS --------------------------------------- */}
 
-      <Modal
-        open={showConfigModal}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      <Modal open={showConfigModal}>
         <div>
           <DashboardConfig filterObject={dashboardFilterData} accounts={accounts} onClose={handleCloseConfigModal} onApply={handleApplyConfigModal}/>
         </div>
       </Modal>
 
-      <Modal
-        open={showPaymentModal}
-        onClose={() => setShowPaymentModal(false)}
-      >
+      <Modal open={showPaymentModal} onClose={() => setShowPaymentModal(false)}>
         <div>
           <StripePayments />
         </div>
       </Modal>
-
 
       <Assistant />
 

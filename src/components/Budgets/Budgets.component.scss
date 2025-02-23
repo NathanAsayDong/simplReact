@@ -10,6 +10,10 @@
         min-width: 350px;
     }
 
+    .row {
+        width: 90%;
+    }
+
     .budgets-title {
         display: flex;
         width: 90%;
@@ -25,7 +29,7 @@
         gap: 20px;
         min-height: 50px;
         height: auto;
-        margin: 10px 10px;
+        margin: 20px 10px;
         border-radius: var(--border-radius);
     }
 
@@ -97,32 +101,6 @@
         .budget-percentage-usage {
             font-weight: 700;
             margin-left: 5px;
-        }
-    }
-
-
-    .add-budget-button {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 100;
-        max-width: 150px;
-        min-width: 150px;
-        height: 40px;
-        border-radius: 19px;
-        border: none;
-        box-shadow: var(--box-shadow);
-        color: white;
-        font-weight: 800;
-        transition: all 0.3s ease;
-
-        &:hover {
-            cursor: pointer;
-            scale: 1.1 !important;
-        }
-        
-        &:focus {
-            outline: none;
         }
     }
 }

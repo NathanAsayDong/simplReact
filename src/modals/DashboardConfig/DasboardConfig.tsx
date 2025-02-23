@@ -26,6 +26,10 @@ export const DashboardConfig: FC<DashboardConfigProps> = ({filterObject, account
     const lineChartModeOptions = ['netValue', 'category', 'account'];
     const pieChartModeOptions = ['category', 'account'];
 
+    const test = () => {
+        console.log(filter);
+    }
+
     const handleStartDateSelect = (date: Dayjs | null) => {
         filter.startDate = date?.toDate() || null;
     }
@@ -36,34 +40,24 @@ export const DashboardConfig: FC<DashboardConfigProps> = ({filterObject, account
 
     const handleFilterSelect = (event: any) => {
         const { name, value } = event.target;
-    
+        console.log(name, value );
         if (name === 'category') {
         if (!value || value.length === 0) {
             setFilter({ ...filter, selectedCategoryIds: [] });
-        } else if (value.includes('All') && !filter.selectedCategoryIds.includes(-1)) {
+        } else if (value.includes(-1)) {
             setFilter({ ...filter, selectedCategoryIds: [] });
-        } else if (value.includes('All') && filter.selectedCategoryIds.includes(-1)) {
-            setFilter({ ...filter, selectedCategoryIds: value.filter((category: string) => category !== 'All') });
         } else {
-            const selectedCategoryIds = filter.categoryOptions
-            .filter(category => value.includes(category.categoryName))
-            .map(category => category.categoryId);
-            setFilter({ ...filter, selectedCategoryIds });
+            setFilter({ ...filter, selectedCategoryIds: value });
         }
         }
     
         if (name === 'account') {
         if (!value || value.length === 0) {
             setFilter({ ...filter, selectedAccountIds: [] });
-        } else if (value.includes('All') && !filter.selectedAccountIds.includes(-1)) {
+        } else if (value.includes(-1)) {
             setFilter({ ...filter, selectedAccountIds: [] });
-        } else if (value.includes('All') && filter.selectedAccountIds.includes(-1)) {
-            setFilter({ ...filter, selectedAccountIds: value.filter((account: string) => account !== 'All') });
         } else {
-            const selectedAccountIds = accounts
-            .filter(account => value.includes(account.accountName))
-            .map(account => account.accountId);
-            setFilter({ ...filter, selectedAccountIds });
+            setFilter({ ...filter, selectedAccountIds: value });
         }
         }
     };
@@ -87,6 +81,7 @@ export const DashboardConfig: FC<DashboardConfigProps> = ({filterObject, account
 
     return (
         <>
+        <button onClick={test}>Test</button>
             <div className="options-box">
                 <div className="options-header archivo-font">
                     <h2 className="header">Date Ranges</h2>
@@ -123,6 +118,7 @@ export const DashboardConfig: FC<DashboardConfigProps> = ({filterObject, account
                     {filter.categoryOptions.map((category: Category, index: any) => (
                     <MenuItem key={index} value={category.categoryId}>{category.categoryName}</MenuItem>
                     ))}
+                    <MenuItem key={10000} value={-1}>All</MenuItem>
                     </Select>
                 </div>
 
@@ -143,7 +139,7 @@ export const DashboardConfig: FC<DashboardConfigProps> = ({filterObject, account
                     {filter.accountOptions.map((account: Account, index: any) => (
                     <MenuItem key={index} value={account.accountId}>{account.accountName}</MenuItem>
                     ))}
-                    <MenuItem key={10000} value={'All'}>All</MenuItem>
+                    <MenuItem key={10000} value={-1}>All</MenuItem>
                     </Select>
                 </div>
 

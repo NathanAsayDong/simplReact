@@ -7,6 +7,7 @@ import './Categories.component.scss';
 import { Category } from '../../services/Classes/classes';
 import Modal from '@mui/material/Modal';
 import { AddCategoryModal } from '../../modals/addCategoryModal/addCategoryModal';
+import ConfirmModal from '../../modals/ConfirmModal/ConfirmModal';
 
 
 interface CategoryManagementProps {}
@@ -16,6 +17,8 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
   const updateCategories = SetUserCategoryData();
   const refreshCategories = InitializeDataForContext().refreshCategories;
   const [showAddCategoryModal, setShowAddCategoryModal] = useState<boolean>(false);
+  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
   const addCategory = async (categoryName: string) => {
     await DataApiService.addCategory(categoryName);
@@ -30,12 +33,22 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
   const onCloseModal = () => {
     setShowAddCategoryModal(false);
   }
+
+  const requestDeleteCategory = (category: Category) => {
+    setSelectedCategory(category);
+    setShowConfirmModal(true);
+  }
   
-  const deleteCategory = async (category: Category) => {
-    const res = await DataApiService.deleteCategory(category);
+  const deleteCategory = async () => {
+    if (!selectedCategory) {
+      setShowConfirmModal(false);
+      return;
+    };
+    const res = await DataApiService.deleteCategory(selectedCategory);
     if (res) {
-      updateCategories(categories.filter((cat: Category) => cat.categoryId !== category.categoryId));
+      updateCategories(categories.filter((cat: Category) => cat.categoryId !== selectedCategory.categoryId));
     }
+    setShowConfirmModal(false);
   }
 
   return (
@@ -59,8 +72,8 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
                   </div>
 
 
-                  <div className='item' style={{marginRight: '5%', marginLeft: 'auto'}}>
-                    <FontAwesomeIcon icon={faTrash} className='trash-icon' onClick={() => deleteCategory(category)}/>
+                  <div className='item' style={{marginRight: '3%', marginLeft: 'auto'}}>
+                    <FontAwesomeIcon icon={faTrash} className='trash-icon' onClick={() => requestDeleteCategory(category)}/>
                   </div>
                 </div>
               ))
@@ -69,14 +82,18 @@ const CategoryManagement: FC<CategoryManagementProps> = () => {
       
       </div>
 
-      <Modal
-          open={showAddCategoryModal}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
+      <Modal open={showAddCategoryModal}>
         <div>
           <AddCategoryModal onClose={onCloseModal} onUpload={addCategory}/>
         </div>
+      </Modal>
+
+      <Modal open={showConfirmModal} onClose={() => {setShowConfirmModal(false)}}>
+          <div>
+              <ConfirmModal prompt="Are you sure you want to delete this category?"
+              onCancel={() => {setShowConfirmModal(false)}}
+              onConfirm={() => {deleteCategory()}}/>
+          </div>
       </Modal>
     </>
   );

@@ -6,8 +6,9 @@ import { Modal } from "@mui/material";
 import AddBudgetModal from "../../modals/AddBudgetModal/AddBudgetModal";
 import { DataApiService } from "../../services/Classes/dataApiService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faPlus } from "@fortawesome/free-solid-svg-icons";
 import ConfirmModal from "../../modals/ConfirmModal/ConfirmModal";
+import { calculateBudgetPercentage, calculateRawBudgetPercentage, getBudgetTotalSpend } from "./Budgets.service";
 
 interface BudgetsProps {}
 
@@ -39,46 +40,13 @@ const Budgets: FC<BudgetsProps> = () => {
         }
     }
 
-    const calculateBudgetPercentage = (budget: Budget) => {
-        const total = budget.amount;
-        const totalSpent = getBudgetTotalSpend(budget);
-        let percentage = (totalSpent / total);
-        if (isNaN(percentage)) {
-            percentage = 0;
-        }
-        if (percentage > 1) {
-            percentage = 1;
-        }
-        return percentage * 100;
-    }
-
-    const calculateRawBudgetPercentage = (budget: Budget) => {
-        const total = budget.amount;
-        const totalSpent = getBudgetTotalSpend(budget);
-        let percentage = (totalSpent / total);
-        if (isNaN(percentage)) {
-            percentage = 0;
-        }
-        return percentage * 100;
-    }
-
-    const getBudgetTotalSpend = (budget: Budget) => {
-        const filteredTransactions = transactions.filter((transaction: Transaction) => budget.categoryIds?.includes(transaction.categoryId));
-        return filteredTransactions.reduce((acc: number, transaction: Transaction) => acc + transaction.amount, 0);
-    }
-
-    const test = () => {
-        console.log(budgets);
-    }
-
-    // const moreOptions = () => {
-
-    // }
-
     return (
         <>
             <div className="budgets-page hide-scroll">
-                <h3 onClick={test} className="page-title budgets-title"> Budgets </h3>
+                <div className='row' style={{paddingTop: '1em'}}>
+                    <h3 className='page-title'>Budgets</h3>
+                    <button className='add-button-accounts' onClick={() => setShowAddBudgetModal(true)} ><FontAwesomeIcon icon={faPlus} size='lg' /></button>
+                </div>
 
                 {budgets.length === 0 && (
                         <p>No budgets found</p>
@@ -97,17 +65,15 @@ const Budgets: FC<BudgetsProps> = () => {
                                 <FontAwesomeIcon icon={faEllipsis} className="more-icon" onClick={() => requestDeleteBudget(budget)} />
 
                                 <div className="budget-bar-container">
-                                    <div className="budget-bar" style={{width: `${calculateBudgetPercentage(budget)}%`}}>
-                                        <p className="budget-usage">{calculateRawBudgetPercentage(budget).toFixed(0)}%</p>
+                                    <div className="budget-bar" style={{width: `${calculateBudgetPercentage(budget, transactions)}%`}}>
+                                        <p className="budget-usage">{calculateRawBudgetPercentage(budget, transactions).toFixed(0)}%</p>
                                     </div>
-                                    <p className="budget-usage">${getBudgetTotalSpend(budget).toFixed(2)}</p>
+                                    <p className="budget-usage">${getBudgetTotalSpend(budget, transactions).toFixed(2)}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
                 )}
-
-                <button className="add-budget-button special-background" onClick={() => setShowAddBudgetModal(true)}>Add budget</button>
             </div>
 
 

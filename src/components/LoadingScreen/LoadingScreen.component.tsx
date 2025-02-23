@@ -6,7 +6,7 @@ interface LoadingScreenProps {
 
 const LoadingScreen = ({ fadeOut = false }: LoadingScreenProps) => {
     return (
-        <div className={`loading-container${fadeOut ? " fade-out" : ""} special-background`}>
+        <div className={`loading-container${fadeOut ? " fade-out" : ""} special-background-animated`}>
             <div className="simpl-fade poppins">
                 Simpl
             </div>

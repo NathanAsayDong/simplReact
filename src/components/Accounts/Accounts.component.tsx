@@ -6,6 +6,8 @@ import { DataApiService } from '../../services/Classes/dataApiService';
 import { SetUserAccountData, UserAccountsData } from '../../services/Classes/dataContext';
 import PlaidService from '../../services/Classes/plaidApiService';
 import './Accounts.component.scss';
+import { Modal } from '@mui/material';
+import ConfirmModal from '../../modals/ConfirmModal/ConfirmModal';
 
 interface AccountsProps {}
 
@@ -14,6 +16,8 @@ const Accounts: FC<AccountsProps> = () =>  {
   const updateAccounts = SetUserAccountData();
   const { open, ready, newAccounts } = PlaidService();
   const [updatedAccountNamesMap, setUpdatedAccountNamesMap] = useState<Map<number, string>>(new Map());
+  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+  const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
 
   useEffect(() => {
     const newAccountsFiltered = newAccounts.filter((newAccount: Account) => !accounts.some((account: Account) => account.accountId === newAccount.accountId));
@@ -29,9 +33,15 @@ const Accounts: FC<AccountsProps> = () =>  {
       }
   }
 
-  const deleteAccount = async (account: Account) => {
-    DataApiService.deleteAccount(account);
-    updateAccounts(accounts.filter((acc: Account) => acc !== account));
+  const requestDeleteAccount = (account: Account) => {
+    setSelectedAccount(account);
+    setShowConfirmModal(true);
+  }
+
+  const deleteAccount = async () => {
+    if (!selectedAccount) return;
+    DataApiService.deleteAccount(selectedAccount);
+    updateAccounts(accounts.filter((acc: Account) => acc !== selectedAccount));
   }
 
   const updateAccountName = (accountId: number, name: string) => {
@@ -54,7 +64,6 @@ const Accounts: FC<AccountsProps> = () =>  {
     });
     updateAccounts(updatedAccounts);
     const updatedAccount = accounts.find((account: Account) => account.accountId === accountId);
-    //TODO: loading
     await DataApiService.updateAccountName(updatedAccount);
     const updatedAccountNames = new Map(updatedAccountNamesMap);
     updatedAccountNames.delete(accountId);
@@ -107,7 +116,7 @@ const Accounts: FC<AccountsProps> = () =>  {
 
                   {!canSave(account.accountId) && (
                     <div className='item hide-scroll' style={{marginRight: '8%'}}>
-                      <FontAwesomeIcon icon={faTrash} className='trash-icon' onClick={() => deleteAccount(account)}/>
+                      <FontAwesomeIcon icon={faTrash} className='trash-icon' onClick={() => requestDeleteAccount(account)}/>
                     </div>
                   )}
 
@@ -122,8 +131,15 @@ const Accounts: FC<AccountsProps> = () =>  {
               ))
             )}
         </div>
-        
       </div>
+
+      <Modal open={showConfirmModal} onClose={() => {setShowConfirmModal(false)}}>
+          <div>
+              <ConfirmModal prompt="Are you sure you want to delete this account?"
+              onCancel={() => {setShowConfirmModal(false)}}
+              onConfirm={() => {deleteAccount()}}/>
+          </div>
+      </Modal>
 
     </>
   );

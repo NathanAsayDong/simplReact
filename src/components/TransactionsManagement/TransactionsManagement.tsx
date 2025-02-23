@@ -29,9 +29,8 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   const [filteredAccounts, setFilteredAccounts] = useState<number[]>([]);
 
   const filterStyling = {
-    border: '1px solid white',
-    borderRadius: '5px',
-    color: 'white',
+    borderRadius: '10px',
+    color: 'black',
     padding: '0px',
     width : '100%',
     height: '31px'
@@ -43,11 +42,6 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
   const getAccountName = (accountId: number) => {
     const name = accounts.find((account: Account) => account.accountId === accountId)?.accountName;
-    return name ? name : 'unsure';
-  }
-
-  const getTransactionCategoryName = (transaction: Transaction) : string => {
-    let name = categories.find((category: Category) => category.categoryId === transaction.categoryId)?.categoryName;
     return name ? name : 'unsure';
   }
 
@@ -64,23 +58,32 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   };
 
   useEffect(() => {
-    if (!dateRanges.startDate && !dateRanges.endDate && filteredCategories.length == 0 && filteredAccounts.length == 0) {
+    // If no filters applied, show all transactions
+    if (
+      (!dateRanges.startDate && !dateRanges.endDate) &&
+      filteredCategories.length === 0 &&
+      filteredAccounts.length === 0
+    ) {
       setFilteredTransactions(transactions);
     }
-    else if (filteredCategories[0] == -1 && filteredAccounts.length == 0) {
-      let trans = transactions.filter((transaction: Transaction) => {
-        return getTransactionCategoryName(transaction).toLowerCase() == "unsure" || transaction.categoryId == null || transaction.categoryId == -1;
+    // If "All Unsure" is selected (-1 is in filter), filter transactions with no proper category
+    else if (filteredCategories.includes(-1)) {
+      const trans = transactions.filter((transaction: Transaction) => {
+        return transaction.categoryId === -1 || transaction.categoryId == null;
       });
-      setFilteredTransactions(trans)
+      setFilteredTransactions(trans);
     }
+    // Otherwise apply date, category and account filters
     else {
-      let trans = transactions.filter((transaction: Transaction) => {
-        return ((!dateRanges.startDate || dayjs(transaction.timestamp).isAfter(dateRanges.startDate)))
-        && (!dateRanges.endDate || dayjs(transaction.timestamp).isBefore(dateRanges.endDate))
-        && (filteredCategories.length == 0 || filteredCategories.includes(transaction.categoryId))
-        && ((filteredAccounts.length == 0 || filteredAccounts.includes(transaction.accountId)));
+      const trans = transactions.filter((transaction: Transaction) => {
+        return (
+          (!dateRanges.startDate || dayjs(transaction.timestamp).isAfter(dateRanges.startDate)) &&
+          (!dateRanges.endDate || dayjs(transaction.timestamp).isBefore(dateRanges.endDate)) &&
+          (filteredCategories.length === 0 || filteredCategories.includes(transaction.categoryId)) &&
+          (filteredAccounts.length === 0 || filteredAccounts.includes(transaction.accountId))
+        );
       });
-      setFilteredTransactions(trans)
+      setFilteredTransactions(trans);
     }
   }, [dateRanges, transactions, filteredCategories, filteredAccounts]);
 
@@ -124,23 +127,18 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
 
   const handleFilterSelect = (event: any) => {
     if (event.target.name === 'category') {
-      if (!event.target.value || event.target.value.length === 0 || event.target.value.includes('All')) {
+      if (!event.target.value || event.target.value.length === 0) {
         setFilteredCategories([]);
-      } 
-      else if (event.target.value.includes('All Unsure')) {
-        setFilteredCategories([-1]);
-        setFilteredAccounts([]);
-      } 
-      else {
+      } else {
+        // Only use numeric values (including -1 for unsure)
         const numericCategories = event.target.value.filter((val: any) => typeof val === 'number');
         setFilteredCategories(numericCategories);
       }
     }
     if (event.target.name === 'account') {
-      if (!event.target.value || event.target.value.length === 0 || event.target.value.includes('All')) {
+      if (!event.target.value || event.target.value.length === 0) {
         setFilteredAccounts([]);
-      }
-      else {
+      } else {
         const numericAccounts = event.target.value.filter((val: any) => typeof val === 'number');
         setFilteredAccounts(numericAccounts);
       }
@@ -151,7 +149,7 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
   <>
     {loading ? <LinearProgress color="inherit" variant='determinate' value={loadingProgress} /> : null}
     
-    <div className='page hide-scroll'>
+    <div className='page hide-scroll transactions-page'>
       <div className='container-transparent'>
         <div className='filters-row-transaction-managment' style={{gap: '5px', marginTop: '1em'}}>
           <h3 className='page-title' style={{marginRight: 'auto'}} >Transactions</h3>
@@ -167,13 +165,14 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
               onChange={handleFilterSelect}
               sx={filterStyling}
               multiple
+              renderValue={(selected: any) =>
+                selected.length === 0 ? "All" : selected.join(', ')
+              }
             >
-            <MenuItem key={1000} value={'All'}>{"All"}</MenuItem>
             {categories.map((category: Category, index: any) => (
             <MenuItem key={index} value={category.categoryId}>{category.categoryName}</MenuItem>
             ))}
-            <MenuItem key={1001} value={'unsure'}>{"unsure"}</MenuItem>
-            <MenuItem key={1002} value={"All Unsure"}>{"All Unsure"}</MenuItem>
+            <MenuItem key={1002} value={-1}>{"All Unsure"}</MenuItem>
           </Select>
           </FormControl>
           { !allUnsureSelected() && <FormControl sx={{ minWidth: 120 }}>
@@ -187,8 +186,10 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
             onChange={handleFilterSelect}
             sx={filterStyling}
             multiple
+            renderValue={(selected: any) =>
+              selected.length === 0 ? "All" : selected.join(', ')
+            }
             >
-            <MenuItem key={1000} value={'All'}>{"All"}</MenuItem>
             {accounts.map((account: Account, index: any) => (
             <MenuItem key={index} value={account.accountId}>{account.accountName}</MenuItem>
             ))}
@@ -233,9 +234,10 @@ const TransactionsManagement: FC<TransactionsManagementProps> = () => {
                   <h3 className='roboto-bold'>Category:</h3>
                   <select
                     className='select-category'
-                    value={transaction.categoryId ?? ''}
+                    value={transaction.categoryId != null ? transaction.categoryId : -1} // updated default value
                     onChange={(event) => updateCategory(transaction, event)}
                   >
+                    <option value={-1}>Unsure</option> {/* added default Unsure option */}
                     {categories.map((category: Category, index: any) => (
                       <option key={index} value={category.categoryId}>
                         {category.categoryName}
