@@ -14,7 +14,7 @@ interface DashboardConfigProps {
 
 export const DashboardConfig: FC<DashboardConfigProps> = ({filterObject, accounts, onClose, onApply}) => {
     const [filter, setFilter] = useState<DashboardFilterData>({ ...filterObject });
-
+    console.log(accounts)
     const filterStyling = {
         border: '1px solid white',
         borderRadius: '5px',

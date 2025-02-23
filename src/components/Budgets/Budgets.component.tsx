@@ -1,6 +1,6 @@
 import { FC, useState } from "react"
 import { TransactionData, UserBudgetDataMethods, UserBudgetsData, UserCategoriesData } from "../../services/Classes/dataContext";
-import { Budget, Category, Transaction } from "../../services/Classes/classes";
+import { Budget, Category } from "../../services/Classes/classes";
 import './Budgets.component.scss';
 import { Modal } from "@mui/material";
 import AddBudgetModal from "../../modals/AddBudgetModal/AddBudgetModal";
