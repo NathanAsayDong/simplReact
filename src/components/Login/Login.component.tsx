@@ -96,6 +96,13 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
                      <p onClick={toggleView} className='create-account-toggle'> Create Account? </p>
                   </div>
                   <div className={`form-container-login createAccount ${!viewLogin ? 'show' : 'hidden'}`} ref={createAccountRef}>
+                     <h2 className='roboto-bold'>Coming Soon</h2>
+                     <p style={{ margin: '20px 0', textAlign: 'center' }}>
+                        Simpl is under development and launches May 17, 2025
+                     </p>
+                     <p onClick={toggleView} className='create-account-toggle'> Back to Login </p>
+                     
+                     {/* Commented out create account functionality
                      <h2 className='roboto-bold'>Create Account</h2>
                      <input id='email-create-account' type="email" placeholder='email' value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? createAccount() : null)} />
                      <input id='password-create-account' type="password" placeholder='password' value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? createAccount() : null)} />
@@ -103,6 +110,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
                      {!loading && <button onClick={createAccount} className='login-button'>Create Account</button>}
                      {loading && <button className='loading-button'> Loading </button>}
                      <p onClick={toggleView} className='create-account-toggle'> Already have an account? </p>
+                     */}
                   </div>
                </div>
             </div>
@@ -110,14 +118,25 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
          { isMobile &&
             <div className='special-background mobile-view'>
                <h1 className='slogan-mobile'>Simple Finances</h1>
-               <div className="white-wrapper">
-                  <h2>Welcome back</h2>
-                  <p>Log in to continue</p>
-                  <input id='email-login' type="email" placeholder='  email' value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
-                  <input id='password-login' type="password" placeholder='  password' value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
-                  <button className='login-button-mobile' onClick={login}>Login</button>
-                  <p className='forgot-password'>Forgot your password?</p>
-               </div>
+               {viewLogin ? (
+                  <div className="white-wrapper">
+                     <h2>Welcome back</h2>
+                     <p>Log in to continue</p>
+                     <input id='email-login' type="email" placeholder='  email' value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
+                     <input id='password-login' type="password" placeholder='  password' value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? login() : null)} />
+                     <button className='login-button-mobile' onClick={login}>Login</button>
+                     <p className='forgot-password'>Forgot your password?</p>
+                     <p onClick={toggleView} className='create-account-toggle'> Create Account? </p>
+                  </div>
+               ) : (
+                  <div className="white-wrapper">
+                     <h2>Coming Soon</h2>
+                     <p style={{ margin: '20px 0', textAlign: 'center' }}>
+                        Simpl is under development and launches May 17, 2025
+                     </p>
+                     <p onClick={toggleView} className='create-account-toggle'> Back to Login </p>
+                  </div>
+               )}
             </div>
          }
          </div>
