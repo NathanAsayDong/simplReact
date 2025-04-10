@@ -11,7 +11,7 @@ interface LoginProps {
 const Login: FC<LoginProps> = ({ handleLogin }) => {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
-   const [confirmPassword, setConfirmPassword] = useState('')
+   // const [confirmPassword, setConfirmPassword] = useState('')
    const [viewLogin, setViewLogin] = useState(true)
    const [loading, setLoading] = useState(false)
    const loginRef = useRef<HTMLDivElement>(null);
@@ -31,7 +31,7 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       setTimeout(() => {
          setEmail('');
          setPassword('');
-         setConfirmPassword('');
+         // setConfirmPassword('');
       }, 500);
    };
    
@@ -58,25 +58,25 @@ const Login: FC<LoginProps> = ({ handleLogin }) => {
       }, 2000);
    }
 
-   const createAccount = async () => {
-      if (email === '' || password === '') {
-         alert('Email and password cannot be empty');
-         return;
-      }
-      if (!email.includes('@') || !email.includes('.')) {
-         alert('Invalid email');
-         return;
-      }
-      if (password !== confirmPassword) {
-         alert("passwords must match")
-      }
-      const success = await attemptCreateAccount(email, password);
-      if (success) {
-         await localStorage.setItem('firebaseAuthId', success.authToken);
-         handleLogin(success.firebaseAuthId);
-         navigate('/onboarding');
-      }
-   }
+   // const createAccount = async () => {
+   //    if (email === '' || password === '') {
+   //       alert('Email and password cannot be empty');
+   //       return;
+   //    }
+   //    if (!email.includes('@') || !email.includes('.')) {
+   //       alert('Invalid email');
+   //       return;
+   //    }
+   //    if (password !== confirmPassword) {
+   //       alert("passwords must match")
+   //    }
+   //    const success = await attemptCreateAccount(email, password);
+   //    if (success) {
+   //       await localStorage.setItem('firebaseAuthId', success.authToken);
+   //       handleLogin(success.firebaseAuthId);
+   //       navigate('/onboarding');
+   //    }
+   // }
 
    return  (
       <>
