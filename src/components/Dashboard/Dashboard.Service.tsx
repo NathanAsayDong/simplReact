@@ -113,26 +113,26 @@ export const getNetValueFromAccounts = (accounts: Account[]): number => {
 export const getRunningBalanceForAccount = async (transactions: Transaction[], account: Account) => {
     // Use account.accountId instead of account.id
     const accountTransactions = transactions
-      .filter((transaction) => transaction.accountId === account.accountId)
+        .filter((transaction) => transaction.accountId === account.accountId)
       .sort((a, b) => b.timestamp - a.timestamp); // most recent to least recent
     const data: any[] = [];
     let accountBalance = account.refBalance;
     for (let i = 0; i < accountTransactions.length; i++) {
-      accountBalance -= accountTransactions[i].amount;
-      data.push({ date: accountTransactions[i].timestamp, accountBalance });
+        accountBalance -= accountTransactions[i].amount;
+        data.push({ date: accountTransactions[i].timestamp, accountBalance });
     }
     // Remove duplicate dates if any
     const filteredData: any[] = [];
     data.forEach((entry) => {
-      const index = filteredData.findIndex((d) => d.date === entry.date);
-      if (index === -1) {
+        const index = filteredData.findIndex((d) => d.date === entry.date);
+    if (index === -1) {
         filteredData.push(entry);
-      } else {
+    } else {
         filteredData[index] = entry;
-      }
+    }
     });
     return { account: account.accountName, running_log: filteredData };
-  };
+};
 
 export const getMapOfDatesToAccountBalances = async (transactions: Transaction[], accounts: Account[], dateScale: string, filterData: DashboardFilterData): Promise<{ [date : number] : { [account: string] : number}}> => {
     //1) Get all the dates, scaled and in range
