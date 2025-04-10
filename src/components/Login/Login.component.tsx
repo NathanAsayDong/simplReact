@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { attemptCreateAccount, attemptLogin } from '../../services/Classes/userApiService';
+import { attemptLogin } from '../../services/Classes/userApiService';
 import './Login.component.scss';
 import { CircularProgress } from '@mui/material';
 
